@@ -108,25 +108,6 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 //     return true;
 //}
 
-void extract_client_def_payload(struct infec_msg* msg, struct client_def* client_collector){
-	unsigned char* data = INF_MSG_DATA(msg);
-	unsigned char poz = 0;
-	if(CHECK_SIGNITURE(data[poz],SIGNITURE_IP)){
-		poz++;
-		ch2int_le(&data[poz],&client_collector->ip_addr);
-		printk(KERN_INFO "Ip extracted %pI4\n",&client_collector->ip_addr);
-		poz +=4;
-	}
-	if(CHECK_SIGNITURE(data[poz],SIGNITURE_MAC)){
-		copy_mac_address(&data[poz+1],client_collector->mac_addr);
-		printk(KERN_INFO "Mac extracted %02X:%02X:%02X:%02X:%02X:%02X\n",client_collector->mac_addr[0],
-		client_collector->mac_addr[1],client_collector->mac_addr[2],client_collector->mac_addr[3],
-		client_collector->mac_addr[4],client_collector->mac_addr[5]);
-		poz +=7;
-	}
-	client_collector->infectivity = UNKNOWN;
-}
-
 static void netlink_handle(struct sk_buff *skb){
 	struct nlmsghdr *nhl;
 	struct infec_msg* msg;
@@ -134,7 +115,6 @@ static void netlink_handle(struct sk_buff *skb){
 	struct client_def *client;
 
 	int ret;
-	
 	printk(KERN_INFO "Message received\n");
 
 	//extracting the netlink message
@@ -152,7 +132,16 @@ static void netlink_handle(struct sk_buff *skb){
 	switch(hdr->payload_type){
 		case ADD_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_def_payload(msg,client);
+#ifdef BIG_ENDIAN
+#undef BIG_ENDIAN
+#define TEMP_DEF_EXC
+#endif
+			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+
+#ifdef TEMP_DEF_EXC
+#undef TEMP_DEF_EXC
+#define BIG_ENDIAN
+#endif
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = ADD_CLIENT_SUSPICIOUS(client->ip_addr, client->mac_addr);
 			if(ret != 0) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
@@ -160,7 +149,15 @@ static void netlink_handle(struct sk_buff *skb){
 			break;
 		case REMOVE_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_def_payload(msg,client);
+#ifdef BIG_ENDIAN
+#undef BIG_ENDIAN
+#define TEMP_DEF_EXC
+#endif
+			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+#ifdef TEMP_DEF_EXC
+#undef TEMP_DEF_EXC
+#define BIG_ENDIAN
+#endif
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);

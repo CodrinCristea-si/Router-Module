@@ -14,9 +14,11 @@ struct network_details{
 
 #define EMPTY_IPV4_ADDRESS 0
 
-#define BIG_ENDIAN 1
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN
+#endif
 
-#if BIG_ENDIAN 
+#ifdef BIG_ENDIAN 
 #define SUBNET_A 0X0000000A
 #define MASK_A   0X000000FF
 #define SUBNET_B 0X000001AC
