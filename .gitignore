@@ -2,6 +2,7 @@
 headers/*.c
 headers/*.o
 source/*.o
+source/*.d
 userspace/libtomcrypt/crypt/*.o
 userspace/libtomcrypt/hashes/*.o
 userspace/libtomcrypt/misc/*.o
@@ -13,6 +14,7 @@ userspace/*.test
 *.ko
 *.json
 *.test
+*.d
 Module.symvers
 modules.order
 pwd

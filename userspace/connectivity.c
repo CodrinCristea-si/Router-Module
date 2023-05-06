@@ -13,7 +13,7 @@
 
 
 #include "./libtomcrypt/hashes/md5.h"
-
+#include "../headers/common_proto.h"
 //#include <openssl/sha1.h>
 
 #define WORD_SEPARATOR " "
@@ -84,6 +84,82 @@ int cmp_uchar_values(unsigned char* hash1, unsigned char* hash2, size_t size){
         if(dif != 0) return dif;
     }
     return 0;
+}
+
+int send_message_to_kernel(struct client_node* client, unsigned char type){
+	
+	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
+	if (fd < 0) {
+		perror("Cannot open socket\n");
+	}
+	printf("Socket created\n");
+	struct sockaddr_nl addr; 
+	memset(&addr, 0, sizeof(addr));
+	addr.nl_family = AF_NETLINK;
+	addr.nl_pid = 0;  // For Linux kernel
+	addr.nl_groups = 0;
+
+	unsigned char *data = (unsigned char *)calloc(20,sizeof(char));
+	int poz =0;
+	data[poz]= SIGNITURE_IP;
+	poz++;
+	copy_uchar_values(client->ipv4,&data[poz],IPV4_LENGTH);
+	poz+=IPV4_LENGTH;
+	data[poz]= SIGNITURE_MAC;
+	poz++;
+	copy_uchar_values(client->mac,&data[poz],MAC_LENGTH);
+	poz+=MAC_LENGTH;
+	printf("Data created\n");
+	printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
+		data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
+
+	struct header_payload *hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
+	hdr_inf->payload_id=rand()%(int)(MAX_ID);
+	hdr_inf->payload_type=type;
+	int cp = SIGNITURE_HEADER;
+	int2ch_be(cp,hdr_inf->signiture);
+	//copy_uchar_values(hdr_inf->signiture,(unsigned char*)&cp,SIGNITURE_HEADER_LENGTH);
+	hdr_inf->payload_len = poz;
+	printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
+		hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
+
+	printf("Header created\n");
+
+	struct infec_msg* msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf));
+	copy_uchar_values((unsigned char*)hdr_inf, (unsigned char*)INF_MSG_HEADER(msg_infec),INF_MSG_HEADER_LEN(msg_infec));
+	copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(msg_infec), INF_MSG_DATA_LEN(msg_infec));
+	printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
+	printf("len %ld\n", INF_MSG_LEN(msg_infec));
+	printf("Msg created\n");
+
+	struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+	memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+	nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
+	nlh->nlmsg_pid = getpid();
+	nlh->nlmsg_flags = 0;
+	copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
+	printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
+		((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
+	printf("nhl created\n");
+	struct iovec iov; 
+	memset(&iov, 0, sizeof(iov));
+	iov.iov_base = (void *) nlh;
+	iov.iov_len = nlh->nlmsg_len;
+
+	struct msghdr msg; 
+	memset(&msg, 0, sizeof(msg));
+	msg.msg_name = (void *) &addr;
+	msg.msg_namelen = sizeof(addr);
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	printf("Massage created\n");
+
+	
+	sendmsg(fd, &msg, 0);
+	free(msg_infec);
+	free(hdr_inf);
+	free(data);
+	printf("Sent message to kernel\n");
 }
 
 
@@ -270,7 +346,7 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
     if(!updated && prev){
         printf("Added client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", node->ipv4[0],node->ipv4[1],
         node->ipv4[2],node->ipv4[3], node->mac[0],node->mac[1],node->mac[2],node->mac[3],node->mac[4],node->mac[5]);
-		
+		send_message_to_kernel(node,ADD_CLIENT);
         prev->next = (void*)node;
         added = true;
     }
@@ -293,7 +369,7 @@ void delete_old_magic(struct client_node* list){
         if(delete){
             printf("Removed client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", current->ipv4[0],current->ipv4[1],
             current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
-            
+            send_message_to_kernel(current,REMOVE_CLIENT);
 			free(current);
             current=prev;
         }
