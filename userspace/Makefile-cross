@@ -1,0 +1,14 @@
+CC=mipsel-openwrt-linux-gcc
+CFLAGS=-I -Wall -pthread
+OUTPUT_NAME= test-connect-neig
+EXTERNAL_LIB= ./libtomcrypt/crypt/crypt_argchk.c ./libtomcrypt/misc/compare_testvector.c ./libtomcrypt/hashes/md5.h
+#CURRENT_DIR = $(shell pwd)
+#TMP= $(shell ./prepare-cross-sh)
+#MAIN_FILE= connectivity.c
+MAIN_FILE= test-connect-localhost.c
+all:
+#	$(CURRENT_DIR)/prepare-cross.sh
+#	$(CC) $(CFLAGS) -o $(OUTPUT_NAME) $(EXTERNAL_LIB) $(MAIN_FILE)
+	$(CC) $(CFLAGS) -o $(OUTPUT_NAME) $(MAIN_FILE)
+clean:
+	-rm -f *.o
