@@ -231,14 +231,14 @@ static void int2ch_le(int in, char* col){
 #define INF_MSG_DATA_LEN(infec_msg) (infec_msg->header.payload_len)
 #define INF_MSG_END(infec_msg) ((void*)(((char *)(&infec_msg->header)) + sizeof(struct header_payload) + infec_msg->header.payload_len))
 
-void copy_uchar_values(unsigned char* from, unsigned char* to, size_t size){
+static void copy_uchar_values(unsigned char* from, unsigned char* to, size_t size){
     unsigned char i=0;
 	for(i=0;i< size;i++){
         to[i]=from[i];
     }
 }
 
-int cmp_uchar_values(unsigned char* hash1, unsigned char* hash2, size_t size){
+static int cmp_uchar_values(unsigned char* hash1, unsigned char* hash2, size_t size){
     unsigned char i=0;
 	for(i=0;i< size;i++){
         int dif = hash1[i] - hash2[i];
@@ -254,7 +254,7 @@ int cmp_uchar_values(unsigned char* hash1, unsigned char* hash2, size_t size){
 
 #define CHECK_FLAG(cand,flag) CHECK_SIGNITURE(cand,flag)
 
-void extract_client_repr_payload(struct infec_msg* msg, struct client_repr* client_collector, unsigned char poz, unsigned char flags){
+static void extract_client_repr_payload(struct infec_msg* msg, struct client_repr* client_collector, unsigned char poz, unsigned char flags){
 	unsigned char* data = INF_MSG_DATA(msg);
 	if(CHECK_SIGNITURE(data[poz],SIGNITURE_IP) && CHECK_FLAG(flags,FLAG_WITH_IP)){
 		poz++;
@@ -289,7 +289,7 @@ void extract_client_repr_payload(struct infec_msg* msg, struct client_repr* clie
 	}
 }
 
-int create_client_repr_payload(struct client_repr* client,unsigned char* collector, unsigned char flags){
+static int create_client_repr_payload(struct client_repr* client,unsigned char* collector, unsigned char flags){
 	int poz =0;
 	collector[poz]= SIGNITURE_IP;
 	poz++;
@@ -312,7 +312,7 @@ int create_client_repr_payload(struct client_repr* client,unsigned char* collect
 	return poz;
 }
 
-int create_header(char id,char type,struct header_payload *collector){
+static int create_header(char id,char type,struct header_payload *collector){
 	collector->payload_id=id;
 	collector->payload_type=type;
 	int cp = SIGNITURE_HEADER;
@@ -326,7 +326,7 @@ int create_header(char id,char type,struct header_payload *collector){
 	return 0;
 }
 
-int create_message(struct header_payload *header, unsigned char* data, int data_len, struct infec_msg* collector){
+static int create_message(struct header_payload *header, unsigned char* data, int data_len, struct infec_msg* collector){
 	header->payload_len = data_len;
 	copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
 	copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), INF_MSG_DATA_LEN(collector));

@@ -5,60 +5,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <regex.h>
-#include <pthread.h>
-#include <linux/netlink.h>
-#include <sys/socket.h>
+#include <fcntl.h>
 #include <time.h>
 
 
-#include "./libtomcrypt/hashes/md5.h"
-#include "../headers/common_proto.h"
-//#include <openssl/sha1.h>
+#include "../libtomcrypt/hashes/md5.h"
+#include "../headers/connectivity.h"
 
-#define WORD_SEPARATOR " "
-#define MAX_WORD_SIZE 100
-#define MAX_ID 1e7
-
-#define REGEX_LEASE "^([0-9])*$"
-#define REGEX_MAC "^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
-#define REGEX_IPV4 "^([0-9]{1,3}\\.){3}([0-9]{1,3})$"
-#define REGEX_NAME "^([0-9a-zA-Z_\\-]+)$|^(\\*)$"
-
-#define MASK_NAME_ASSIGNED 001u
-#define MASK_IPV4_ASSIGNED 010u
-#define MASK_MAC_ASSIGNED 100u
-#define MASK_CLIENT_COMPLETE 111u
-#define MASK_CLIENT_EMPTY 000u
-
-#define MD5_HASH_SIZE 16
-#define MAC_LENGTH 6
-#define IPV4_LENGTH 4
-
-#define MAX_PAYLOAD_SIZE 1024
-
-enum {
-	FORMAT_LEASE=1,
-	FORMAT_MAC,
-	FORMAT_IPV4,
-	FORMAT_NAME,
-	FORMAT_UNKNOWN
-};
-
-struct client_def{
-	char ipv4[MAX_WORD_SIZE];
-	char mac[MAX_WORD_SIZE];
-	char name[MAX_WORD_SIZE];
-	u_int32_t complete_mask;
-};
-
-struct client_node{
-    unsigned char ipv4[IPV4_LENGTH];
-    unsigned char mac[MAC_LENGTH];
-    unsigned char hash[MD5_HASH_SIZE];
-    unsigned int state;
-    void* next;
-};
 
 unsigned int magic_number = 0;
 struct client_node start_client={
@@ -69,75 +22,11 @@ struct client_node start_client={
     .next = NULL
 };
 
-pthread_mutex_t lock;
-u_int8_t shutdown_order = 0;
 
-
-int send_message_to_kernel(struct client_node* client, unsigned char type){
-	
-	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
-	if (fd < 0) {
-		perror("Cannot open socket\n");
-	}
-	printf("Socket created\n");
-	struct sockaddr_nl addr; 
-	memset(&addr, 0, sizeof(addr));
-	addr.nl_family = AF_NETLINK;
-	addr.nl_pid = 0;  // For Linux kernel
-	addr.nl_groups = 0;
-
-	struct client_repr client_rep;
-	ch2int(client->ipv4,&client_rep.ip_addr);
-	copy_uchar_values(client->mac,client_rep.mac_addr,MAC_LENGTH);
-	client_rep.infectivity=UNKNOW_INFECTION;
-	
-	unsigned char *data = (unsigned char *)calloc(20,sizeof(char));
-	int len = create_client_repr_payload(&client_rep,data,FLAG_WITH_IP|FLAG_WITH_MAC);
-	printf("Data created\n");
-	// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
-	// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
-
-	struct header_payload *hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
-	create_header(rand()%(int)(MAX_ID), type,hdr_inf);
-	// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
-	// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
-
-	printf("Header created\n");
-
-	struct infec_msg* msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf));
-	create_message(hdr_inf,data,len,msg_infec);
-	// printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
-	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
-	printf("Msg created\n");
-
-	struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-	memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-	nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
-	nlh->nlmsg_pid = getpid();
-	nlh->nlmsg_flags = 0;
-	copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
-	printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
-		((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-	printf("nhl created\n");
-	struct iovec iov; 
-	memset(&iov, 0, sizeof(iov));
-	iov.iov_base = (void *) nlh;
-	iov.iov_len = nlh->nlmsg_len;
-
-	struct msghdr msg; 
-	memset(&msg, 0, sizeof(msg));
-	msg.msg_name = (void *) &addr;
-	msg.msg_namelen = sizeof(addr);
-	msg.msg_iov = &iov;
-	msg.msg_iovlen = 1;
-	printf("Massage created\n");
-
-	
-	sendmsg(fd, &msg, 0);
-	free(msg_infec);
-	free(hdr_inf);
-	free(data);
-	printf("Sent message to kernel\n");
+void convert_node_2_repr(struct client_node* client,struct client_repr* collector){
+	ch2int(client->ipv4,&collector->ip_addr);
+	copy_uchar_values(client->mac,collector->mac_addr,MAC_LENGTH);
+	collector->infectivity=UNKNOW_INFECTION;
 }
 
 
@@ -302,7 +191,7 @@ void str2mac(unsigned char * str, unsigned char* collector){
     collector[poz]=nr;
     poz++;
 }
-//to add new things to kernel
+
 bool insert_or_update_client(struct client_node* list, struct client_node* node){
     unsigned char empty_hash[MD5_HASH_SIZE] ={0};
     struct client_node *first = list->next, *prev = list;
@@ -324,13 +213,15 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
     if(!updated && prev){
         printf("Added client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", node->ipv4[0],node->ipv4[1],
         node->ipv4[2],node->ipv4[3], node->mac[0],node->mac[1],node->mac[2],node->mac[3],node->mac[4],node->mac[5]);
-		send_message_to_kernel(node,ADD_CLIENT);
+		struct client_repr cl_rpr;
+		convert_node_2_repr(node,&cl_rpr);
+		send_message_to_kernel(&cl_rpr,ADD_CLIENT);
         prev->next = (void*)node;
         added = true;
     }
     return added || updated;
 }
-//to add new things to kernel
+
 void delete_old_magic(struct client_node* list){
     struct client_node *current = list->next, *prev = list;
     bool updated = false;
@@ -347,7 +238,9 @@ void delete_old_magic(struct client_node* list){
         if(delete){
             printf("Removed client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", current->ipv4[0],current->ipv4[1],
             current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
-            send_message_to_kernel(current,REMOVE_CLIENT);
+            struct client_repr cl_rpr;
+			convert_node_2_repr(current,&cl_rpr);
+			send_message_to_kernel(&cl_rpr,REMOVE_CLIENT);
 			free(current);
             current=prev;
         }
@@ -447,7 +340,7 @@ void process_dhcp_file(char* filename){
 }
 
 time_t check_if_file_was_modified(char* filename, time_t last_modified){
-	struct stat filestat;
+    struct stat filestat;
     int err = stat(filename, &filestat);
     if (err != 0) {
         perror("Cannot access file stats");
@@ -457,80 +350,37 @@ time_t check_if_file_was_modified(char* filename, time_t last_modified){
     return filestat.st_mtime - last_modified;
 }
 
-bool is_order_to_shut_down(){
-	bool to_shutdown=false;
-	pthread_mutex_lock(&lock);
-	if(shutdown_order)
-		to_shutdown=true;
-	pthread_mutex_unlock(&lock);
-	return to_shutdown;
+bool is_file_available(char* filename){
+	struct stat filestat;
+	int err = stat(filename, &filestat);
+    if (err != 0) {
+        perror("Cannot access file stats");
+        return false;
+    }
+	return true;
 }
 
-void *thread_checker(void *argv){
+void connectivity_checker(char* file){
 	printf("Thread awake\n");
 	time_t last_modified = 0;
-	char* filename = (char*)(argv);
-	while(1){
-		time_t how_long_ago = check_if_file_was_modified(filename,last_modified);
-		if( how_long_ago > 0){
-			printf("File has been modified\n");
-			last_modified += how_long_ago;
-			printf("Running processing...\n");
-			process_dhcp_file(filename);
+	char* filename = (char*)malloc(sizeof(char)*strlen(file));
+	strncpy(filename,file,strlen(file));
+	if(is_file_available(filename)){
+		while(1){
+			time_t how_long_ago = check_if_file_was_modified(filename,last_modified);
+			if( how_long_ago > 0){
+				printf("File has been modified\n");
+				last_modified += how_long_ago;
+				printf("Running processing...\n");
+				process_dhcp_file(filename);
+			}
+			else{
+				printf("Nothing new\n");
+			}
+			sleep(SLEEP_TIME);
 		}
-		else{
-			printf("Nothing new\n");
-			if(is_order_to_shut_down())
-				break;
-		}
-		sleep(5);
 	}
+	free(filename);
 	printf("Thread dead\n");
 }
 
-int shutdown_thread(pthread_t thr_id){
-	int ret;
-	printf("Atempting to shutdown...\n");
-	pthread_mutex_lock(&lock);
-	shutdown_order = 1;
-	pthread_mutex_unlock(&lock);
-	printf("Shutdown order given\n");
-	if(thr_id){
-		ret = pthread_join(thr_id, NULL);
-		printf("attempting to close thread\n");
-		if (ret)
-		{
-			printf("Failed to stop thread!\n" );
-			return -1;
-		}   
-	}
-	printf("Thread shutdowned\n");
-	return 0;
-}
-
-int deploy_thread(pthread_t *thr_id, char* filename){
-	printf("Atempting to deploy...\n");
-	pthread_mutex_lock(&lock);
-	shutdown_order = 0;
-	pthread_mutex_unlock(&lock);
-	printf("Deploy order given\n");
-	pthread_create(thr_id, NULL, thread_checker, (void*)filename);
-	printf("Thread lauched\n");
-	return thr_id == NULL;
-}
-
-int main(int argc, char** argv){
-	srand(time(NULL));
-	//"dhcp-probs.txt"
-	char filename[20] = "dhcp-probs.txt";
-	strncpy(filename,argv[1],20);
-
-	pthread_t thr_id;
-	
-	//process_dhcp_file();
-	deploy_thread(&thr_id, filename);
-	sleep(60);
-	shutdown_thread(thr_id);
-
-	return 0;
-}

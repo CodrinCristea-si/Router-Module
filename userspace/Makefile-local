@@ -3,10 +3,11 @@ CFLAGS=-I -Wall -pthread
 OUTPUT_NAME= connect-test
 OUTPUT_FILE=$(OUTPUT_NAME).test
 EXTERNAL_LIB= ./libtomcrypt/crypt/crypt_argchk.c ./libtomcrypt/misc/compare_testvector.c ./libtomcrypt/hashes/md5.h
-MAIN_FILE= connectivity.c
+SOURCE_FILES=$(shell ./get_source-files.sh)
+MAIN_FILE= manage_connectivity_thread.c
 #MAIN_FILE= test-connect-localhost.c
 all:
-	$(CC) $(CFLAGS) -ggdb -o $(OUTPUT_FILE) $(EXTERNAL_LIB) $(MAIN_FILE)
+	$(CC) $(CFLAGS) -ggdb -o $(OUTPUT_FILE) $(EXTERNAL_LIB) $(SOURCE_FILES)
 #	$(CC) $(CFLAGS) -ggdb -o $(OUTPUT_FILE) $(MAIN_FILE)
 clean:
 	rm *.o
