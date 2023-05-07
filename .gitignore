@@ -1,8 +1,9 @@
 .vscode/
-headers/*.c
-headers/*.o
-source/*.o
-source/*.d
+common/*.o
+kernelspace/headers/*.c
+kernelspace/headers/*.o
+kernelspace/source/*.o
+kernelspace/source/*.d
 userspace/libtomcrypt/crypt/*.o
 userspace/libtomcrypt/hashes/*.o
 userspace/libtomcrypt/misc/*.o

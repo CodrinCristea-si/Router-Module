@@ -3,7 +3,7 @@ CFLAGS=-I -Wall -pthread
 OUTPUT_NAME= connect-test
 OUTPUT_FILE=$(OUTPUT_NAME).test
 EXTERNAL_LIB= ./libtomcrypt/crypt/crypt_argchk.c ./libtomcrypt/misc/compare_testvector.c ./libtomcrypt/hashes/md5.h
-SOURCE_FILES=$(shell ./get_source-files.sh)
+SOURCE_FILES=$(shell ../get_source-files.sh ./source ;../get_source-files.sh ../common | cat |tr '\n' ' ')
 MAIN_FILE= manage_connectivity_thread.c
 #MAIN_FILE= test-connect-localhost.c
 all:

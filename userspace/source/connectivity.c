@@ -215,7 +215,7 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
         node->ipv4[2],node->ipv4[3], node->mac[0],node->mac[1],node->mac[2],node->mac[3],node->mac[4],node->mac[5]);
 		struct client_repr cl_rpr;
 		convert_node_2_repr(node,&cl_rpr);
-		send_message_to_kernel(&cl_rpr,ADD_CLIENT);
+		send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
         prev->next = (void*)node;
         added = true;
     }
@@ -240,7 +240,7 @@ void delete_old_magic(struct client_node* list){
             current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
             struct client_repr cl_rpr;
 			convert_node_2_repr(current,&cl_rpr);
-			send_message_to_kernel(&cl_rpr,REMOVE_CLIENT);
+			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
 			free(current);
             current=prev;
         }
