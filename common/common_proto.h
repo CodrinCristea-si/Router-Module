@@ -1,5 +1,24 @@
 #include <linux/if_ether.h> // for ETH_ALEN
 
+///source code from /linux/drdb.h
+#ifdef __KERNEL__
+#include <linux/types.h>
+#include <asm/byteorder.h>
+#else
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <limits.h>
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define __LITTLE_ENDIAN_BITFIELD
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#define __BIG_ENDIAN_BITFIELD
+#else
+# error "Undefined endianness"
+#endif
+
+#endif
+
 #ifndef BIG_ENDIAN
 #define BIG_ENDIAN
 #endif
@@ -197,26 +216,29 @@ struct infec_msg{
 };
 
 static void ch2int(char* ch, int* col){
+#ifdef __LITTLE_ENDIAN_BITFIELD
 	*col = ((ch[0] & 0xFF) << 24) | ((ch[1] & 0xFF) << 16) | ((ch[2] & 0xFF) << 8) | (ch[3] & 0xFF);
-}
-
-static void ch2int_le(char* ch, int* col){
+#endif
+#ifdef __BIG_ENDIAN_BITFIELD
 	*col = ((ch[3] & 0xFF) << 24) | ((ch[2] & 0xFF) << 16) | ((ch[1] & 0xFF) << 8) | (ch[0] & 0xFF);
+#endif
 }
 
 static void int2ch(int in, char* col){
+#ifdef __LITTLE_ENDIAN_BITFIELD
 	col[0] = (char)(in & 0xFF);  
 	col[1] = (char)((in >> 8) & 0xFF);  
 	col[2] = (char)((in >> 16) & 0xFF); 
 	col[3] = (char)((in >> 24) & 0xFF);
-}
-
-static void int2ch_le(int in, char* col){
+#endif
+#ifdef __BIG_ENDIAN_BITFIELD
 	col[3] = (char)(in & 0xFF);  
 	col[2] = (char)((in >> 8) & 0xFF);  
 	col[1] = (char)((in >> 16) & 0xFF); 
 	col[0] = (char)((in >> 24) & 0xFF);
+#endif
 }
+
 
 #define CHECK_SIGNITURE(cand,sign) ((cand & sign) == sign)
 
@@ -258,12 +280,7 @@ static void extract_client_repr_payload(struct infec_msg* msg, struct client_rep
 	unsigned char* data = INF_MSG_DATA(msg);
 	if(CHECK_SIGNITURE(data[poz],SIGNITURE_IP) && CHECK_FLAG(flags,FLAG_WITH_IP)){
 		poz++;
-#ifdef BIG_ENDIAN
 		ch2int(&data[poz],&client_collector->ip_addr);
-#else
-		ch2int_le(&data[poz],&client_collector->ip_addr);
-#endif
-		// printk(KERN_INFO "Ip extracted %pI4\n",&client_collector->ip_addr);
 		poz +=4;
 	}
 	else{
@@ -293,11 +310,7 @@ static int create_client_repr_payload(struct client_repr* client,unsigned char* 
 	int poz =0;
 	collector[poz]= SIGNITURE_IP;
 	poz++;
-#ifdef BIG_ENDIAN
 	int2ch(client->ip_addr,&collector[poz]);
-#else
-	int2ch_le(client->ip_addr,&collector[poz]);
-#endif
 	poz+=4;
 	collector[poz]= SIGNITURE_MAC;
 	poz++;
@@ -316,12 +329,7 @@ static int create_header(char id,char type,struct header_payload *collector){
 	collector->payload_id=id;
 	collector->payload_type=type;
 	int cp = SIGNITURE_HEADER;
-#ifdef BIG_ENDIAN
 	int2ch(cp,collector->signiture);
-#else
-	int2ch_le(cp,collector->signiture);
-#endif
-	//copy_uchar_values(hdr_inf->signiture,(unsigned char*)&cp,SIGNITURE_HEADER_LENGTH);
 	collector->payload_len = 0;
 	return 0;
 }

@@ -11,8 +11,7 @@
 #include <linux/net_namespace.h>
 //#include <linux/dhcp.h>
 #include "../headers/interceptor.h"
-#include "../headers/infectivity.h"
-#include "../common/common_proto.h"
+#include "../headers/communicator.h"
 #include "../headers/utils.h"
 
 struct nf_hook_ops *interceptor_hook_ops = NULL;
@@ -109,12 +108,12 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 //}
 
 
-
 static void netlink_handle(struct sk_buff *skb){
 	struct nlmsghdr *nhl;
 	struct infec_msg* msg;
 	struct header_payload* hdr;
 	struct client_def *client;
+	struct clients_list *all_clients;
 
 	int ret;
 	printk(KERN_INFO "Message received\n");
@@ -134,53 +133,37 @@ static void netlink_handle(struct sk_buff *skb){
 	switch(hdr->payload_type){
 		case ADD_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-#ifdef BIG_ENDIAN
-#undef BIG_ENDIAN
-#define TEMP_DEF_EXC
-#endif
 			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
-
-#ifdef TEMP_DEF_EXC
-#undef TEMP_DEF_EXC
-#define BIG_ENDIAN
-#endif
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = ADD_CLIENT_SUSPICIOUS(client->ip_addr, client->mac_addr);
 			if(ret != 0) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Added client %pI4\n",&client->ip_addr);
+			kfree(client);
 			break;
 		case REMOVE_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-#ifdef BIG_ENDIAN
-#undef BIG_ENDIAN
-#define TEMP_DEF_EXC
-#endif
 			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
-#ifdef TEMP_DEF_EXC
-#undef TEMP_DEF_EXC
-#define BIG_ENDIAN
-#endif
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
+			kfree(client);
 			break;
 
 		case GET_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-#ifdef BIG_ENDIAN
-#undef BIG_ENDIAN
-#define TEMP_DEF_EXC
-#endif
 			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
-#ifdef TEMP_DEF_EXC
-#undef TEMP_DEF_EXC
-#define BIG_ENDIAN
-#endif
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
+			kfree(client);
+			break;
+		case CLIENTS_DATA:
+			all_clients = (struct clients_list*)kcalloc(1,sizeof(struct clients_list),GFP_KERNEL);
+			GET_ALL_CLIENTS(all_clients);
+			//send to userspace
+			kfree(all_clients);
 			break;
 		default:
 			printk(KERN_ERR "Not implemented\n");
