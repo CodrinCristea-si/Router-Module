@@ -1,3 +1,78 @@
 <%+header%>
+
 <h1>Clients</h1>
+<div>
+    <table class="table" id="list_clients">
+        <tr class="tr table-titles">
+            <th class="th nowrap" data-sortable-row="true">IP Address</th>
+            <th class="th hide-xs" data-sortable-row="true">MAC Address</th>
+            <th class="th" data-sortable-row="true">Infectivity</th>
+            <th class="th cbi-section-actions">Actions</th>
+        </tr>
+    </table>
+</div>
 <%+footer%>
+<script src='<%=luci.dispatcher.build_url("admin", "network","infectivity")%>/script'></script>
+<!-- <script src="/luci-static/resources/luci.js"></script> -->
+<!-- <script type="text/javascript" src="<%=luci.dispatcher.build_url('network/infectivity/home-script.js')%>"> </script> -->
+<!-- <script type="text/javascript" src="/view/network/infectivity/home-script.js"></script> -->
+<!-- <%=luci.util.lib("luci-static.resources.my_script")%> -->
+
+<!-- <div class="network-status-table">
+    <div class="ifacebox">
+        <div class="ifacebox-head center active">
+            <strong>radio0</strong>
+        </div>
+        <div class="ifacebox-body left">
+            <span>
+                <span class="nowrap">
+                    <strong>Type: 
+
+                    </strong>MediaTek MT76x8 802.11bgn</span><br>
+                    <span class="nowrap">
+                        <strong>Channel: </strong>
+                        13 (2.472 GHz)
+                    </span><br>
+                    <span class="nowrap"><strong>Bitrate: </strong>54 Mbit/s</span></span><div><span class="ifacebadge"><img src="/luci-static/resources/icons/signal-75-100.png" title="Signal: -24 dBm / Quality: 100%"><span><span class="nowrap"><strong>SSID: </strong>OpenWrt</span><br><span class="nowrap"><strong>Mode: </strong>Master</span><br><span class="nowrap"><strong>BSSID: </strong>32:DE:4B:5A:BB:CC</span><br><span class="nowrap"><strong>Encryption: </strong>WPA2 PSK (CCMP)</span><br><span class="nowrap"><strong>Associations: </strong>1</span><br></span></span><span class="ifacebadge"><img src="/luci-static/resources/icons/signal-75-100.png" title="Signal: -25 dBm / Quality: 100%"><span><span class="nowrap"><strong>SSID: </strong>Parola este 35789473</span><br><span class="nowrap"><strong>Mode: </strong>Client</span><br><span class="nowrap"><strong>BSSID: </strong>30:DE:4B:5A:BB:CC</span><br><span class="nowrap"><strong>Encryption: </strong>WPA2 PSK (CCMP)</span><br><span class="nowrap"><strong>Associations: </strong>1</span><br></span></span></div></div></div></div>
+                    <h3>Associated Stations</h3>
+                    <table class="table assoclist" data-idref="73bd1ea2">
+                        <tr class="tr table-titles">
+                            <th class="th nowrap" data-sortable-row="true">Network</th>
+                            <th class="th hide-xs" data-sortable-row="true">MAC address</th>
+                            <th class="th" data-sortable-row="true">Host</th>
+                            <th class="th" data-sortable-row="true">Signal / Noise</th>
+                            <th class="th" data-sortable-row="true">RX Rate / TX Rate</th>
+                            <th class="th cbi-section-actions"></th>
+                        </tr>
+                        <tr class="tr cbi-rowstyle-1">
+                            <td class="td nowrap" data-title="Network">
+                                <span class="ifacebadge" title="Wireless Network: Master &quot;OpenWrt&quot; (wlan0-1)" data-ifname="wlan0-1" data-ssid="OpenWrt">
+                                    <img src="/luci-static/resources/icons/wifi.png">
+                                    <span> Master "OpenWrt"<small> (wlan0-1)</small></span>
+                                </span>
+                            </td>
+                            <td class="td hide-xs" data-title="MAC address">BC:D0:74:84:95:78</td>
+                            <td class="td" data-title="Host">Cristeas-MBP.lan <span class="hide-xs">(192.168.1.123, fe80::c1b:698c:2c56:9dd)</span></td>
+                            <td class="td" data-title="Signal / Noise">
+                                <span class="ifacebadge" title="Signal: -24 dBm" data-signal="-24" data-noise="0">
+                                    <img src="/luci-static/resources/icons/signal-75-100.png">
+                                    <span> -24&nbsp;dBm</span>
+                                </span>
+                            </td>
+                            <td class="td" data-title="RX Rate / TX Rate">
+                                <span>
+                                    <span>54.0&nbsp;Mbit/s, 20&nbsp;MHz</span><br>
+                                    <span>54.0&nbsp;Mbit/s, 20&nbsp;MHz</span>
+                                </span>
+                            </td>
+                            <td class="td cbi-section-actions">
+                                <button class="cbi-button cbi-button-remove">Disconnect</button>
+                            </td>
+                        </tr>
+
+
+                        <tr class="tr cbi-rowstyle-2"><td class="td nowrap" data-title="Network"><span class="ifacebadge" title="Wireless Network: Client &quot;Parola este 35789473&quot; (wlan0)" data-ifname="wlan0" data-ssid="Parola este 35789473"><img src="/luci-static/resources/icons/wifi.png"><span> Client "Parola este 35789473"<small> (wlan0)</small></span></span></td><td class="td hide-xs" data-title="MAC address">DC:9B:D6:B5:62:1C</td><td class="td" data-title="Host">?</td><td class="td" data-title="Signal / Noise"><span class="ifacebadge" title="Signal: -26 dBm" data-signal="-26" data-noise="0"><img src="/luci-static/resources/icons/signal-75-100.png"><span> -26&nbsp;dBm</span></span></td><td class="td" data-title="RX Rate / TX Rate"><span><span>144.4&nbsp;Mbit/s, 20&nbsp;MHz, MCS&nbsp;15, Short&nbsp;GI</span><br><span>144.4&nbsp;Mbit/s, 20&nbsp;MHz, MCS&nbsp;15, Short&nbsp;GI</span></span></td><td class="td cbi-section-actions">-</td></tr></table>
+
+
+
+                    <div class="network-status-table"><div class="ifacebox"><div class="ifacebox-head center active"><strong>radio0</strong></div><div class="ifacebox-body left"><span><span class="nowrap"><strong>Type: </strong>MediaTek MT76x8 802.11bgn</span><br><span class="nowrap"><strong>Channel: </strong>13 (2.472 GHz)</span><br><span class="nowrap"><strong>Bitrate: </strong>54 Mbit/s</span></span><div><span class="ifacebadge"><img src="/luci-static/resources/icons/signal-75-100.png" title="Signal: -25 dBm / Quality: 100%"><span><span class="nowrap"><strong>SSID: </strong>OpenWrt</span><br><span class="nowrap"><strong>Mode: </strong>Master</span><br><span class="nowrap"><strong>BSSID: </strong>32:DE:4B:5A:BB:CC</span><br><span class="nowrap"><strong>Encryption: </strong>WPA2 PSK (CCMP)</span><br><span class="nowrap"><strong>Associations: </strong>1</span><br></span></span><span class="ifacebadge"><img src="/luci-static/resources/icons/signal-75-100.png" title="Signal: -26 dBm / Quality: 100%"><span><span class="nowrap"><strong>SSID: </strong>Parola este 35789473</span><br><span class="nowrap"><strong>Mode: </strong>Client</span><br><span class="nowrap"><strong>BSSID: </strong>30:DE:4B:5A:BB:CC</span><br><span class="nowrap"><strong>Encryption: </strong>WPA2 PSK (CCMP)</span><br><span class="nowrap"><strong>Associations: </strong>1</span><br></span></span></div></div></div></div><h3>Associated Stations</h3><table class="table assoclist" data-idref="5dcb517d"><tr class="tr table-titles"><th class="th nowrap" data-sortable-row="true">Network</th><th class="th hide-xs" data-sortable-row="true">MAC address</th><th class="th" data-sortable-row="true">Host</th><th class="th" data-sortable-row="true">Signal / Noise</th><th class="th" data-sortable-row="true">RX Rate / TX Rate</th><th class="th cbi-section-actions"></th></tr><tr class="tr cbi-rowstyle-1"><td class="td nowrap" data-title="Network"><span class="ifacebadge" title="Wireless Network: Master &quot;OpenWrt&quot; (wlan0-1)" data-ifname="wlan0-1" data-ssid="OpenWrt"><img src="/luci-static/resources/icons/wifi.png"><span> Master "OpenWrt"<small> (wlan0-1)</small></span></span></td><td class="td hide-xs" data-title="MAC address">BC:D0:74:84:95:78</td><td class="td" data-title="Host">Cristeas-MBP.lan <span class="hide-xs">(192.168.1.123, fe80::c1b:698c:2c56:9dd)</span></td><td class="td" data-title="Signal / Noise"><span class="ifacebadge" title="Signal: -24 dBm" data-signal="-24" data-noise="0"><img src="/luci-static/resources/icons/signal-75-100.png"><span> -24&nbsp;dBm</span></span></td><td class="td" data-title="RX Rate / TX Rate"><span><span>54.0&nbsp;Mbit/s, 20&nbsp;MHz</span><br><span>54.0&nbsp;Mbit/s, 20&nbsp;MHz</span></span></td><td class="td cbi-section-actions"><button class="cbi-button cbi-button-remove">Disconnect</button></td></tr><tr class="tr cbi-rowstyle-2"><td class="td nowrap" data-title="Network"><span class="ifacebadge" title="Wireless Network: Client &quot;Parola este 35789473&quot; (wlan0)" data-ifname="wlan0" data-ssid="Parola este 35789473"><img src="/luci-static/resources/icons/wifi.png"><span> Client "Parola este 35789473"<small> (wlan0)</small></span></span></td><td class="td hide-xs" data-title="MAC address">DC:9B:D6:B5:62:1C</td><td class="td" data-title="Host">?</td><td class="td" data-title="Signal / Noise"><span class="ifacebadge" title="Signal: -28 dBm" data-signal="-28" data-noise="0"><img src="/luci-static/resources/icons/signal-75-100.png"><span> -28&nbsp;dBm</span></span></td><td class="td" data-title="RX Rate / TX Rate"><span><span>144.4&nbsp;Mbit/s, 20&nbsp;MHz, MCS&nbsp;15, Short&nbsp;GI</span><br><span>144.4&nbsp;Mbit/s, 20&nbsp;MHz, MCS&nbsp;15, Short&nbsp;GI</span></span></td><td class="td cbi-section-actions">-</td></tr></table> -->
