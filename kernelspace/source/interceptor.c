@@ -112,7 +112,7 @@ static void netlink_handle(struct sk_buff *skb){
 	struct nlmsghdr *nhl;
 	struct infec_msg* msg;
 	struct header_payload* hdr;
-	struct client_def *client;
+	struct client_def *client, *empty_client;
 	struct clients_list *all_clients;
 
 	int ret;
@@ -159,10 +159,16 @@ static void netlink_handle(struct sk_buff *skb){
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
 			kfree(client);
 			break;
-		case CLIENTS_DATA:
+		case GET_CLIENTS:
+			/// list creation
 			all_clients = (struct clients_list*)kcalloc(1,sizeof(struct clients_list),GFP_KERNEL);
+			empty_client = __create_empty_client();
+			all_clients->client=*empty_client;
+			INIT_LIST_HEAD(&all_clients->list);
 			GET_ALL_CLIENTS(all_clients);
-			//send to userspace
+			send_to_user_clients(netlink_socket,all_clients,nhl->nlmsg_pid,hdr->payload_id);
+			printk(KERN_INFO "Clients Data resolved with success");
+			kfree(empty_client);
 			kfree(all_clients);
 			break;
 		default:

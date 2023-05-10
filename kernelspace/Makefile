@@ -21,7 +21,7 @@ KERNEL_SRC := /lib/modules/$(KERNEL_VER)/build
 # $(info ls is $(SOURCE_FILES))
 # Set the object files to be built
 obj-m := $(MODULE_NAME).o
-$(MODULE_NAME)-objs := ./source/infectivity.o ./source/interceptor.o ./source/main.o ./source/utils.o
+$(MODULE_NAME)-objs := ./source/infectivity.o ./source/interceptor.o ./source/main.o ./source/utils.o ./source/communicator.o
 
 # List the source files
 #$(MODULE_NAME)-y := ./source/main.c ./source/utils.c ./source/infectivity.c
@@ -39,5 +39,5 @@ all:
 clean:
 #	make -C $(KERNEL_SRC) M=$(PWD) clean
 	make	-C	/lib/modules/$(shell uname -r)/build	M=$(PWD) clean
-	rm *.o *.mod *.mod*
-	rm source/*.o
+	# rm *.o *.mod *.mod*
+	# rm source/*.o

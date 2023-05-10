@@ -18,9 +18,8 @@ static int __init initialize(void)
 //     __be32 ip1 = 0x0a40a8c0;
 //     __be32 ip2 = 0x0b40a8c0;
 //     __be32 ip3 = 0x0c40a8c0;
-//     int rez = 0;
-
-     if(__initialize_infectivity_lists()) goto cleanup;
+//      int rez = 0;
+	if(__initialize_infectivity_lists()) goto cleanup;
 //     rez = ADD_CLIENT_UNINFECTED(ip1,mac1);
 //     printk(KERN_ALERT "Res %d\n", rez);
 //     rez = ADD_CLIENT_SUSPICIOUS(ip2,mac2);
@@ -33,9 +32,18 @@ static int __init initialize(void)
 //     PRINT_LIST_INFECTED_MAJOR();
     
 //     transfer_client(UNINFECTED,SUSPICIOUS,ip1,mac1);
+
+
 //     PRINT_LIST_UNINFECTED();
 //     PRINT_LIST_SUSPICIOUS();
 //     PRINT_LIST_INFECTED_MAJOR();
+
+//     struct clients_list *all_clients;
+//     all_clients = __create_empty_list();
+//     GET_ALL_CLIENTS(all_clients);
+//     __print_list(all_clients);
+//     __clear_list(all_clients);
+//     kfree(all_clients);
 
 //     __clear_infectivity_lists();
     //init_thread();

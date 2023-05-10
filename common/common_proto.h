@@ -41,6 +41,7 @@
 
 #define UNKNOW_INFECTION 0
 
+#define MAC_LEN ETH_ALEN
 // REQUESTS
 enum {
 	/// CRUD ops for client infectivity
@@ -131,6 +132,9 @@ layout payload REMOVE_CLIENT:
 
 layout payload GET_CLIENT:
 	same as ADD_CLIENT
+
+layout payload GET_CLIENTS:
+	empty (payload_len = 0)
 
 RESPONSES
 
@@ -336,7 +340,9 @@ static int create_header(char id,char type,struct header_payload *collector){
 
 static int create_message(struct header_payload *header, unsigned char* data, int data_len, struct infec_msg* collector){
 	header->payload_len = data_len;
-	copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
-	copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), INF_MSG_DATA_LEN(collector));
+	if(header)
+		copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
+	if(data)
+		copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), INF_MSG_DATA_LEN(collector));
 	return 0;
 }

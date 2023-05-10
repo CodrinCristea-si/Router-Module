@@ -15,20 +15,20 @@ struct clients_list* infected_major_list = NULL;
 struct clients_list* infected_sever_list = NULL;
 
 int __add_client_to_list(struct clients_list* list, const __be32 client_ip_addr, const unsigned char* client_mac_addr, const unsigned char type){
-    struct clients_list* new_client;
-	printk(KERN_INFO "Add %p and %p and %pI4\n",list,client_mac_addr,&client_ip_addr);
-    if(!list || !client_mac_addr || client_ip_addr == 0)
-        return -2;
-    new_client = (struct clients_list *) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-    if(!new_client) goto cleanup;
-    new_client->client.ip_addr = client_ip_addr;
-    // new_client->mac_addr = (unsigned char *) kcalloc(ETH_ALEN,sizeof(unsigned char), GFP_KERNEL);
-    // if(!new_client->mac_addr) goto cleanup;
-    copy_mac_address(client_mac_addr,new_client->client.mac_addr);
-    new_client->client.infectivity = type;
+	struct clients_list* new_client;
+	//printk(KERN_INFO "Add %p and %p and %pI4\n",list,client_mac_addr,&client_ip_addr);
+	if(!list || !client_mac_addr || client_ip_addr == 0)
+	return -2;
+	new_client = (struct clients_list *) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	if(!new_client) goto cleanup;
+	new_client->client.ip_addr = client_ip_addr;
+	// new_client->mac_addr = (unsigned char *) kcalloc(ETH_ALEN,sizeof(unsigned char), GFP_KERNEL);
+	// if(!new_client->mac_addr) goto cleanup;
+	copy_mac_address(client_mac_addr,new_client->client.mac_addr);
+	new_client->client.infectivity = type;
 	list_add(&new_client->list,&list->list);
-    printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X added to type %d\n", &client_ip_addr,
-            client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], type);
+	printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X added to type %d\n", &client_ip_addr,
+		client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], type);
 	return 0;
 
 cleanup:
@@ -173,6 +173,59 @@ struct client_def* __get_client_from_list_by_mac(struct clients_list* list_from,
     return &tmp->client;
 }
 
+// struct clients_list* __copy_clients_list(struct clients_list * client){
+// 	struct clients_list *copy= NULL;
+// 	copy = new_client = (struct clients_list *) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+// 	copy->
+// }
+
+int __get_all_clients(struct clients_list* list_collector){
+	struct clients_list *tmp = NULL;
+	struct list_head *listptr;
+	int nr_cl=0;
+	if(list_collector){
+		printk("%p and %p\n", list_collector, &list_collector->list);
+		list_for_each(listptr, &uninfected_list->list) {
+			tmp = list_entry(listptr, struct clients_list, list);
+			//list_add(&tmp->list,&list_collector->list);
+			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+			nr_cl++;
+		}
+		printk(KERN_INFO "done1\n");
+		list_for_each(listptr, &suspicious_list->list) {
+			tmp = list_entry(listptr, struct clients_list, list);
+			printk(KERN_INFO "conn %pI4 \n", &tmp->client.ip_addr);
+			//list_add(&tmp->list,&list_collector->list);
+			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+			nr_cl++;
+			printk(KERN_INFO "nr %d\n",nr_cl);
+		}
+		printk(KERN_INFO "done2\n");
+		list_for_each(listptr, &infected_minor_list->list) {
+			tmp = list_entry(listptr, struct clients_list, list);
+			//list_add(&tmp->list,&list_collector->list);
+			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+			nr_cl++;
+		}
+		printk(KERN_INFO "done3\n");
+		list_for_each(listptr, &infected_major_list->list) {
+			tmp = list_entry(listptr, struct clients_list, list);
+			//list_add(&tmp->list,&list_collector->list);
+			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+			nr_cl++;
+		}
+		printk(KERN_INFO "done4\n");
+		list_for_each(listptr, &infected_sever_list->list) {
+			tmp = list_entry(listptr, struct clients_list, list);
+			//list_add(&tmp->list,&list_collector->list);
+			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+			nr_cl++;
+		}
+		printk(KERN_INFO "done5\n");
+	}
+	return nr_cl;
+}
+
 void __print_list(struct clients_list* list_from){
     struct clients_list *tmp=NULL;
     struct list_head *listptr;
@@ -189,60 +242,87 @@ inline bool __check_status_validity(const int status){
         || (status == INFECTED_MAJOR) || (status == INFECTED_SEVER);   
 }
 
+inline struct client_def* __create_empty_client(void){
+	struct client_def* empty_client = NULL;
+	empty_client = (struct client_def *) kcalloc(1,sizeof(struct client_def), GFP_KERNEL);
+	if(empty_client){
+		empty_client->ip_addr = 0;
+		//empty_client->mac_addr = {-1,-1,-1,-1,-1,-1};
+		empty_client->infectivity = MIN_GRADE;
+	}
+	return empty_client;
+}
+
+inline struct clients_list* __create_empty_list(void){
+	struct clients_list* lista = NULL;
+	struct client_def* empty_client;
+	empty_client= __create_empty_client();
+	lista = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	// printk(KERN_INFO "uninfected_list %p\n", lista);
+	if(lista){
+		lista->client = *empty_client;
+		INIT_LIST_HEAD(&lista->list);
+	}
+	if(empty_client){
+		kfree(empty_client);
+	}
+	return lista;
+}
+
 int __initialize_infectivity_lists(void){
-    struct client_def* empty_client; 
-    //initialize a header client
+	struct client_def* empty_client; 
+	//initialize a header client
 	empty_client = (struct client_def *) kcalloc(1,sizeof(struct client_def), GFP_KERNEL);
 	if(!empty_client) goto cleanup;
 	empty_client->ip_addr = 0;
 	//empty_client->mac_addr = {-1,-1,-1,-1,-1,-1};
 	empty_client->infectivity = MIN_GRADE;
 
-    uninfected_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	uninfected_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
 	printk(KERN_INFO "uninfected_list %p\n", uninfected_list);
-    if(!uninfected_list) goto cleanup;
-    uninfected_list->client = *empty_client;
-    uninfected_list->client.infectivity = UNINFECTED;
-    INIT_LIST_HEAD(&uninfected_list->list);
+	if(!uninfected_list) goto cleanup;
+	uninfected_list->client = *empty_client;
+	uninfected_list->client.infectivity = UNINFECTED;
+	INIT_LIST_HEAD(&uninfected_list->list);
 
-    suspicious_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	suspicious_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
 	printk(KERN_INFO "suspicious_list %p\n", suspicious_list);
-    if(!suspicious_list) goto cleanup;
-    suspicious_list->client = *empty_client;
-    suspicious_list->client.infectivity = SUSPICIOUS;
-    INIT_LIST_HEAD(&suspicious_list->list);
+	if(!suspicious_list) goto cleanup;
+	suspicious_list->client = *empty_client;
+	suspicious_list->client.infectivity = SUSPICIOUS;
+	INIT_LIST_HEAD(&suspicious_list->list);
 
-    infected_minor_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-    if(!infected_minor_list) goto cleanup;
-    infected_minor_list->client = *empty_client;
-    infected_minor_list->client.infectivity = INFECTED_MINOR;
-    INIT_LIST_HEAD(&infected_minor_list->list);
+	infected_minor_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	if(!infected_minor_list) goto cleanup;
+	infected_minor_list->client = *empty_client;
+	infected_minor_list->client.infectivity = INFECTED_MINOR;
+	INIT_LIST_HEAD(&infected_minor_list->list);
 
-    infected_major_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-    if(!infected_major_list) goto cleanup;
-    infected_major_list->client = *empty_client;
-    infected_major_list->client.infectivity = INFECTED_MAJOR;
-    INIT_LIST_HEAD(&infected_major_list->list);
+	infected_major_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	if(!infected_major_list) goto cleanup;
+	infected_major_list->client = *empty_client;
+	infected_major_list->client.infectivity = INFECTED_MAJOR;
+	INIT_LIST_HEAD(&infected_major_list->list);
 
-    infected_sever_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-    if(!infected_sever_list) goto cleanup;
-    infected_sever_list->client = *empty_client;
-    infected_sever_list->client.infectivity = INFECTED_SEVER;
-    INIT_LIST_HEAD(&infected_sever_list->list);
-    
-    if(empty_client)
-            kfree(empty_client);
-    printk(KERN_INFO "Lists initialized with success!\n");
-    return 0;
+	infected_sever_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+	if(!infected_sever_list) goto cleanup;
+	infected_sever_list->client = *empty_client;
+	infected_sever_list->client.infectivity = INFECTED_SEVER;
+	INIT_LIST_HEAD(&infected_sever_list->list);
+
+	if(empty_client)
+		kfree(empty_client);
+	printk(KERN_INFO "Lists initialized with success!\n");
+	return 0;
 
 cleanup:
-    __clear_infectivity_lists();
-    if(empty_client){
-        kfree(empty_client);
+	__clear_infectivity_lists();
+	if(empty_client){
+	kfree(empty_client);
 		printk(KERN_INFO "cleared empty_client\n");
 	}
-    printk(KERN_ERR "Lists failed to initialize!\n");
-    return -1;
+	printk(KERN_ERR "Lists failed to initialize!\n");
+	return -1;
 }
 
 int __clear_list(struct clients_list* collector){
