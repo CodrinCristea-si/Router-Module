@@ -64,6 +64,8 @@ struct client_def* __get_client_generic(const __be32 client_ip_addr, const unsig
 
 int __get_all_clients(struct clients_list* list_collector);
 
+int __get_size_of_clients_list(struct clients_list* cl_list);
+
 struct clients_list* __get_list_according_to_status(unsigned char status);
 
 bool transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr);

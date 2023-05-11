@@ -75,7 +75,7 @@ bool check_ip_belong_to_network(struct network_details* network, __be32 ip_add){
     return (network->mask & ip_add) == network ->subnet_ip;
 }
 
-int copy_mac_address(const unsigned char* from, unsigned char* to){
+inline int copy_mac_address(const unsigned char* from, unsigned char* to){
     unsigned char i;
     if(from && to){
         for(i =0;i<ETH_ALEN;i++){
@@ -86,7 +86,7 @@ int copy_mac_address(const unsigned char* from, unsigned char* to){
     return -1;
 }
 
-int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2){
+inline int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2){
     int sum = 0;
     unsigned char i;
     if(mac1 && mac2){

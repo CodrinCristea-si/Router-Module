@@ -38,6 +38,8 @@
 #define SIGNITURE_INFECT_TYPE 0x51
 
 #define MAX_LEN_ERROR 100
+#define MAX_LEN_CONFIRM 100
+#define MAX_PAYLOAD_SIZE 2048
 
 #define UNKNOW_INFECTION 0
 
@@ -62,7 +64,7 @@ enum {
 enum{
 	CONFIRM	= 10,		//10
 #define CONFIRM CONFIRM
-	ERROR,			    //11
+	ERROR,			//11
 #define ERROR ERROR
 	CLIENTS_DATA,		//12
 #define CLIENTS_DATA CLIENTS_DATA
@@ -76,13 +78,13 @@ Visual Representation of the Protocol
        struct infect_msg
    0  1  2  3  4  5  6  7   bite
   -------------------------- ____
-  |	                       |     }
+  |                        |     }
   |   header_payload 	   |     } 8 bytes
-  |	                       | ____}
+  |                        | ____}
   |------------------------|____
-  |	                       |     }
+  |                        |     }
   |       payload          |     } payload_len
-  |	                       | ____}
+  |                        | ____}
   --------------------------
 
 
@@ -98,8 +100,8 @@ Visual Representation of the Protocol
   |------------------------|
 6 |      payload_type      |
   |------------------------|
-7 |	     payload_len       |
-8 |	                       |
+7 |      payload_len       |
+8 |                        |
   --------------------------
 byte
 
@@ -185,7 +187,14 @@ s  |                        | _________________________________________}
 byte
 
 layout payload CONFIRM:
-	empty (payload_len = 0)
+	  payload
+    0  1  2  3  4  5  6  7   bites
+   --------------------------  ___
+   |	                    |     }
+   |      ADDITIONAL        |     }  MAX_LEN_CONFIRM 
+   |        INFO            |     }
+   |                        | ____}  
+   --------------------------
 
 layout payload ERROR:
 	    payload
@@ -206,6 +215,15 @@ struct client_repr{
 	unsigned char infectivity;
 };
 
+struct client_repr_ext{
+	unsigned char signiture_ip;
+	int ip_addr;
+	unsigned char signiture_mac;
+	unsigned char mac_addr [ETH_ALEN];
+	unsigned char signiture_infectivity;
+	unsigned char infectivity;
+};
+
 
 
 struct header_payload{
@@ -220,10 +238,10 @@ struct infec_msg{
 };
 
 static void ch2int(char* ch, int* col){
-#ifdef __LITTLE_ENDIAN_BITFIELD
+#ifdef __BIG_ENDIAN_BITFIELD
 	*col = ((ch[0] & 0xFF) << 24) | ((ch[1] & 0xFF) << 16) | ((ch[2] & 0xFF) << 8) | (ch[3] & 0xFF);
 #endif
-#ifdef __BIG_ENDIAN_BITFIELD
+#ifdef __LITTLE_ENDIAN_BITFIELD
 	*col = ((ch[3] & 0xFF) << 24) | ((ch[2] & 0xFF) << 16) | ((ch[1] & 0xFF) << 8) | (ch[0] & 0xFF);
 #endif
 }
@@ -257,6 +275,12 @@ static void int2ch(int in, char* col){
 #define INF_MSG_DATA_LEN(infec_msg) (infec_msg->header.payload_len)
 #define INF_MSG_END(infec_msg) ((void*)(((char *)(&infec_msg->header)) + sizeof(struct header_payload) + infec_msg->header.payload_len))
 
+#define MULTI_CLIENTS_PAYLOAD_SIZE(nr_clients) (nr_clients*sizeof(struct client_repr_ext) + 5)
+#define MULTI_CLIENTS_MSG_SIZE(nr_clients) MULTI_CLIENTS_PAYLOAD_SIZE(nr_clients) + sizeof(struct header_payload)
+#define CONFIRM_MSG_SIZE(nr_clients) MAX_LEN_CONFIRM + sizeof(struct header_payload)
+#define ERROR_MSG_SIZE(nr_clients) MAX_LEN_ERROR + sizeof(struct header_payload)
+
+
 static void copy_uchar_values(unsigned char* from, unsigned char* to, size_t size){
     unsigned char i=0;
 	for(i=0;i< size;i++){
@@ -280,8 +304,9 @@ static int cmp_uchar_values(unsigned char* hash1, unsigned char* hash2, size_t s
 
 #define CHECK_FLAG(cand,flag) CHECK_SIGNITURE(cand,flag)
 
-static void extract_client_repr_payload(struct infec_msg* msg, struct client_repr* client_collector, unsigned char poz, unsigned char flags){
+static int extract_client_repr_payload(struct infec_msg* msg, struct client_repr* client_collector, unsigned char poz, unsigned char flags){
 	unsigned char* data = INF_MSG_DATA(msg);
+	int initial_poz = poz;
 	if(CHECK_SIGNITURE(data[poz],SIGNITURE_IP) && CHECK_FLAG(flags,FLAG_WITH_IP)){
 		poz++;
 		ch2int(&data[poz],&client_collector->ip_addr);
@@ -308,6 +333,7 @@ static void extract_client_repr_payload(struct infec_msg* msg, struct client_rep
 	else{
 		client_collector->infectivity=UNKNOW_INFECTION;
 	}
+	return poz-initial_poz;
 }
 
 static int create_client_repr_payload(struct client_repr* client,unsigned char* collector, unsigned char flags){
@@ -343,6 +369,6 @@ static int create_message(struct header_payload *header, unsigned char* data, in
 	if(header)
 		copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
 	if(data)
-		copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), INF_MSG_DATA_LEN(collector));
+		copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), data_len);
 	return 0;
 }

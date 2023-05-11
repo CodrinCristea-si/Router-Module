@@ -13,7 +13,19 @@
 
 #define MAX_SIZE_PAYLOAD 4096
 
-
+void print_infec_msg(struct infec_msg * msg_infec){
+	struct header_payload *hdr_inf;
+	size_t i;
+	hdr_inf = (struct header_payload *)INF_MSG_HEADER(msg_infec);
+	printf("hdr p %p s %x%x%x%x len %d t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
+		hdr_inf->signiture[3],hdr_inf->payload_len, hdr_inf->payload_type, hdr_inf->payload_id);
+	printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
+	printf("len %ld\n", INF_MSG_LEN(msg_infec));
+	for(i =0;i< INF_MSG_DATA_LEN(msg_infec);i++){
+		printf("%x ",((unsigned char*)INF_MSG_DATA(msg_infec))[i]);
+	}
+	printf("\n");
+}
 
 struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned char type){
 	struct header_payload *hdr_inf;
@@ -136,53 +148,61 @@ int extract_nr_clients_from_payload(unsigned char* data){
 	return nr;
 }
 
-void extract_clients_data(struct infec_msg* msg, struct client_repr ** collector, int nr_clients){
+void extract_clients_data(struct infec_msg* msg, struct client_repr ** collector){
 	//pass nr signature
 	int poz = 5;
 	size_t i=0;
-	struct client_repr *decoy;
+	int len_cl;
+	int nr_clients;
+	nr_clients = extract_nr_clients_from_payload((unsigned char*)INF_MSG_DATA(msg));
 	for (i=0;i<nr_clients;i++){
-		decoy = (struct client_repr *)malloc(sizeof(struct client_repr));
-		extract_client_repr_payload(msg,decoy,poz,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
-		collector[i]=decoy;
-		poz+=sizeof(struct client_repr);
+		collector[i] = (struct client_repr *)malloc(sizeof(struct client_repr));
+		len_cl = extract_client_repr_payload(msg,(struct client_repr *)&collector[i],poz,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
+		poz+=len_cl;
 	}
 
 }
 
-struct kernel_response* extract_kernel_response(unsigned char* data,int data_len, int payload_id){
-	struct nlmsghdr *nh;
+struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_len, int payload_id){
+	//struct nlmsghdr *nh;
 	struct kernel_response* response;
 	struct infec_msg* msg_infec;
 	unsigned char* collector;
 	int nr_cl;
 
-	response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
-	nh = (struct nlmsghdr*)data;
-	while (NLMSG_OK(nh, data_len)) {
-		msg_infec = NLMSG_DATA(nh);
+	//nh = (struct nlmsghdr*)data;
+	while (NLMSG_OK(nlh, data_len)) {
+		msg_infec = (struct infec_msg*)NLMSG_DATA(nlh);
+		print_infec_msg(msg_infec);
+		printf("Response type %x\n",msg_infec->header.payload_type);
 		if(payload_id){
 			switch (msg_infec->header.payload_type)
 			{
 			case CLIENTS_DATA:
 				nr_cl = extract_nr_clients_from_payload((unsigned char*)INF_MSG_DATA(msg_infec));
+				printf("Nr cl %d\n",nr_cl);
 				if (nr_cl<0) return NULL;
 				else{
+					response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
 					collector = (unsigned char*)malloc(nr_cl*sizeof(struct client_repr*));
-					extract_clients_data(msg_infec,(struct client_repr**)collector,nr_cl);
+					extract_clients_data(msg_infec,(struct client_repr**)collector);
+					response->data = (unsigned char*)malloc(sizeof(struct client_repr)*nr_cl);
 					copy_uchar_values(collector,response->data,sizeof(struct client_repr)*nr_cl);
 					response->type=CLIENTS_DATA;
 					response->opt=nr_cl;
 				}
 				break;
 			case ERROR:
+				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
 				collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
-				copy_uchar_values(INF_MSG_DATA(msg_infec),collector,strlen(INF_MSG_DATA(msg_infec)));
-				copy_uchar_values(collector,response->data,strlen(INF_MSG_DATA(msg_infec)));
+				response->data = (unsigned char*)malloc(strlen(INF_MSG_DATA(msg_infec)) * sizeof(unsigned char));
+				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,strlen(INF_MSG_DATA(msg_infec)));
 				response->type=ERROR;
 			case CONFIRM:
-				collector = (char*)malloc(1*sizeof(char));
-				copy_uchar_values(collector,response->data,1);
+				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
+				collector = (char*)malloc(MAX_LEN_CONFIRM*sizeof(char));
+				response->data = (unsigned char*)malloc(MAX_LEN_CONFIRM * sizeof(unsigned char));
+				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,MAX_LEN_CONFIRM);
 				response->type=CONFIRM;
 			default:
 				break;
@@ -191,11 +211,11 @@ struct kernel_response* extract_kernel_response(unsigned char* data,int data_len
 		else{
 			//ceva update
 		}
-		nh = NLMSG_NEXT(nh, data_len);
+		nlh = NLMSG_NEXT(nlh, data_len);
 	}
 }
 
-
+//needs rework
 struct kernel_response* receive_from_kernel(int payload_id){
 	struct nlmsghdr *nh;
 	struct ndmsg *ndm;
@@ -203,9 +223,10 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	unsigned char* collector;
 	struct kernel_response* response = NULL;
 	int nr_cl;
-
-	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
+	int fd;
 	int len;
+
+	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 	}
@@ -261,58 +282,93 @@ void clear_response(struct kernel_response* response){
 }
 
 struct kernel_response* send_and_receive_kernel(unsigned char* data, unsigned char type){
-	int len_data;
+	int len_data, additional_len;
 	struct kernel_response* response = NULL;
-	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
+	int fd;
+	struct sockaddr_nl dest_addr, src_addr; 
+	struct nlmsghdr *nlh;
+	struct iovec iov; 
+	struct msghdr msg;
+
+	struct infec_msg* msg_infec;
+	int payload_id;
+
+	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 		return NULL;
 	}
 	printf("Socket created\n");
-	struct sockaddr_nl addr; 
-	memset(&addr, 0, sizeof(addr));
-	addr.nl_family = AF_NETLINK;
-	addr.nl_pid = 0;  // For Linux kernel
-	addr.nl_groups = 0;
+	
+	memset(&dest_addr, 0, sizeof(dest_addr));
+	dest_addr.nl_family = AF_NETLINK;
+	dest_addr.nl_pid = 0;  // For Linux kernel
+	dest_addr.nl_groups = 0; //unicast
+
+	memset(&src_addr, 0, sizeof(src_addr));
+	src_addr.nl_family = AF_NETLINK;
+	src_addr.nl_pid = getpid(); /* self pid */
+	src_addr.nl_groups=0; //unicast
+
+	bind(fd, (struct sockaddr*)&src_addr, sizeof(src_addr));
 	// printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
 	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
-	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
-	if(msg_infec){
-		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-		memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-		nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
-		nlh->nlmsg_pid = getpid();
-		nlh->nlmsg_flags = 0;
-		copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
-		printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
-			((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-		printf("nhl created\n");
-		struct iovec iov; 
-		memset(&iov, 0, sizeof(iov));
-		iov.iov_base = (void *) nlh;
-		iov.iov_len = nlh->nlmsg_len;
 
-		struct msghdr msg; 
-		memset(&msg, 0, sizeof(msg));
-		msg.msg_name = (void *) &addr;
-		msg.msg_namelen = sizeof(addr);
-		msg.msg_iov = &iov;
-		msg.msg_iovlen = 1;
-		printf("Message created\n");
+	msg_infec = create_infec_msg_by_type(data,type);
+	if(!msg_infec){
+		perror("Cannot create message\n");
+		goto cleanup;
+	}
+	payload_id = msg_infec->header.payload_id;
+	nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+	//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+	nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
+	nlh->nlmsg_pid = getpid();
+	nlh->nlmsg_flags = 0;
+
+	copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
+	printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
+		((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
+	printf("nhl created\n");
+	
+	memset(&iov, 0, sizeof(iov));
+	iov.iov_base = (void *) nlh;
+	iov.iov_len = nlh->nlmsg_len;
 
 		
-		sendmsg(fd, &msg, 0);
-		clear_infec_msg(msg_infec);
-		printf("Sent message to kernel\n");
+	memset(&msg, 0, sizeof(msg));
+	msg.msg_name = (void *) &dest_addr;
+	msg.msg_namelen = sizeof(dest_addr);
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	printf("Message created\n");
 
-		char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
-		len_data = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
-		if(len_data >0)
-			response = extract_kernel_response(buf,len_data,msg_infec->header.payload_id);
-		//return msg_infec->header.payload_id;
+	
+	len_data = sendmsg(fd, &msg, 0);
+	if(len_data < 0){
+		perror("Failed to send message to kernel\n");
+		goto cleanup;
 	}
-	else{
-		perror("Cannot create message\n");
+	printf("Sent message to kernel\n");
+
+	memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+	//char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
+	len_data = recvmsg(fd, &msg, 0);
+	printf("Received len %d\n", len_data);
+	if(len_data < 0){
+		perror("Failed to receive message from kernel\n");
+		goto cleanup;
 	}
+	response = extract_kernel_response(nlh,len_data,payload_id);
+	// if(response->type == CONFIRM){
+	// 	ch2int(response->data,additional_len);
+
+	// }
+	
+	//free(buf);
+	//return msg_infec->header.payload_id;
+cleanup:
+	clear_infec_msg(msg_infec);
+	close(fd);
 	return response;
 }

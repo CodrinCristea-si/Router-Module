@@ -173,67 +173,53 @@ struct client_def* __get_client_from_list_by_mac(struct clients_list* list_from,
     return &tmp->client;
 }
 
-// struct clients_list* __copy_clients_list(struct clients_list * client){
-// 	struct clients_list *copy= NULL;
-// 	copy = new_client = (struct clients_list *) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-// 	copy->
-// }
+int __get_size_of_clients_list(struct clients_list* cl_list){
+	int nr;
+	struct clients_list *listptr, *tmp;
+	nr =0;
+	if(cl_list){
+		list_for_each_entry_safe(listptr, tmp, &cl_list->list, list){
+			nr++;
+		}
+	}
+	return nr;
+}
 
 int __get_all_clients(struct clients_list* list_collector){
-	struct clients_list *tmp = NULL;
-	struct list_head *listptr;
+	struct clients_list *listptr, *tmp;
 	int nr_cl=0;
 	if(list_collector){
-		printk("%p and %p\n", list_collector, &list_collector->list);
-		list_for_each(listptr, &uninfected_list->list) {
-			tmp = list_entry(listptr, struct clients_list, list);
-			//list_add(&tmp->list,&list_collector->list);
-			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+		list_for_each_entry_safe(listptr, tmp, &uninfected_list->list, list) {
+			__add_client_to_list(list_collector,listptr->client.ip_addr, listptr->client.mac_addr,listptr->client.infectivity);
 			nr_cl++;
 		}
-		printk(KERN_INFO "done1\n");
-		list_for_each(listptr, &suspicious_list->list) {
-			tmp = list_entry(listptr, struct clients_list, list);
-			printk(KERN_INFO "conn %pI4 \n", &tmp->client.ip_addr);
-			//list_add(&tmp->list,&list_collector->list);
-			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
-			nr_cl++;
-			printk(KERN_INFO "nr %d\n",nr_cl);
-		}
-		printk(KERN_INFO "done2\n");
-		list_for_each(listptr, &infected_minor_list->list) {
-			tmp = list_entry(listptr, struct clients_list, list);
-			//list_add(&tmp->list,&list_collector->list);
-			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+		list_for_each_entry_safe(listptr, tmp, &suspicious_list->list, list){
+			__add_client_to_list(list_collector,listptr->client.ip_addr, listptr->client.mac_addr,listptr->client.infectivity);
 			nr_cl++;
 		}
-		printk(KERN_INFO "done3\n");
-		list_for_each(listptr, &infected_major_list->list) {
-			tmp = list_entry(listptr, struct clients_list, list);
-			//list_add(&tmp->list,&list_collector->list);
-			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+		list_for_each_entry_safe(listptr, tmp, &infected_minor_list->list, list){
+			__add_client_to_list(list_collector,listptr->client.ip_addr, listptr->client.mac_addr,listptr->client.infectivity);
 			nr_cl++;
 		}
-		printk(KERN_INFO "done4\n");
-		list_for_each(listptr, &infected_sever_list->list) {
-			tmp = list_entry(listptr, struct clients_list, list);
-			//list_add(&tmp->list,&list_collector->list);
-			__add_client_to_list(list_collector,tmp->client.ip_addr, tmp->client.mac_addr,tmp->client.infectivity);
+		list_for_each_entry_safe(listptr, tmp, &infected_major_list->list, list){
+			__add_client_to_list(list_collector,listptr->client.ip_addr, listptr->client.mac_addr,listptr->client.infectivity);
 			nr_cl++;
 		}
-		printk(KERN_INFO "done5\n");
+		list_for_each_entry_safe(listptr, tmp, &infected_sever_list->list, list){
+			__add_client_to_list(list_collector,listptr->client.ip_addr, listptr->client.mac_addr,listptr->client.infectivity);
+			nr_cl++;
+		}
 	}
 	return nr_cl;
 }
 
 void __print_list(struct clients_list* list_from){
-    struct clients_list *tmp=NULL;
-    struct list_head *listptr;
+    struct clients_list *tmp, *listptr;
     if(list_from)
-        list_for_each(listptr, &list_from->list) {
-            tmp = list_entry(listptr, struct clients_list, list);
-            printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X and status %d \n", &tmp->client.ip_addr,
-            tmp->client.mac_addr[0],tmp->client.mac_addr[1],tmp->client.mac_addr[2],tmp->client.mac_addr[3],tmp->client.mac_addr[4],tmp->client.mac_addr[5], tmp->client.infectivity);
+        list_for_each_entry_safe(listptr, tmp, &list_from->list, list) {
+            printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X and status %d \n", &listptr->client.ip_addr,
+		listptr->client.mac_addr[0],listptr->client.mac_addr[1],listptr->client.mac_addr[2],listptr->client.mac_addr[3],
+		listptr->client.mac_addr[4],listptr->client.mac_addr[5], listptr->client.infectivity);
         }
 }
 
@@ -257,14 +243,15 @@ inline struct clients_list* __create_empty_list(void){
 	struct clients_list* lista = NULL;
 	struct client_def* empty_client;
 	empty_client= __create_empty_client();
-	lista = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-	// printk(KERN_INFO "uninfected_list %p\n", lista);
-	if(lista){
-		lista->client = *empty_client;
-		INIT_LIST_HEAD(&lista->list);
-	}
-	if(empty_client){
-		kfree(empty_client);
+	if (empty_client){
+		lista = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
+		if(lista){
+			lista->client = *empty_client;
+			INIT_LIST_HEAD(&lista->list);
+		}
+		if(empty_client){
+			kfree(empty_client);
+		}
 	}
 	return lista;
 }
@@ -279,14 +266,12 @@ int __initialize_infectivity_lists(void){
 	empty_client->infectivity = MIN_GRADE;
 
 	uninfected_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-	printk(KERN_INFO "uninfected_list %p\n", uninfected_list);
 	if(!uninfected_list) goto cleanup;
 	uninfected_list->client = *empty_client;
 	uninfected_list->client.infectivity = UNINFECTED;
 	INIT_LIST_HEAD(&uninfected_list->list);
 
 	suspicious_list = (struct clients_list*) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
-	printk(KERN_INFO "suspicious_list %p\n", suspicious_list);
 	if(!suspicious_list) goto cleanup;
 	suspicious_list->client = *empty_client;
 	suspicious_list->client.infectivity = SUSPICIOUS;
@@ -326,11 +311,14 @@ cleanup:
 }
 
 int __clear_list(struct clients_list* collector){
-    struct clients_list* listptr, * tmp;
+    struct clients_list *listptr, *tmp;
     if(collector){
+	//__print_list(collector);
         list_for_each_entry_safe(listptr,tmp,&collector->list,list){
-                list_del(&listptr->list);
-                kfree(listptr);
+		if(listptr){
+			list_del(&listptr->list);
+			kfree(listptr);
+		}
         }
         return 0;
     }
@@ -339,34 +327,34 @@ int __clear_list(struct clients_list* collector){
 
 int __clear_infectivity_lists(void){
     if(uninfected_list){
-        __clear_list(uninfected_list);
-        kfree(uninfected_list);
-		uninfected_list = NULL;
-		printk(KERN_INFO "cleared uninfected_list\n");
+	__clear_list(uninfected_list);
+	kfree(uninfected_list);
+	uninfected_list = NULL;
+	printk(KERN_INFO "cleared uninfected_list\n");
     } 
     if(suspicious_list){
-        __clear_list(suspicious_list);
-        kfree(suspicious_list);
-		suspicious_list=NULL;
-		printk(KERN_INFO "cleared suspicious_list\n");
+	__clear_list(suspicious_list);
+	kfree(suspicious_list);
+	suspicious_list=NULL;
+	printk(KERN_INFO "cleared suspicious_list\n");
     }
     if(infected_minor_list){
         __clear_list(infected_minor_list);
         kfree(infected_minor_list);
-		infected_minor_list=NULL;
-		printk(KERN_INFO "cleared infected_minor_list\n");
+	infected_minor_list=NULL;
+	printk(KERN_INFO "cleared infected_minor_list\n");
     }
     if(infected_major_list){
         __clear_list(infected_major_list);
         kfree(infected_major_list);
-		infected_major_list=NULL;
-		printk(KERN_INFO "cleared infected_major_list\n");
+	infected_major_list=NULL;
+	printk(KERN_INFO "cleared infected_major_list\n");
     }
     if(infected_sever_list){
         __clear_list(infected_sever_list);
         kfree(infected_sever_list);
-		infected_sever_list=NULL;
-		printk(KERN_INFO "cleared infected_sever_list\n");
+	infected_sever_list=NULL;
+	printk(KERN_INFO "cleared infected_sever_list\n");
     }
     printk(KERN_INFO "Lists cleared with success!\n");
     return 0;

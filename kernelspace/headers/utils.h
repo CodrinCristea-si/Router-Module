@@ -40,9 +40,9 @@ struct network_details get_lan_network_from_list(struct network_details* collect
 
 bool check_ip_belong_to_network(struct network_details* network, __be32 ip_add);
 
-int copy_mac_address(const unsigned char* from, unsigned char* to);
+inline int copy_mac_address(const unsigned char* from, unsigned char* to);
 
-int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2);
+inline int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2);
 
 int initialize_network_interfaces_list(struct network_details* collector);
 

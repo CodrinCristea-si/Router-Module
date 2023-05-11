@@ -6,6 +6,6 @@
 #include "infectivity.h"
 #include "../common/common_proto.h"
 
-#define MAX_USER_PAYLOAD_SIZE 2048
+#define MAX_USER_PAYLOAD_SIZE MAX_PAYLOAD_SIZE
 
-void send_to_user_clients(struct sock* netlink_socket,struct clients_list* clients_list,int requester, int payload_id);
+void send_to_user_unicast(struct sock* netlink_socket,unsigned char* clients_list,unsigned char type,int requester, int payload_id);
