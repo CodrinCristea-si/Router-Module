@@ -1,18 +1,21 @@
 CC=gcc
 CFLAGS=-I -Wall -pthread
 OUTPUT_NAME1= connect-test
-OUTPUT_NAME2= get_update
+OUTPUT_NAME2= monitor-test
+OUTPUT_NAME3= get_update
 OUTPUT_FILE1=$(OUTPUT_NAME1).test
 OUTPUT_FILE2=$(OUTPUT_NAME2).test
+OUTPUT_FILE3=$(OUTPUT_NAME3).test
 EXTERNAL_LIB= ./libtomcrypt/crypt/crypt_argchk.c ./libtomcrypt/misc/compare_testvector.c ./libtomcrypt/hashes/md5.h
 #SOURCE_FILES1=$(shell ../get_source-files.sh ./source ;../get_source-files.sh ../common | cat |tr '\n' ' ')
-SOURCE_FILES1= ./source/communication.c ./source/connectivity.c ./source/manage_connectivity_thread.c
-SOURCE_FILES2= ./source/communication.c ./source/get_update.c
-MAIN_FILE1= manage_connectivity_thread.c
-MAIN_FILE2= get_update.c
+SOURCE_FILES1=  ./source/networking.c  ./source/list.c  ./source/infectivity_monitor.c ./source/communication_kernel.c ./source/communication_local.c ./source/connectivity.c ./source/manage_connectivity_thread.c
+SOURCE_FILES2=  ./source/networking.c  ./source/list.c   ./source/infectivity_monitor.c  ./source/communication_kernel.c ./source/manage_infectivity_monitor.c
+SOURCE_FILES3=  ./source/networking.c  ./source/list.c   ./source/infectivity_monitor.c ./source/communication_kernel.c ./source/communication_local.c  ./source/get_update.c
+#MAIN_FILE1= manage_connectivity_thread.c
+#MAIN_FILE2= manage_infectivity_monitor.c
+#MAIN_FILE3= get_update.c
 #MAIN_FILE= test-connect-localhost.c
 all:
-	$(CC) $(CFLAGS) -ggdb -o $(OUTPUT_FILE1) $(EXTERNAL_LIB) $(SOURCE_FILES1)
-	$(CC) $(CFLAGS) -ggdb -o $(OUTPUT_FILE2) $(SOURCE_FILES2)
-clean:
-	rm *.o
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE1) $(EXTERNAL_LIB) $(SOURCE_FILES1)
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE2) $(SOURCE_FILES2)
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE3) $(SOURCE_FILES3)

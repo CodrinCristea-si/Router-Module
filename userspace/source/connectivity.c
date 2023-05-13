@@ -22,13 +22,12 @@ struct client_node start_client={
     .next = NULL
 };
 
-
-void convert_node_2_repr(struct client_node* client,struct client_repr* collector){
-	ch2int(client->ipv4,&collector->ip_addr);
-	copy_uchar_values(client->mac,collector->mac_addr,MAC_LENGTH);
+void convert_node_2_infectivity(struct client_node* client,struct client_infectivity* collector){
+	//ch2int(client->ipv4,&collector->ipv4);
+	copy_uchar_values(client->ipv4,collector->ipv4,IPV4_LENGTH);
+	copy_uchar_values(client->mac,collector->mac,MAC_LENGTH);
 	collector->infectivity=UNKNOW_INFECTION;
 }
-
 
 int hash_client(struct client_def *client, char* hash_collector){
 	int err;
@@ -213,9 +212,9 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
     if(!updated && prev){
         printf("Added client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", node->ipv4[0],node->ipv4[1],
         node->ipv4[2],node->ipv4[3], node->mac[0],node->mac[1],node->mac[2],node->mac[3],node->mac[4],node->mac[5]);
-		struct client_repr cl_rpr;
-		convert_node_2_repr(node,&cl_rpr);
-		send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
+	struct client_infectivity cl_infec;
+	convert_node_2_infectivity(node,&cl_infec);
+	send_to_monitor((unsigned char *)&cl_infec,ADD);
         prev->next = (void*)node;
         added = true;
     }
@@ -236,13 +235,13 @@ void delete_old_magic(struct client_node* list){
             delete = true;
         }
         if(delete){
-            printf("Removed client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", current->ipv4[0],current->ipv4[1],
-            current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
-            struct client_repr cl_rpr;
-			convert_node_2_repr(current,&cl_rpr);
-			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
-			free(current);
-            current=prev;
+		printf("Removed client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", current->ipv4[0],current->ipv4[1],
+		current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
+		struct client_infectivity cl_infec;
+		convert_node_2_infectivity(current,&cl_infec);
+		send_to_monitor((unsigned char *)&cl_infec,REMOVE);
+		free(current);
+        	current=prev;
         }
         else prev = current;
         current = (struct client_node *) current->next;
@@ -310,12 +309,12 @@ void process_dhcp_file(char* filename){
 		struct client_def client;
 		while ((ch = fgetc(file_descriptor)) ){
 			//printf("%x\n",ch);
-			if (ch == ' ' || ch == '\n' ||  ch == EOF || ch == 0xff){
+			if (ch == ' ' || ch == '\n' ||  feof(file_descriptor)){
 				buf[dim_buf] ='\0';
 				dim_buf = 0;
 				process_word_on_client(buf,&client);
 
-				if(ch == '\n' ||  ch == EOF || ch == 0xff){
+				if(ch == '\n' ||  feof(file_descriptor)){
 					line_number++;
 					word_number=0;
 					modification |= process_client(&client);

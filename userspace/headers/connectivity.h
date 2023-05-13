@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 #include <time.h>
 
-#include "communication.h"
+#include "communication_local.h"
 
 
 #define WORD_SEPARATOR " "

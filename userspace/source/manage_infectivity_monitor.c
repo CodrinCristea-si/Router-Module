@@ -6,13 +6,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
+#include <time.h>
 
-#include "../headers/connectivity.h" 
+#include "../headers/infectivity_monitor.h"
 
-char pid_file[30] =".pid_connectifity";
-#define MAX_FILE_PATH_SIZE 200
+char pid_file[30] =".pid_monitor";
 
-int shutdown_thread_checker(){
+int shutdown_thread(){
 	pid_t pid_th=0;
 	int ret;
 	printf("Atempting to shutdown...\n");
@@ -38,11 +38,14 @@ int shutdown_thread_checker(){
 }
 
 
-int deploy_thread_checker(char* filename){
+int deploy_thread(char* filename){
 	printf("Atempting to deploy...\n");
 	pid_t pid_th,sid_th;
 	char file[MAX_FILE_PATH_SIZE];
-	strncpy(file,filename,strlen(filename));
+	if(filename)
+		strncpy(file,filename,strlen(filename));
+
+	else file[0]='\0';
 	pid_th = fork();
 	if(pid_th <0)
 		return -1;
@@ -69,21 +72,21 @@ int deploy_thread_checker(char* filename){
 		}
 		printf("Child detached\n");
 		// Change the working directory to a safe location in root
-		chdir("/");
+		chdir("../");
 		printf("Child migrated\n");
 
 		// Redirect standard input, output, and error to /dev/null
-		int fd = open("/dev/null", O_RDWR);
-		if (fd >= 0){
-			printf("Child muted\n");
-			dup2(fd, STDIN_FILENO);
-			dup2(fd, STDOUT_FILENO);
-			dup2(fd, STDERR_FILENO);
-			close(fd);	
-		}
+		// int fd = open("/dev/null", O_RDWR);
+		// if (fd >= 0){
+		// 	printf("Child muted\n");
+		// 	dup2(fd, STDIN_FILENO);
+		// 	dup2(fd, STDOUT_FILENO);
+		// 	dup2(fd, STDERR_FILENO);
+		// 	close(fd);	
+		// }
 
 		//Start working
-		connectivity_checker(file);
+		start_monitoring(file);
 		return 0;
 	}
 	return 0;
@@ -98,15 +101,15 @@ int main(int argc, char** argv){
 				filename = (char *)malloc(sizeof(char)*strlen(argv[2]));
 				strncpy(filename,argv[2],strlen(argv[2]));
 			}
-			else{
-				perror("No file location\n");
-				return -1;
-			}
-			deploy_thread_checker(filename);
+			// else{
+			// 	perror("No file location\n");
+			// 	return -1;
+			// }
+			deploy_thread(filename);
 			free(filename);
 		}
 		else if(strncmp("-stop",argv[1],5) == 0){
-			shutdown_thread_checker();
+			shutdown_thread();
 		}
 		else{
 			perror("Invalid command! Try -start or -stop\n");
