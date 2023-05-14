@@ -16,15 +16,20 @@
 void print_infec_msg(struct infec_msg * msg_infec){
 	struct header_payload *hdr_inf;
 	size_t i;
-	hdr_inf = (struct header_payload *)INF_MSG_HEADER(msg_infec);
-	printf("hdr p %p s %x%x%x%x len %d t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
-		hdr_inf->signiture[3],hdr_inf->payload_len, hdr_inf->payload_type, hdr_inf->payload_id);
-	printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
-	printf("len %ld\n", INF_MSG_LEN(msg_infec));
-	for(i =0;i< INF_MSG_DATA_LEN(msg_infec);i++){
-		printf("%x ",((unsigned char*)INF_MSG_DATA(msg_infec))[i]);
+	if(msg_infec){
+		hdr_inf = (struct header_payload *)INF_MSG_HEADER(msg_infec);
+		printf("hdr p %p s %x%x%x%x len %d t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
+			hdr_inf->signiture[3],hdr_inf->payload_len, hdr_inf->payload_type, hdr_inf->payload_id);
+		printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
+		printf("len %ld\n", INF_MSG_LEN(msg_infec));
+		for(i =0;i< INF_MSG_DATA_LEN(msg_infec);i++){
+			printf("%x ",((unsigned char*)INF_MSG_DATA(msg_infec))[i]);
+		}
+		printf("\n");
 	}
-	printf("\n");
+	else{
+		printf("NULL\n");
+	}
 }
 
 struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned char type){
@@ -32,7 +37,7 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 	struct infec_msg* msg_infec = NULL;
 	if(client){
 		unsigned char *data = (unsigned char *)calloc(20,sizeof(char));
-		int len = create_client_repr_payload(client,data,FLAG_WITH_IP|FLAG_WITH_MAC);
+		int len = create_client_repr_payload(client,data,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
 		printf("Data created\n");
 		// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
 		// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
@@ -76,6 +81,9 @@ struct infec_msg* create_infec_msg_by_type(unsigned char* data, unsigned char ty
 	case REMOVE_CLIENT:
 		return create_add_client_msg((struct client_repr *)data,type);
 		break;
+	case TRANSFER_CLIENT:
+		return create_add_client_msg((struct client_repr *)data,type);
+		break;
 	case GET_CLIENTS:
 		return create_get_clients_msg(type);
 		break;
@@ -90,7 +98,7 @@ void clear_infec_msg(struct infec_msg * msg_infec){
 
 
 int send_message_to_kernel(unsigned char* data, unsigned char type){
-	
+	int payload_id;
 	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
 	if (fd < 0) {
 		perror("Cannot open socket\n");
@@ -107,14 +115,15 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
 	if(msg_infec){
 		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-		memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+		//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
 		nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
 		nlh->nlmsg_pid = getpid();
 		nlh->nlmsg_flags = 0;
 		copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
-		printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
-			((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-		printf("nhl created\n");
+		payload_id = msg_infec->header.payload_id;
+		// printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
+		// 	((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
+		// printf("nhl created\n");
 		struct iovec iov; 
 		memset(&iov, 0, sizeof(iov));
 		iov.iov_base = (void *) nlh;
@@ -127,13 +136,13 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		msg.msg_iov = &iov;
 		msg.msg_iovlen = 1;
 		printf("Message created\n");
-
+		print_infec_msg(msg_infec);
 		
 		sendmsg(fd, &msg, 0);
 		clear_infec_msg(msg_infec);
 		
 		printf("Sent message to kernel\n");
-		return msg_infec->header.payload_id;
+		return payload_id;
 	}
 	else{
 		perror("Cannot create message\n");

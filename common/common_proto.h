@@ -126,6 +126,9 @@ layout payload ADD_CLIENT:
  9 |                        |
 10 |                        |
 11 |                        |
+   |------------------------|
+12 |                        |
+13 |        Padding         |
    --------------------------
 byte
 
@@ -183,6 +186,9 @@ c  |      STANDARD GET      |                                          }
 -  |                        |                                          }
 -  |                        |                                          }
 s  |                        | _________________________________________}
+   |------------------------|
+t  |                        |
+u  |        Padding         |
    --------------------------
 byte
 
@@ -194,6 +200,9 @@ layout payload CONFIRM:
    |      ADDITIONAL        |     }  MAX_LEN_CONFIRM 
    |        INFO            |     }
    |                        | ____}  
+   |------------------------|
+   |                        |
+   |        Padding         |
    --------------------------
 
 layout payload ERROR:
@@ -206,6 +215,9 @@ layout payload ERROR:
    |      DESCRIPTION       |     }
    |                        |     }
    |                        | ____}
+   |------------------------|
+   |                        |
+   |        Padding         |
    --------------------------
 */
 
@@ -265,9 +277,9 @@ static void int2ch(int in, char* col){
 #define CHECK_SIGNITURE(cand,sign) ((cand & sign) == sign)
 
 #define CHECK_SIGNITURE_HEADER(infec_msg) ((infec_msg->header.signiture & SIGNITURE_HEADER) == SIGNITURE_HEADER)
-
-#define INF_MSG_LEN(infec_msg) (infec_msg->header.payload_len + sizeof(struct header_payload))
-#define INF_MSG_LEN_H(hdr) (hdr->payload_len + sizeof(struct header_payload))
+//2 for padding cus C compiler may calculate the wrong sizeof(struct header_payload)
+#define INF_MSG_LEN(infec_msg) (infec_msg->header.payload_len + sizeof(struct header_payload) + 2)
+#define INF_MSG_LEN_H(hdr) (hdr->payload_len + sizeof(struct header_payload) + 2)
 #define INF_MSG_HEADER(infec_msg) ((void*)(&infec_msg->header))
 #define INF_MSG_START(infec_msg) INF_MSG_HEADER(infec_msg)
 #define INF_MSG_HEADER_LEN(infec_msg) (sizeof(struct header_payload))
@@ -328,11 +340,12 @@ static int extract_client_repr_payload(struct infec_msg* msg, struct client_repr
 	}
 	if(CHECK_SIGNITURE(data[poz],SIGNITURE_INFECT_TYPE) && CHECK_FLAG(flags,FLAG_WITH_INFECTIVITY)){
 		client_collector->infectivity = data[poz+1];
-		poz++;
+		poz+=2;
 	}
 	else{
 		client_collector->infectivity=UNKNOW_INFECTION;
 	}
+	poz+=2; //this is for padding do not delete!!!
 	return poz-initial_poz;
 }
 
@@ -352,6 +365,7 @@ static int create_client_repr_payload(struct client_repr* client,unsigned char* 
 		collector[poz]= client->infectivity;
 		poz++;
 	}
+	poz+= 2;// this is for padding, do not delete!
 	return poz;
 }
 

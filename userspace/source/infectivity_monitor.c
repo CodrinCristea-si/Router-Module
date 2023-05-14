@@ -160,7 +160,7 @@ int cmp_clients(struct client_infectivity* client1, struct client_infectivity* c
 void convert_infectivity_2_repr(struct client_infectivity* client,struct client_repr* collector){
 	ch2int(client->ipv4,&collector->ip_addr);
 	copy_uchar_values(client->mac,collector->mac_addr,MAC_LEN);
-	collector->infectivity=UNKNOW_INFECTION;
+	collector->infectivity=client->infectivity;
 }
 //not thread safe!
 bool check_for_same_user_in_file(char* filename, struct client_infectivity* to_find)
@@ -212,9 +212,9 @@ void process_add_job(struct job *job){
 			push_to_list(updates,(void*)job_copy);
 			//printf("push\n");
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
 		}
 		
 	}
@@ -271,9 +271,9 @@ void process_remove_job(struct job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job)); 
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -312,9 +312,9 @@ void process_transfer_job(struct job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job));
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -553,12 +553,12 @@ void* main_server(){
 		perror("bind failed");
 		return NULL;
 	}
-	//printf("bind created\n");
+	printf("bind created\n");
 	if ((listen(sockfd, 5)) != 0) {
 		perror("Listen failed...\n");
 		return NULL;
 	}
-	//printf("listen created\n");
+	printf("listen created\n");
 	memset(&client_addr, 0, sizeof(client_addr));
       
 	int len_data;
@@ -600,11 +600,11 @@ int start_monitoring(char *filename){
 	size_pool = 0;
 	updates = create_list();
 	task_pool = create_list();
-	int filedesc;
-	filedesc = open(storage_file,'w');
-	if(filedesc > 0){
-		write(filedesc,'\0',sizeof(char));
-		close(filedesc);
+	FILE* filedesc;
+	filedesc = fopen(storage_file,"w");
+	if(filedesc){
+		//fprintf(filedesc,"\n");
+		fclose(filedesc);
 		printf("File opened\n");
 		for(i=0;i<NUMBER_OF_WORKERS+1;i++){
 			if(i == 0){

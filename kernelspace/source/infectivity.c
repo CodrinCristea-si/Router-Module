@@ -43,7 +43,7 @@ cleanup:
 	return -1;
 }
 
-bool transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr){
+bool __transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr){
 	struct clients_list *list_from, *list_to;
 	bool ok;
 	bool transfered = false;
@@ -57,6 +57,19 @@ bool transfer_client(unsigned char status_from, unsigned char status_to, const _
 			status = __add_client_to_list(list_to,ip_addr,mac_addr,status_to);
 			if(!status) transfered = true;
 		}
+	}
+	return transfered;
+}
+
+bool __transfer_client_generic( unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr){
+	struct clients_list *list_from, *list_to;
+	struct client_def *client;
+	bool transfered = false;
+	client = GET_CLIENT_GENERIC(ip_addr,mac_addr);
+	if(client){
+		list_from = __get_list_according_to_status(client->infectivity);
+		list_to = __get_list_according_to_status(status_to);
+		transfered = __transfer_client(client->infectivity, status_to,ip_addr,mac_addr);
 	}
 	return transfered;
 }

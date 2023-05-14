@@ -174,7 +174,7 @@ void send_to_user_unicast(struct sock* netlink_socket,unsigned char* clients_lis
 	// printk(KERN_INFO "msg created\n");
 	// print_infec_msg(msg);
 	
-	create reply
+	//create reply
 	skb_out = nlmsg_new(INF_MSG_LEN(msg), 0);
 	if (!skb_out) {
 		printk(KERN_ERR "Failed to allocate new skb\n");

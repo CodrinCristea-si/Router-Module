@@ -124,7 +124,8 @@ static void netlink_handle(struct sk_buff *skb){
 	printk(KERN_INFO "1\n");
 	//extracting the infec_msg
 	msg = (struct infec_msg*) NLMSG_DATA(nhl);
-	printk(KERN_INFO "msg p %p \n",msg);
+	print_infec_msg(msg);
+	// printk(KERN_INFO "msg p %p \n",msg);
 	printk(KERN_INFO "2\n");
 	//extract the header payload
 	
@@ -150,39 +151,54 @@ static void netlink_handle(struct sk_buff *skb){
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
 			kfree(client);
 			break;
-
-		case GET_CLIENT:
+		case TRANSFER_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
-			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
-			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
-			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
+			ret = TRANSFER_CLIENT_GENERIC(client->infectivity,client->ip_addr, client->mac_addr);
+			if(!ret) printk(KERN_ERR "Failed to transfer client %pI4 to %x err %d\n",&client->ip_addr,client->infectivity,ret);
+			else printk(KERN_INFO "Transfered client %pI4 to %x\n",&client->ip_addr, client->infectivity);
 			kfree(client);
 			break;
-		case GET_CLIENTS:
-			/// list creation
-			all_clients = __create_empty_list();
-			if(all_clients){
-				nr_cl = GET_ALL_CLIENTS(all_clients);
-				printk(KERN_INFO " all_clients after get all %p and %p\n",all_clients,&all_clients->list);
-				__print_list(all_clients);
-				printk(KERN_INFO " all_clients after print %p and %p\n",all_clients,&all_clients->list);
-				nr_cl = __get_size_of_clients_list(all_clients);
-				//size = MULTI_CLIENTS_MSG_SIZE(nr_cl);
-				//send_to_user_clients(netlink_socket,(unsigned char*)&size,CONFIRM,nhl->nlmsg_pid,hdr->payload_id);
-				send_to_user_unicast(netlink_socket,(unsigned char*)all_clients,CLIENTS_DATA,nhl->nlmsg_pid,hdr->payload_id);
-				printk(KERN_INFO " all_clients after send %p and %p\n",all_clients,&all_clients->list);
-				//__print_list(all_clients);
-				__clear_list(all_clients);
-				printk(KERN_INFO " all_clients after clear %p and %p\n",all_clients,&all_clients->list);
-				kfree(all_clients);
-				printk(KERN_INFO "Clients Data resolved with success");
-			}
-			break;
+		// case GET_CLIENT:
+		// 	client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
+		// 	extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+		// 	printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
+		// 	ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
+		// 	if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
+		// 	else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
+		// 	kfree(client);
+		// 	break;
+		// case GET_CLIENTS:
+		// 	/// list creation
+		// 	all_clients = __create_empty_list();
+		// 	if(all_clients){
+		// 		nr_cl = GET_ALL_CLIENTS(all_clients);
+		// 		printk(KERN_INFO " all_clients after get all %p and %p\n",all_clients,&all_clients->list);
+		// 		__print_list(all_clients);
+		// 		printk(KERN_INFO " all_clients after print %p and %p\n",all_clients,&all_clients->list);
+		// 		nr_cl = __get_size_of_clients_list(all_clients);
+		// 		//size = MULTI_CLIENTS_MSG_SIZE(nr_cl);
+		// 		//send_to_user_clients(netlink_socket,(unsigned char*)&size,CONFIRM,nhl->nlmsg_pid,hdr->payload_id);
+		// 		send_to_user_unicast(netlink_socket,(unsigned char*)all_clients,CLIENTS_DATA,nhl->nlmsg_pid,hdr->payload_id);
+		// 		printk(KERN_INFO " all_clients after send %p and %p\n",all_clients,&all_clients->list);
+		// 		//__print_list(all_clients);
+		// 		__clear_list(all_clients);
+		// 		printk(KERN_INFO " all_clients after clear %p and %p\n",all_clients,&all_clients->list);
+		// 		kfree(all_clients);
+		// 		printk(KERN_INFO "Clients Data resolved with success");
+		// 	}
+		// 	break;
 		default:
 			printk(KERN_ERR "Not implemented\n");
 			break;
+	}
+	all_clients = __create_empty_list();
+	if(all_clients){
+		nr_cl = GET_ALL_CLIENTS(all_clients);
+		__print_list(all_clients);
+		__clear_list(all_clients);
+		kfree(all_clients);
 	}
 	printk(KERN_INFO "Done\n");
 }

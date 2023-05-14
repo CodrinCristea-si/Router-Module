@@ -68,7 +68,9 @@ int __get_size_of_clients_list(struct clients_list* cl_list);
 
 struct clients_list* __get_list_according_to_status(unsigned char status);
 
-bool transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr);
+bool __transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr);
+
+bool __transfer_client_generic( unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr);
 
 inline bool __check_status_validity(int status);
 
@@ -115,6 +117,9 @@ void __print_list(struct clients_list* list);
 #define GET_CLIENT_INFECTED_SEVER_BY_MAC(MAC_ADDR) __get_client_from_list_by_mac(infected_sever_list, MAC_ADDR)
 
 #define GET_ALL_CLIENTS(collector) __get_all_clients(collector)
+
+#define TRANSFER_CLIENT_BETWEEN(FROM,TO,IP_ADDR, MAC_ADDR) __transfer_client(FROM,TO,IP_ADDR, MAC_ADDR);
+#define TRANSFER_CLIENT_GENERIC(TO,IP_ADDR, MAC_ADDR) __transfer_client_generic(TO,IP_ADDR, MAC_ADDR);
 
 #define IS_LOCKDOWN_MODE_ENABLED (LOCKDOWN_MODE == LOCKDOWN_UP)
 #define DISABLE_LOCKDOWN_MODE() __disable_lockdown_mode()
