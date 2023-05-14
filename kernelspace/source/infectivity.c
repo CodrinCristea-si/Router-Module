@@ -18,7 +18,7 @@ int __add_client_to_list(struct clients_list* list, const __be32 client_ip_addr,
 	struct clients_list* new_client;
 	//printk(KERN_INFO "Add %p and %p and %pI4\n",list,client_mac_addr,&client_ip_addr);
 	if(!list || !client_mac_addr || client_ip_addr == 0)
-	return -2;
+		return -2;
 	new_client = (struct clients_list *) kcalloc(1,sizeof(struct clients_list), GFP_KERNEL);
 	if(!new_client) goto cleanup;
 	new_client->client.ip_addr = client_ip_addr;
@@ -41,6 +41,18 @@ cleanup:
     	printk(KERN_ERR "Failed to add client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X \n",&client_ip_addr,
             client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5]);
 	return -1;
+}
+
+bool __add_client_generic(const __be32 client_ip_addr, const unsigned char* client_mac_addr){
+	bool added = false;
+	int res;
+	struct client_def* old_client;
+	old_client = __get_client_generic(client_ip_addr,client_mac_addr);
+	if(old_client == NULL){
+		res = ADD_CLIENT_SUSPICIOUS(client_ip_addr,client_mac_addr);
+		if(res >= 0) added = true; 
+	}
+	return added;
 }
 
 bool __transfer_client(unsigned char status_from, unsigned char status_to, const __be32 ip_addr, const unsigned char* mac_addr){

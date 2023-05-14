@@ -52,6 +52,8 @@ int __clear_infectivity_lists(void);
 
 int __add_client_to_list(struct clients_list* list, const __be32 client_ip_addr, const unsigned char* client_mac_addr, const unsigned char type);
 
+bool __add_client_generic(const __be32 client_ip_addr, const unsigned char* client_mac_addr);
+
 bool __remove_client_from_list(struct clients_list* list_from,const __be32 client_ip_addr, const unsigned char* client_mac_addr);
 
 bool __remove_client_generic(const __be32 client_ip_addr, const unsigned char* client_mac_addr);
@@ -87,6 +89,8 @@ void __print_list(struct clients_list* list);
 #define PRINT_LIST_INFECTED_MINOR() __print_list(infected_minor_list)
 #define PRINT_LIST_INFECTED_MAJOR() __print_list(infected_major_list)
 #define PRINT_LIST_INFECTED_SEVER() __print_list(infected_sever_list)
+
+#define ADD_CLIENT_GENERIC(IP_ADDR, MAC_ADDR) __add_client_generic(IP_ADDR, MAC_ADDR)
 
 #define ADD_CLIENT_UNINFECTED(IP_ADDR, MAC_ADDR) __add_client_to_list(uninfected_list, IP_ADDR, MAC_ADDR, UNINFECTED)
 #define ADD_CLIENT_SUSPICIOUS(IP_ADDR, MAC_ADDR) __add_client_to_list(suspicious_list, IP_ADDR, MAC_ADDR, SUSPICIOUS)
