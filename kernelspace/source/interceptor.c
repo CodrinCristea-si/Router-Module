@@ -137,8 +137,8 @@ static void netlink_handle(struct sk_buff *skb){
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
-			ret = ADD_CLIENT_SUSPICIOUS(client->ip_addr, client->mac_addr);
-			if(ret != 0) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
+			ret = ADD_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
+			if(!ret) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Added client %pI4\n",&client->ip_addr);
 			kfree(client);
 			break;
