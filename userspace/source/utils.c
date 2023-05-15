@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <regex.h>
+#include <ctype.h>
 
 
 int compare_regex(char *str, char *regex_str){
