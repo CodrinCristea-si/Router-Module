@@ -1,5 +1,5 @@
 #include <linux/if_ether.h> // for ETH_ALEN
-
+#pragma pack(1)
 ///source code from /linux/drdb.h
 #ifdef __KERNEL__
 #include <linux/types.h>
@@ -278,15 +278,16 @@ static void int2ch(int in, char* col){
 
 #define CHECK_SIGNITURE_HEADER(infec_msg) ((infec_msg->header.signiture & SIGNITURE_HEADER) == SIGNITURE_HEADER)
 //2 for padding cus C compiler may calculate the wrong sizeof(struct header_payload)
-#define INF_MSG_LEN(infec_msg) (infec_msg->header.payload_len + sizeof(struct header_payload) + 2)
-#define INF_MSG_LEN_H(hdr) (hdr->payload_len + sizeof(struct header_payload) + 2)
+#define INF_MSG_LEN(infec_msg) (infec_msg->header.payload_len + sizeof(struct header_payload))
+#define INF_MSG_LEN_H(hdr) (hdr->payload_len + sizeof(struct header_payload))
 #define INF_MSG_HEADER(infec_msg) ((void*)(&infec_msg->header))
 #define INF_MSG_START(infec_msg) INF_MSG_HEADER(infec_msg)
 #define INF_MSG_HEADER_LEN(infec_msg) (sizeof(struct header_payload))
-#define INF_MSG_DATA(infec_msg) ((void*)((char*)(&infec_msg->header) + infec_msg->header.payload_len))
+#define INF_MSG_DATA(infec_msg) ((void*)((char*)(&infec_msg->header) + sizeof(struct header_payload)))
 #define INF_MSG_DATA_LEN(infec_msg) (infec_msg->header.payload_len)
 #define INF_MSG_END(infec_msg) ((void*)(((char *)(&infec_msg->header)) + sizeof(struct header_payload) + infec_msg->header.payload_len))
 
+//unsafe to use
 #define MULTI_CLIENTS_PAYLOAD_SIZE(nr_clients) (nr_clients*sizeof(struct client_repr_ext) + 5)
 #define MULTI_CLIENTS_MSG_SIZE(nr_clients) MULTI_CLIENTS_PAYLOAD_SIZE(nr_clients) + sizeof(struct header_payload)
 #define CONFIRM_MSG_SIZE(nr_clients) MAX_LEN_CONFIRM + sizeof(struct header_payload)
@@ -349,6 +350,36 @@ static int extract_client_repr_payload(struct infec_msg* msg, struct client_repr
 	return poz-initial_poz;
 }
 
+
+static int extract_client_repr_payload_ext(struct infec_msg* msg, struct client_repr* client_collector, unsigned char poz, unsigned char flags){
+	unsigned char* data = INF_MSG_DATA(msg);
+	int initial_poz = poz;
+	struct client_repr_ext* client_ext = (struct client_repr_ext*)&data[poz];
+
+	if(CHECK_SIGNITURE(client_ext->signiture_ip,SIGNITURE_IP) && CHECK_FLAG(flags,FLAG_WITH_IP)){
+		client_collector->ip_addr= client_ext->ip_addr;
+	}
+	else{
+		client_collector->ip_addr = 0;
+	}
+	if(CHECK_SIGNITURE(client_ext->signiture_mac,SIGNITURE_MAC) && CHECK_FLAG(flags,FLAG_WITH_MAC)){
+		copy_uchar_values(client_ext->mac_addr,client_collector->mac_addr,ETH_ALEN);
+	}
+	else{
+		unsigned char empty[ETH_ALEN]={0};
+		copy_uchar_values(empty,client_collector->mac_addr,ETH_ALEN);
+	}
+	if(CHECK_SIGNITURE(client_ext->signiture_infectivity,SIGNITURE_INFECT_TYPE) && CHECK_FLAG(flags,FLAG_WITH_INFECTIVITY)){
+		client_collector->infectivity = client_ext->infectivity;
+	}
+	else{
+		client_collector->infectivity=UNKNOW_INFECTION;
+	}
+	//poz+=2; //this is for padding do not delete!!!
+	return sizeof(struct client_repr_ext);
+}
+
+
 static int create_client_repr_payload(struct client_repr* client,unsigned char* collector, unsigned char flags){
 	int poz =0;
 	collector[poz]= SIGNITURE_IP;
@@ -369,20 +400,54 @@ static int create_client_repr_payload(struct client_repr* client,unsigned char* 
 	return poz;
 }
 
-static int create_header(char id,char type,struct header_payload *collector){
+static int create_client_repr_payload_ext(struct client_repr* client,unsigned char* collector, unsigned char flags){
+	int poz =0;
+	struct client_repr_ext* client_ext = (struct client_repr_ext*)collector;
+	unsigned char empty[ETH_ALEN]={0};
+
+	if(CHECK_FLAG(flags,FLAG_WITH_IP)){
+		client_ext->signiture_ip = SIGNITURE_IP;
+		client_ext->ip_addr = client->ip_addr;
+	}
+	else{
+		client_ext->signiture_ip = 0;
+		client_ext->ip_addr = 0;
+	}
+	if(CHECK_FLAG(flags,FLAG_WITH_MAC)){
+		client_ext->signiture_mac = SIGNITURE_MAC;
+		copy_uchar_values(client->mac_addr,client_ext->mac_addr,ETH_ALEN);
+	}
+	else{
+		client_ext->signiture_ip = 0;
+		copy_uchar_values(empty,client_ext->mac_addr,ETH_ALEN);
+	}
+	if(CHECK_FLAG(flags,FLAG_WITH_INFECTIVITY)){
+		client_ext->signiture_infectivity = SIGNITURE_INFECT_TYPE;
+		client_ext->infectivity = client->infectivity;
+	}
+	else{
+		client_ext->signiture_infectivity = 0;
+		client_ext->infectivity = 0;
+	}
+	//poz+= 2;// this is for padding, do not delete!
+	return sizeof(struct client_repr_ext);
+}
+
+static int create_header(char id,char type,int len_data, struct header_payload *collector){
 	collector->payload_id=id;
 	collector->payload_type=type;
 	int cp = SIGNITURE_HEADER;
 	int2ch(cp,collector->signiture);
-	collector->payload_len = 0;
+	collector->payload_len = len_data;
 	return 0;
 }
 
-static int create_message(struct header_payload *header, unsigned char* data, int data_len, struct infec_msg* collector){
-	header->payload_len = data_len;
-	if(header)
+static int create_message(struct header_payload *header, unsigned char* data, struct infec_msg* collector){
+	if(header){
 		copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
-	if(data)
-		copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), data_len);
-	return 0;
+		if(data)
+			copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), header->payload_len);
+		return 0;
+	}
+	return -1;
 }

@@ -496,7 +496,7 @@ void inject_task(char* data,int size, int sender){
 	push_to_list(task_pool,new_task);
 	//printf("ok5\n");
 	//printf("Task added\n");
-	print_task(new_task);
+	//print_task(new_task);
 	pthread_cond_signal(&cond);
 	pthread_mutex_unlock(&mutex);
 }

@@ -23,7 +23,7 @@ void print_infec_msg(struct infec_msg * msg_infec){
 		printf("inf p %p h %p d %p \n",msg_infec,INF_MSG_HEADER(msg_infec), INF_MSG_DATA(msg_infec));
 		printf("len %ld\n", INF_MSG_LEN(msg_infec));
 		for(i =0;i< INF_MSG_DATA_LEN(msg_infec);i++){
-			printf("%x ",((unsigned char*)INF_MSG_DATA(msg_infec))[i]);
+			printf("%x at %ld\n",((unsigned char*)INF_MSG_DATA(msg_infec))[i], i);
 		}
 		printf("\n");
 	}
@@ -36,19 +36,19 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 	struct header_payload *hdr_inf;
 	struct infec_msg* msg_infec = NULL;
 	if(client){
-		unsigned char *data = (unsigned char *)calloc(20,sizeof(char));
-		int len = create_client_repr_payload(client,data,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
-		printf("Data created\n");
+		unsigned char *data = (unsigned char *)calloc(sizeof(struct client_repr_ext),sizeof(char));
+		int len = create_client_repr_payload_ext(client,data,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
+		printf("Data created %d\n",len);
 		// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
 		// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
 
 		hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
-		create_header(rand()%(int)(MAX_ID), type,hdr_inf);
+		create_header(rand()%(int)(MAX_ID), type,len,hdr_inf);
 		printf("Header created\n");
 		// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
 		// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
-		msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf));
-		create_message(hdr_inf,data,len,msg_infec);
+		msg_infec = (struct infec_msg *)calloc(INF_MSG_LEN_H(hdr_inf), sizeof(char));
+		create_message(hdr_inf,data,msg_infec);
 
 		free(data);
 		free(hdr_inf);
@@ -60,12 +60,12 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 
 struct infec_msg* create_get_clients_msg(unsigned char type){
 	struct header_payload *hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
-	create_header(rand()%(int)(MAX_ID), type,hdr_inf);
+	create_header(rand()%(int)(MAX_ID), type,0,hdr_inf);
 	printf("Header created\n");
 	// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
 	// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
-	struct infec_msg* msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf));
-	create_message(hdr_inf,NULL,0,msg_infec);
+	struct infec_msg* msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf) + 2);
+	create_message(hdr_inf,NULL,msg_infec);
 	free(hdr_inf);
 
 	printf("Msg created\n");
@@ -114,9 +114,11 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
 	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
 	if(msg_infec){
-		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(MAX_PAYLOAD_SIZE));
+		print_infec_msg(msg_infec);
+		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(INF_MSG_LEN(msg_infec)));
+		printf("done malloc\n");
 		//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
-		nlh->nlmsg_len = NLMSG_SPACE(MAX_PAYLOAD_SIZE);
+		nlh->nlmsg_len = NLMSG_SPACE(INF_MSG_LEN(msg_infec));
 		nlh->nlmsg_pid = getpid();
 		nlh->nlmsg_flags = 0;
 		copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
@@ -136,7 +138,6 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		msg.msg_iov = &iov;
 		msg.msg_iovlen = 1;
 		printf("Message created\n");
-		print_infec_msg(msg_infec);
 		
 		sendmsg(fd, &msg, 0);
 		clear_infec_msg(msg_infec);

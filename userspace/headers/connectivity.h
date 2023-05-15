@@ -13,15 +13,11 @@
 #include <time.h>
 
 #include "communication_local.h"
+#include "utils.h"
 
 
 #define WORD_SEPARATOR " "
 #define MAX_WORD_SIZE 100
-
-#define REGEX_LEASE "^([0-9])*$"
-#define REGEX_MAC "^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
-#define REGEX_IPV4 "^([0-9]{1,3}\\.){3}([0-9]{1,3})$"
-#define REGEX_NAME "^([0-9a-zA-Z_\\-]+)$|^(\\*)$"
 
 #define MASK_NAME_ASSIGNED 001u
 #define MASK_IPV4_ASSIGNED 010u
@@ -61,19 +57,11 @@ void convert_node_2_repr(struct client_node* client,struct client_repr* collecto
 
 int hash_client(struct client_def *client, char* hash_collector);
 
-int compare_regex(char *str, char *regex_str);
-
 int get_type_of_dhcp_word(char* word);
 
 void process_word_on_client(char*word, struct client_def *client);
 
 void clear_client(struct client_def *client);
-
-void str2ipv4(unsigned char * str, unsigned char* collector);
-
-char hex_value_str(char ch);
-
-void str2mac(unsigned char * str, unsigned char* collector);
 
 bool insert_or_update_client(struct client_node* list, struct client_node* node);
 

@@ -73,11 +73,11 @@ struct infec_msg* create_clients_data_msg(struct clients_list* clients_data, uns
 		
 		hdr_inf = (struct header_payload *)kcalloc(1, sizeof(struct header_payload),GFP_KERNEL);
 		get_random_bytes(&id, sizeof(id));
-		create_header(id, type, hdr_inf);
+		create_header(id, type, len_payload, hdr_inf);
 		printk(KERN_INFO "Header created\n");
 
 		msg_infec = (struct infec_msg *)kcalloc(1,INF_MSG_LEN_H(hdr_inf),GFP_KERNEL);
-		create_message(hdr_inf,data,len_payload,msg_infec);
+		create_message(hdr_inf,data,msg_infec);
 
 		kfree(data);
 		kfree(hdr_inf);
@@ -100,10 +100,10 @@ struct infec_msg* create_confirm_msg(unsigned char* data, unsigned char type){
 
 		hdr_inf = (struct header_payload *)kcalloc(1, sizeof(struct header_payload),GFP_KERNEL);
 		get_random_bytes(&id, sizeof(id));
-		create_header(id, type, hdr_inf);
+		create_header(id, type,MAX_LEN_CONFIRM, hdr_inf);
 		
 		msg_infec = (struct infec_msg *)kcalloc(1,INF_MSG_LEN_H(hdr_inf),GFP_KERNEL);
-		create_message(hdr_inf,payload,MAX_LEN_CONFIRM,msg_infec);
+		create_message(hdr_inf,payload,msg_infec);
 
 		kfree(payload);
 		kfree(hdr_inf);
@@ -125,10 +125,10 @@ struct infec_msg* create_error_msg(unsigned char* data, unsigned char type){
 
 		hdr_inf = (struct header_payload *)kcalloc(1, sizeof(struct header_payload),GFP_KERNEL);
 		get_random_bytes(&id, sizeof(id));
-		create_header(id, type, hdr_inf);
+		create_header(id, type, MAX_LEN_ERROR, hdr_inf);
 		
 		msg_infec = (struct infec_msg *)kcalloc(1,INF_MSG_LEN_H(hdr_inf),GFP_KERNEL);
-		create_message(hdr_inf,payload,MAX_LEN_ERROR,msg_infec);
+		create_message(hdr_inf, payload, msg_infec);
 
 		kfree(payload);
 		kfree(hdr_inf);

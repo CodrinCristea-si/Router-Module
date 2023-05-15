@@ -46,10 +46,12 @@ cleanup:
 bool __add_client_generic(const __be32 client_ip_addr, const unsigned char* client_mac_addr){
 	bool added = false;
 	int res;
-	struct client_def* old_client;
+	struct client_def* old_client = NULL;
 	old_client = __get_client_generic(client_ip_addr,client_mac_addr);
+	printk(KERN_INFO "old_client %p\n", old_client);
 	if(old_client == NULL){
 		res = ADD_CLIENT_SUSPICIOUS(client_ip_addr,client_mac_addr);
+		printk(KERN_INFO "res %d\n", res);
 		if(res >= 0) added = true; 
 	}
 	return added;
@@ -159,9 +161,10 @@ struct client_def* __get_client_from_list(struct clients_list* list_from, const 
             if(tmp->client.ip_addr == client_ip_addr &&  cmp_mac_address(tmp->client.mac_addr, client_mac_addr) == 0){
                 break;
             }
+	    tmp = NULL;
         }
     }
-    return &tmp->client;
+    return tmp ==NULL ? NULL : &tmp->client;
 }
 
 struct client_def* __get_client_generic(const __be32 client_ip_addr, const unsigned char* client_mac_addr){

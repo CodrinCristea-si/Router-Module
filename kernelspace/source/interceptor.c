@@ -135,7 +135,7 @@ static void netlink_handle(struct sk_buff *skb){
 	switch(hdr->payload_type){
 		case ADD_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = ADD_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
@@ -144,7 +144,7 @@ static void netlink_handle(struct sk_buff *skb){
 			break;
 		case REMOVE_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
+			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
@@ -153,7 +153,7 @@ static void netlink_handle(struct sk_buff *skb){
 			break;
 		case TRANSFER_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
-			extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
+			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
 			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = TRANSFER_CLIENT_GENERIC(client->infectivity,client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to transfer client %pI4 to %x err %d\n",&client->ip_addr,client->infectivity,ret);
