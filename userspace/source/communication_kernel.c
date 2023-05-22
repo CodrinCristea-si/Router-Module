@@ -38,13 +38,13 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 	if(client){
 		unsigned char *data = (unsigned char *)calloc(sizeof(struct client_repr_ext),sizeof(char));
 		int len = create_client_repr_payload_ext(client,data,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
-		printf("Data created %d\n",len);
-		// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
+		//printf("Data created %d\n",len);
+		/// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
 		// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
 
 		hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
 		create_header(rand()%(int)(MAX_ID), type,len,hdr_inf);
-		printf("Header created\n");
+		//printf("Header created\n");
 		// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
 		// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
 		msg_infec = (struct infec_msg *)calloc(INF_MSG_LEN_H(hdr_inf), sizeof(char));
@@ -53,7 +53,7 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 		free(data);
 		free(hdr_inf);
 
-		printf("Msg created\n");
+		//printf("Msg created\n");
 	}
 	return msg_infec;
 }
@@ -61,14 +61,14 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 struct infec_msg* create_get_clients_msg(unsigned char type){
 	struct header_payload *hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
 	create_header(rand()%(int)(MAX_ID), type,0,hdr_inf);
-	printf("Header created\n");
+	//printf("Header created\n");
 	// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
 	// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
 	struct infec_msg* msg_infec = (struct infec_msg *)malloc(INF_MSG_LEN_H(hdr_inf) + 2);
 	create_message(hdr_inf,NULL,msg_infec);
 	free(hdr_inf);
 
-	printf("Msg created\n");
+	//printf("Msg created\n");
 	return msg_infec;
 }
 
@@ -104,7 +104,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		perror("Cannot open socket\n");
 		return -1;
 	}
-	printf("Socket created\n");
+	//printf("Socket created\n");
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));
 	addr.nl_family = AF_NETLINK;
@@ -114,9 +114,9 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
 	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
 	if(msg_infec){
-		print_infec_msg(msg_infec);
+		//print_infec_msg(msg_infec);
 		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(INF_MSG_LEN(msg_infec)));
-		printf("done malloc\n");
+		//printf("done malloc\n");
 		//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
 		nlh->nlmsg_len = NLMSG_SPACE(INF_MSG_LEN(msg_infec));
 		nlh->nlmsg_pid = getpid();
@@ -137,12 +137,12 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		msg.msg_namelen = sizeof(addr);
 		msg.msg_iov = &iov;
 		msg.msg_iovlen = 1;
-		printf("Message created\n");
+		//printf("Message created\n");
 		
 		sendmsg(fd, &msg, 0);
 		clear_infec_msg(msg_infec);
 		
-		printf("Sent message to kernel\n");
+		//printf("Sent message to kernel\n");
 		return payload_id;
 	}
 	else{
@@ -184,13 +184,13 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 	while (NLMSG_OK(nlh, data_len)) {
 		msg_infec = (struct infec_msg*)NLMSG_DATA(nlh);
 		print_infec_msg(msg_infec);
-		printf("Response type %x\n",msg_infec->header.payload_type);
+		//printf("Response type %x\n",msg_infec->header.payload_type);
 		if(payload_id){
 			switch (msg_infec->header.payload_type)
 			{
 			case CLIENTS_DATA:
 				nr_cl = extract_nr_clients_from_payload((unsigned char*)INF_MSG_DATA(msg_infec));
-				printf("Nr cl %d\n",nr_cl);
+				//printf("Nr cl %d\n",nr_cl);
 				if (nr_cl<0) return NULL;
 				else{
 					response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
@@ -200,17 +200,18 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 					copy_uchar_values(collector,response->data,sizeof(struct client_repr)*nr_cl);
 					response->type=CLIENTS_DATA;
 					response->opt=nr_cl;
+					free(collector);
 				}
 				break;
 			case ERROR:
 				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
-				collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
+				//collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
 				response->data = (unsigned char*)malloc(strlen(INF_MSG_DATA(msg_infec)) * sizeof(unsigned char));
 				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,strlen(INF_MSG_DATA(msg_infec)));
 				response->type=ERROR;
 			case CONFIRM:
 				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
-				collector = (char*)malloc(MAX_LEN_CONFIRM*sizeof(char));
+				//collector = (char*)malloc(MAX_LEN_CONFIRM*sizeof(char));
 				response->data = (unsigned char*)malloc(MAX_LEN_CONFIRM * sizeof(unsigned char));
 				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,MAX_LEN_CONFIRM);
 				response->type=CONFIRM;
@@ -240,7 +241,7 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 	}
-	printf("Socket created\n");
+	//printf("Socket created\n");
 
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));

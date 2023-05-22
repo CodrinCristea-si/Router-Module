@@ -43,9 +43,9 @@ int deploy_thread(char* filename){
 	pid_t pid_th,sid_th;
 	char file[MAX_FILE_PATH_SIZE];
 	if(filename)
-		strncpy(file,filename,strlen(filename));
-
+		strncpy(file,filename,MAX_FILE_PATH_SIZE);
 	else file[0]='\0';
+	printf("file2 %s\n",file);
 	pid_th = fork();
 	if(pid_th <0)
 		return -1;
@@ -98,15 +98,16 @@ int main(int argc, char** argv){
 		if(strncmp("-start",argv[1],6) == 0){
 			char *filename;
 			if(argc>2){
-				filename = (char *)malloc(sizeof(char)*strlen(argv[2]));
+				filename = (char *)malloc(sizeof(char)*strlen(argv[2])+2);
 				strncpy(filename,argv[2],strlen(argv[2]));
+				printf("file1 %s\n",filename);
 			}
 			// else{
 			// 	perror("No file location\n");
 			// 	return -1;
 			// }
 			deploy_thread(filename);
-			free(filename);
+			if(argc>2)free(filename);
 		}
 		else if(strncmp("-stop",argv[1],5) == 0){
 			shutdown_thread();

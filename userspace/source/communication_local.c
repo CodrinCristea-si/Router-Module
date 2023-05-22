@@ -66,59 +66,75 @@ int send_to_monitor(unsigned char*data, unsigned char type){
 	free(job);
 }
 
-struct response* receive_from_monitor(int *sockfd){
+
+struct response create_invalid_response(){
+	struct response resp ={
+		.data = NULL,
+		.nr_ent = -1
+	};
+	return resp;
+}
+
+
+struct response receive_from_monitor(int *sockfd){
+	unsigned char type;
 	int len;
 	int nr_ent;
 	int poz =0;
-	unsigned char type;
 	size_t i;
-	struct response *response = NULL;
-	len = receive_data(*sockfd,(unsigned char *)&type);
+	struct response response = create_invalid_response();
+	len = receive_data(*sockfd,(unsigned char*)&type);
 	//printf("type received %x\n",type);
 	if(len > 0){
-		response = (struct response *)malloc(sizeof(struct response));
-		response->data = create_list();
+		// response = (struct response *)malloc(sizeof(struct response));
+		response.data = create_list();
 		len = receive_data(*sockfd,(unsigned char *)&nr_ent);
-		response->nr_ent=nr_ent;
+		response.nr_ent=nr_ent;
 		//printf("nr ent received %x\n",nr_ent);
-		switch(type){
-			case ALL_DATA:
-				for(i=0;i<nr_ent;i++){
-					struct client_infectivity *buf= (struct client_infectivity *)malloc(sizeof(struct client_infectivity));
-					len = receive_data(*sockfd,(unsigned char*)buf);
-					if(len<=0) break;
-					else{
-						push_to_list(response->data,buf);
-						//printf("received ");
-						//print_client_infectivity(buf);
-					}
+		//printf("type received %x and %x\n",type,ALL_DATA);
+		if (type == ALL_DATA){
+			//printf("All_DATA\n");
+			for(i=0;i<nr_ent;i++){
+				//printf("for %d\n",i);
+				struct client_infectivity *buf= (struct client_infectivity *)malloc(sizeof(struct client_infectivity));
+				//if (!buf) printf("Ceva a mers prost\n");
+				len = receive_data(*sockfd,(unsigned char*)buf);
+				//printf("len %d\n",len);
+				if(len<=0) break;
+				else{
+					push_to_list(response.data,buf);
+					//printf("received ");
+					print_client_infectivity(buf);
 				}
-				break;
-			case UPDATES:
-				for(i=0;i<nr_ent;i++){
-					struct job *buf= (struct job *)malloc(sizeof(struct job));
-					len = receive_data(*sockfd,(unsigned char*)buf);
-					if(len<=0) break;
-					else{
-						push_to_list(response->data,buf);
-					}
+			}
+		}
+		else if(type == UPDATES){
+			for(i=0;i<nr_ent;i++){
+				struct job *buf= (struct job *)malloc(sizeof(struct job));
+				len = receive_data(*sockfd,(unsigned char*)buf);
+				if(len<=0) break;
+				else{
+					push_to_list(response.data,buf);
 				}
-				break;
-			default:
-				break;
+			}
+		}
+		else{
+			printf("Invalid type %x\n",type);
 		}
 	}
+	printf("Exit commun\n");
+	//free(type);
 	return response;
 	
 }
 
-
-struct response* send_and_receive_from_monitor(unsigned char*data, unsigned char type){
+struct response send_and_receive_from_monitor(unsigned char*data, unsigned char type){
 	struct job* job = create_job(data,type);
 	if(!job){
 		perror("Failed to create job\n");
-		return NULL;
+		return create_invalid_response();
 	}
+	//printf("job created\n");
 	int sockfd;
 	struct sockaddr_in servaddr;
 	int len;
@@ -126,9 +142,9 @@ struct response* send_and_receive_from_monitor(unsigned char*data, unsigned char
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
 		perror("socket creation failed...\n");
-		return NULL;
+		return create_invalid_response();
 	}
-
+	//printf("socket created\n");
 	memset(&servaddr,0, sizeof(servaddr));
 
 	// assign IP, PORT
@@ -139,21 +155,23 @@ struct response* send_and_receive_from_monitor(unsigned char*data, unsigned char
 	// connect the client socket to server socket
 	if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr))!= 0) {
 		perror("connection with the server failed...\n");
-		return NULL;
+		return create_invalid_response();
 	}
+	//printf("connected\n");
 	len = send_data(sockfd,(unsigned char*)job,sizeof(struct job));
 	if(len <= 0){
 		perror("error while sending the message");
-		return NULL;
+		return create_invalid_response();
 	}
+	//printf("message sent\n");
 	free(job);
 	return receive_from_monitor(&sockfd);
 }
 
-void clear_response(struct response* response){
+void clear_response(struct response* response, bool is_static){
 	if(response){
 		clear_list(response->data);
 		free(response->data);
-		free(response);	
+		if(!is_static)free(response);	
 	}
 }

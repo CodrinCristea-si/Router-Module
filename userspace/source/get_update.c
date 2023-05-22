@@ -40,6 +40,7 @@
 
 void print_response_get_all(struct response *response){
 	size_t i,length;
+	printf("Response pointer %p\n",response);
 	printf("Nr ent %d\n", response->nr_ent);
 	length = response->nr_ent;
 	for(i =0;i<length;i++){
@@ -70,7 +71,7 @@ void create_json_get_all(struct response *response, char* output){
 				client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
 				client->infectivity);
 			}
-			if(i != length -1){
+			if(i != length -1 && client){
 				fprintf(file,",\n");
 			}
 		}
@@ -80,21 +81,28 @@ void create_json_get_all(struct response *response, char* output){
 }
 
 void print_response_get_updates(struct response *response){
-	size_t i,length;
+	size_t i;
+	size_t length;
+	printf("Response pointer %p\n",response);
 	printf("Nr ent %d\n", response->nr_ent);
 	length = response->nr_ent;
 	for(i =0;i<length;i++){
 		struct job *job = get_from_list(response->data,i);
-		printf("Action %d with client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->job_type,job->client.ipv4[0],
-			job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
-			job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
-			job->client.infectivity);
+		if(job){
+			printf("Action %d with client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->job_type,job->client.ipv4[0],
+				job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+				job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+				job->client.infectivity);
+		}else{
+			printf("NULL\n");
+		}
 	}
 }
 
 void create_json_get_updates(struct response *response, char* output){
 	FILE *file;
-	size_t i, length;
+	size_t i;
+	size_t length;
 	file = fopen(output,"w");
 	if(file){
 		fprintf(file,"{\"updates\":[");
@@ -107,7 +115,7 @@ void create_json_get_updates(struct response *response, char* output){
 				job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
 				job->client.infectivity);
 			}
-			if(i != length -1){
+			if(i != length -1 && job){
 				fprintf(file,",\n");
 			}
 		}
@@ -128,26 +136,34 @@ void create_json_error(char* error, char* output){
 
 int main(int argc,char** argv){
 	int payload_id;
-	struct response *response = NULL;
+	struct response response;
 	char msg[100];
 	char filename [100];
 	//struct kernel_response* response;
 	//response = send_and_receive_kernel(NULL,GET_CLIENTS);
 	if(argc > 1){
+		//printf("has args\n");
 		if(strncmp(argv[1], "--get-all", 10) == 0){
+			//printf("received --get-all\n");
 			if(argc > 2){
 				strncpy(filename,argv[2],100);
-				response = send_and_receive_from_monitor(NULL,GET_ALL); 
+				//printf("copy\n");
+				response = send_and_receive_from_monitor(NULL,GET_ALL);
+				//printf("daca nu se afiseaza asta atunci primesc Bus Error de la return :( \n");
 				//printf("%p\n",response);
-				if(!response){
+				if(response.nr_ent < 0){
+					//printf("e null\n");
 					strncpy(msg,"Cannot send message",100);
 					perror(msg);
 					create_json_error(msg, filename);
 				}
 				else{
-					create_json_get_all(response,filename);
-					//print_response_get_all(response);
-					clear_response(response);
+					//printf("hai sa print\n");
+					print_response_get_all(&response);
+					//printf("hai sa save file\n");
+					create_json_get_all(&response,filename);
+					//printf("hai sa stergem raspuns\n");
+					clear_response(&response,true);
 				}
 			}
 			else{
@@ -158,14 +174,14 @@ int main(int argc,char** argv){
 			if(argc > 2){
 				strncpy(filename,argv[2],100);
 				response = send_and_receive_from_monitor(NULL,GET_UPDATES); 
-				if(!response){
+				if(response.nr_ent < 0){
 					strncpy(msg,"Cannot send message",100);
 					perror(msg);
 					create_json_error(msg, filename);
 				}else{
-					create_json_get_updates(response,filename);
-					//print_response_get_updates(response);
-					clear_response(response);
+					print_response_get_updates(&response);
+					create_json_get_updates(&response,filename);
+					clear_response(&response,true);
 				}
 			}
 			else{

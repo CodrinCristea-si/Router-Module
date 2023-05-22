@@ -212,9 +212,9 @@ void process_add_job(struct job *job){
 			push_to_list(updates,(void*)job_copy);
 			//printf("push\n");
 			//kernel
-			struct client_repr cl_rpr;
-			convert_infectivity_2_repr(&job->client,&cl_rpr);
-			send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
+			// struct client_repr cl_rpr;
+			// convert_infectivity_2_repr(&job->client,&cl_rpr);
+			// send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
 		}
 		
 	}
@@ -271,9 +271,9 @@ void process_remove_job(struct job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job)); 
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			struct client_repr cl_rpr;
-			convert_infectivity_2_repr(&job->client,&cl_rpr);
-			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
+			// struct client_repr cl_rpr;
+			// convert_infectivity_2_repr(&job->client,&cl_rpr);
+			// send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -312,9 +312,9 @@ void process_transfer_job(struct job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job));
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			struct client_repr cl_rpr;
-			convert_infectivity_2_repr(&job->client,&cl_rpr);
-			send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
+			// struct client_repr cl_rpr;
+			// convert_infectivity_2_repr(&job->client,&cl_rpr);
+			// send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -332,9 +332,9 @@ void send_to_sender(int sockfd, unsigned char type, unsigned char* data){
 			list_size = list != NULL ? list->size : 0;
 			//printf("to send %d clients\n",list_size);
 			len = send_data(sockfd,&type,sizeof(unsigned char));
-			if (len >0){
+			if (len >= 0){
 				len = send_data(sockfd,(unsigned char *)&list_size,sizeof(int));
-				if(len > 0 && list_size > 0){
+				if(len >= 0 && list_size > 0){
 					length = list->size;
 					for(i=0;i< length;i++){
 						void* data = pop_from_list(list);
@@ -572,7 +572,7 @@ void* main_server(){
 	int size;
 	while(1){
 		clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&len);
-		printf("client with ip %s connected\n", inet_ntoa(client_addr.sin_addr));
+		//printf("client with ip %s connected\n", inet_ntoa(client_addr.sin_addr));
 		size = receive_data(clientfd,buf);
 		if(size > 0)
 			inject_task(buf,size,clientfd);
@@ -593,7 +593,7 @@ int start_monitoring(char *filename){
 		strncpy(storage_file,filename,sizeof(filename));
 	pthread_t thr[NUMBER_OF_WORKERS +1];
 	size_t i;
-	printf("Creating threads ... \n");
+	//printf("Creating threads ... \n");
 	pthread_mutex_init(&mutex,NULL);
 	pthread_mutex_init(&mutex_storage,NULL);
 	pthread_cond_init(&cond,NULL);
@@ -605,7 +605,7 @@ int start_monitoring(char *filename){
 	if(filedesc){
 		//fprintf(filedesc,"\n");
 		fclose(filedesc);
-		printf("File opened\n");
+		//printf("File opened\n");
 		for(i=0;i<NUMBER_OF_WORKERS+1;i++){
 			if(i == 0){
 				pthread_create(&thr[i],NULL,main_server,NULL);
@@ -614,7 +614,7 @@ int start_monitoring(char *filename){
 				pthread_create(&thr[i],NULL,worker,NULL);
 			}
 		}
-		printf("Threads created\n");
+		//printf("Threads created\n");
 		for(i=0;i<NUMBER_OF_WORKERS+1;i++){
 			pthread_join(thr[i],NULL);
 		}
@@ -630,6 +630,6 @@ int start_monitoring(char *filename){
 	pthread_mutex_destroy(&mutex);
 	pthread_mutex_destroy(&mutex_storage);
 	pthread_cond_destroy(&cond);
-	printf("Threads killed\n");
+	//printf("Threads killed\n");
 	return 0;
 }

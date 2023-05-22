@@ -1,5 +1,7 @@
 .vscode/
+.*
 common/*.o
+infectivity_router_module/
 kernelspace/headers/*.c
 kernelspace/headers/*.o
 kernelspace/source/*.o
@@ -8,6 +10,10 @@ userspace/libtomcrypt/crypt/*.o
 userspace/libtomcrypt/hashes/*.o
 userspace/libtomcrypt/misc/*.o
 userspace/*.test
+userspace/*.cp
+userspace/*.infec
+userspace/*.out
+userspace/.*
 *.mod
 *.mod.*
 *.o

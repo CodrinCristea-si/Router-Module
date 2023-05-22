@@ -121,22 +121,22 @@ static void netlink_handle(struct sk_buff *skb){
 
 	//extracting the netlink message
 	nhl = (struct nlmsghdr *) skb->data;
-	printk(KERN_INFO "1\n");
+	//printk(KERN_INFO "1\n");
 	//extracting the infec_msg
 	msg = (struct infec_msg*) NLMSG_DATA(nhl);
-	print_infec_msg(msg);
+	//print_infec_msg(msg);
 	// printk(KERN_INFO "msg p %p \n",msg);
-	printk(KERN_INFO "2\n");
+	//printk(KERN_INFO "2\n");
 	//extract the header payload
 	
 	hdr = (struct header_payload*)INF_MSG_HEADER(msg);
-	printk(KERN_INFO "Message type %x\n", hdr->payload_type);
+	//printk(KERN_INFO "Message type %x\n", hdr->payload_type);
 	//process msg
 	switch(hdr->payload_type){
 		case ADD_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
-			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
+			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = ADD_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Added client %pI4\n",&client->ip_addr);
@@ -145,7 +145,7 @@ static void netlink_handle(struct sk_buff *skb){
 		case REMOVE_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
-			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
+			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
@@ -154,7 +154,7 @@ static void netlink_handle(struct sk_buff *skb){
 		case TRANSFER_CLIENT:
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
-			printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
+			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
 			ret = TRANSFER_CLIENT_GENERIC(client->infectivity,client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to transfer client %pI4 to %x err %d\n",&client->ip_addr,client->infectivity,ret);
 			else printk(KERN_INFO "Transfered client %pI4 to %x\n",&client->ip_addr, client->infectivity);
@@ -193,14 +193,14 @@ static void netlink_handle(struct sk_buff *skb){
 			printk(KERN_ERR "Not implemented\n");
 			break;
 	}
-	all_clients = __create_empty_list();
-	if(all_clients){
-		nr_cl = GET_ALL_CLIENTS(all_clients);
-		__print_list(all_clients);
-		__clear_list(all_clients);
-		kfree(all_clients);
-	}
-	printk(KERN_INFO "Done\n");
+	// all_clients = __create_empty_list();
+	// if(all_clients){
+	// 	nr_cl = GET_ALL_CLIENTS(all_clients);
+	// 	__print_list(all_clients);
+	// 	__clear_list(all_clients);
+	// 	kfree(all_clients);
+	// }
+	// printk(KERN_INFO "Done\n");
 }
 
 struct netlink_kernel_cfg config = {
