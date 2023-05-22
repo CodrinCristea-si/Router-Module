@@ -42,7 +42,9 @@ int deploy_thread_checker(char* filename){
 	printf("Atempting to deploy...\n");
 	pid_t pid_th,sid_th;
 	char file[MAX_FILE_PATH_SIZE];
-	strncpy(file,filename,strlen(filename));
+	strncpy(file,filename,MAX_FILE_PATH_SIZE);
+	file[strlen(filename)]='\0';
+	printf("file %s\n",file);
 	pid_th = fork();
 	if(pid_th <0)
 		return -1;
@@ -72,6 +74,10 @@ int deploy_thread_checker(char* filename){
 		chdir("/");
 		printf("Child migrated\n");
 
+		char path_curr[100];
+		getcwd(path_curr,sizeof(path_curr));
+		printf("curr path %s and file %s\n",path_curr,file);
+
 		// Redirect standard input, output, and error to /dev/null
 		int fd = open("/dev/null", O_RDWR);
 		if (fd >= 0){
@@ -95,15 +101,17 @@ int main(int argc, char** argv){
 		if(strncmp("-start",argv[1],6) == 0){
 			char *filename;
 			if(argc>2){
-				filename = (char *)malloc(sizeof(char)*strlen(argv[2]));
-				strncpy(filename,argv[2],strlen(argv[2]));
+				filename = (char *)malloc(sizeof(char)*strlen(argv[2])+2);
+				strncpy(filename, argv[2], strlen(argv[2]));
+				filename[strlen(argv[2])]='\0';
+				printf("%s \n", filename);
+				deploy_thread_checker(filename);
+				free(filename);
 			}
 			else{
 				perror("No file location\n");
 				return -1;
 			}
-			deploy_thread_checker(filename);
-			free(filename);
 		}
 		else if(strncmp("-stop",argv[1],5) == 0){
 			shutdown_thread_checker();

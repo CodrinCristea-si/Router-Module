@@ -101,6 +101,21 @@ void clear_client(struct client_def *client){
 	}
 }
 
+bool check_if_client_is_reachable(unsigned char * ip){
+	char command[100];
+	snprintf(command,100, "ping -c 1 -W 1 %d.%d.%d.%d", (unsigned int)ip[0],(unsigned int)ip[1],(unsigned int)ip[2],(unsigned int)ip[3]);
+	printf("command %s\n",command);
+	int result = system(command);
+
+	// Check the return value of the `system` function
+	// A return value of 0 indicates success, i.e., the client is reachable
+	if (result == 0) {
+		return true; // Client is reachable
+	} else {
+		return false; // Client is not reachable
+	}
+}
+
 bool insert_or_update_client(struct client_node* list, struct client_node* node){
     unsigned char empty_hash[MD5_HASH_SIZE] ={0};
     struct client_node *first = list->next, *prev = list;
@@ -108,6 +123,11 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
     //printf("%p & %p & %d & %d\n",list,node,cmp_uchar_values(node->hash, empty_hash, MD5_HASH_SIZE),node->state);
     if(!list || !node || cmp_uchar_values(node->hash, empty_hash, MD5_HASH_SIZE) == 0 || node->state != magic_number){
         perror("Insert or update validation failed \n");
+        return -1;
+    }
+    if (!check_if_client_is_reachable(node->ipv4))
+    {
+	perror("Client is unreachable\n");
         return -1;
     }
     while (first != NULL){
@@ -129,6 +149,35 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
         added = true;
     }
     return added || updated;
+}
+
+void delete_unreachable_clients(struct client_node* list){
+	struct client_node *current = list->next, *prev = list;
+	bool updated = false;
+	if(!list){
+		perror("Empty list!\n");
+		return;
+	}
+	while (current != NULL){
+		bool delete = false;
+		bool is_reachable=check_if_client_is_reachable(current->ipv4);
+		if(!is_reachable){
+			printf("Is reachable %d\n",is_reachable);
+			prev->next = (void*)current->next;
+			delete = true;
+		}
+		if(delete){
+			printf("Removed client ip=%d.%d.%d.%d, mac=%02x:%02x:%02x:%02x:%02x:%02x\n", current->ipv4[0],current->ipv4[1],
+			current->ipv4[2],current->ipv4[3], current->mac[0],current->mac[1],current->mac[2],current->mac[3],current->mac[4],current->mac[5]);
+			struct client_infectivity cl_infec;
+			convert_node_2_infectivity(current,&cl_infec);
+			send_to_monitor((unsigned char *)&cl_infec,REMOVE);
+			free(current);
+			current=prev;
+		}
+		else prev = current;
+		current = (struct client_node *) current->next;
+	}
 }
 
 void delete_old_magic(struct client_node* list){
@@ -244,8 +293,9 @@ void process_dhcp_file(char* filename){
 		perror("Unable to open dhcp file\n");
 		exit(1);
 	}
-    if(modification)
-        delete_old_magic(&start_client);
+	if(modification)
+		delete_old_magic(&start_client);
+	delete_unreachable_clients(&start_client);
 }
 
 time_t check_if_file_was_modified(char* filename, time_t last_modified){
@@ -272,20 +322,28 @@ bool is_file_available(char* filename){
 void connectivity_checker(char* file){
 	printf("Thread awake\n");
 	time_t last_modified = 0;
-	char* filename = (char*)malloc(sizeof(char)*strlen(file));
-	strncpy(filename,file,strlen(file));
+	char extension[5]=".cp";
+	char* filename = (char*)malloc(sizeof(char)*strlen(file)+7);
+	char* filename_copy = (char*)malloc(sizeof(char)*(strlen(file)+ strlen(extension))+7);
+	char *command = (char*)malloc(sizeof(char)*300);
+	strncpy(filename,file,strlen(file)+1);
+	strncpy(filename_copy,file,strlen(file)+1);
+	strncat(filename_copy,extension,strlen(extension));
+	snprintf(command,300,"cp %s %s",filename,filename_copy);
+	
 	if(is_file_available(filename)){
 		while(1){
-			time_t how_long_ago = check_if_file_was_modified(filename,last_modified);
-			if( how_long_ago > 0){
-				printf("File has been modified\n");
-				last_modified += how_long_ago;
-				printf("Running processing...\n");
-				process_dhcp_file(filename);
-			}
-			else{
-				printf("Nothing new\n");
-			}
+			// time_t how_long_ago = check_if_file_was_modified(filename,last_modified);
+			// if( how_long_ago > 0){
+			// printf("File has been modified\n");
+			// last_modified += how_long_ago;
+			printf("Running processing...\n");
+			system(command);
+			process_dhcp_file(filename_copy);
+			// }
+			// else{
+			// 	printf("Nothing new\n");
+			// }
 			sleep(SLEEP_TIME);
 		}
 	}
