@@ -1,16 +1,20 @@
 CC=mipsel-openwrt-linux-gcc
 CFLAGS=-I -Wall -pthread
-OUTPUT_NAME= test-connect-neig
-OUTPUT_FILE=$(OUTPUT_NAME).test
+CONNECT_NAME= connectivity-check
+MONITOR_NAME= infectivity-monitor
+UPDATER_NAME= updater
+OUTPUT_FILE1=$(CONNECT_NAME)
+OUTPUT_FILE2=$(MONITOR_NAME)
+OUTPUT_FILE3=$(UPDATER_NAME)
 EXTERNAL_LIB= ./libtomcrypt/crypt/crypt_argchk.c ./libtomcrypt/misc/compare_testvector.c ./libtomcrypt/hashes/md5.h
-SOURCE_FILES=$(shell ../get_source-files.sh ./source ;../get_source-files.sh ../common | cat |tr '\n' ' ')
-#CURRENT_DIR = $(shell pwd)
-#TMP= $(shell ./prepare-cross-sh)
-#MAIN_FILE= connectivity.c
-MAIN_FILE= test-connect-localhost.c
+#SOURCE_FILES=$(shell ../get_source-files.sh ./source ;../get_source-files.sh ../common | cat |tr '\n' ' ')
+MAIN_FILE= test-connect-localhost.
+SOURCE_FILES1=  ./source/utils.c ./source/networking.c  ./source/list.c  ./source/infectivity_monitor.c  ./source/communication_local.c  ./source/communication_kernel.c ./source/connectivity.c ./source/manage_connectivity_thread.c
+SOURCE_FILES2=  ./source/utils.c ./source/networking.c  ./source/list.c  ./source/infectivity_monitor.c  ./source/communication_kernel.c ./source/manage_infectivity_monitor.c
+SOURCE_FILES3=  ./source/utils.c ./source/networking.c  ./source/list.c  ./source/communication_local.c  ./source/communication_kernel.c ./source/infectivity_monitor.c ./source/get_update.c
 all:
-#	$(CURRENT_DIR)/prepare-cross.sh
-	$(CC) $(CFLAGS) -o $(OUTPUT_FILE) $(EXTERNAL_LIB) $(SOURCE_FILES)
-#	$(CC) $(CFLAGS) -o $(OUTPUT_FILE) $(MAIN_FILE)
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE1) $(EXTERNAL_LIB) $(SOURCE_FILES1)
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE2) $(SOURCE_FILES2)
+	$(CC)   $(CFLAGS)   -ggdb   -o  $(OUTPUT_FILE3) $(SOURCE_FILES3)
 clean:
 	-rm -f *.o
