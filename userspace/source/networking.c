@@ -15,7 +15,7 @@ int receive_data(int sockfd,unsigned char* buf){
 		if(len_data <0 ) return -1; 
 		curr_len += len_data;
 	}
-	printf("Data received\n");
+	//printf("Data received\n");
 	return size_payload;
 }
 
@@ -30,6 +30,6 @@ int send_data(int sockfd,unsigned char* buf, int size_data){
 		if(len_data <0 ) return -1; 
 		curr_len += len_data;
 	}
-	printf("Data sent\n");
+	//printf("Data sent\n");
 	return size_payload;
 }

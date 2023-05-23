@@ -2,7 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+ #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "../headers/communication_local.h"
 #include "../headers/utils.h"
@@ -36,6 +39,17 @@
 // 	}
 // }
 
+int write_data(int file,char* buf, int size_data){
+	int len_data =0 ;
+	int size_payload = size_data;
+	int curr_len =0 ;
+	while(curr_len <= size_payload){
+		len_data = write(file, &buf[curr_len],sizeof(size_payload-curr_len));
+		if(len_data <0 ) return -1; 
+		curr_len += len_data;
+	}
+	return 0;
+}
 
 
 void print_response_get_all(struct response *response){
@@ -57,25 +71,42 @@ void print_response_get_all(struct response *response){
 }
 
 void create_json_get_all(struct response *response, char* output){
+	//int file;
 	FILE *file;
 	size_t i, length;
+	//file = open(output,'w');
 	file = fopen(output,"w");
 	if(file){
-		fprintf(file,"{\"data\":[");
+		// char begining[] = "[{\"data\":[";
+		// write_data(file,begining,strlen(begining));
+		fprintf(file,"[{\"data\":[");
 		length = response->nr_ent;
 		for(i =0;i<length;i++){
 			struct client_infectivity *client = get_from_list(response->data,i);
 			if(client){
+				// char client_str[100]={0};
+				// sprintf(client_str,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",client->ipv4[0],
+				// client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
+				// client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
+				// client->infectivity);
+				// write_data(file,client_str,strlen(client_str));
+
 				fprintf(file,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",client->ipv4[0],
 				client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
 				client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
 				client->infectivity);
 			}
 			if(i != length -1 && client){
+				// char sep[]=",\n";
+				// write_data(file,sep,strlen(sep));
 				fprintf(file,",\n");
 			}
 		}
-		fprintf(file,"]}");
+		// char ending[]="]}]\n";
+		// write_data(file,ending,strlen(ending));
+		// close(file);
+
+		fprintf(file,"]}]\n");
 		fclose(file);
 	}
 }
@@ -100,35 +131,56 @@ void print_response_get_updates(struct response *response){
 }
 
 void create_json_get_updates(struct response *response, char* output){
-	FILE *file;
+	//int file;
+	FILE* file;
 	size_t i;
 	size_t length;
+	//file = open(output,'w');
 	file = fopen(output,"w");
 	if(file){
-		fprintf(file,"{\"updates\":[");
+		//char begining[] = "[{\"updates\":[";
+		//write_data(file,begining,strlen(begining));
+		fprintf(file,"[{\"updates\":[");
 		length = response->nr_ent;
 		for(i =0;i<length;i++){
 			struct job *job = get_from_list(response->data,i);
 			if(job){
+				// char job_str[100]={0};
+				// sprintf(job_str,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
+				// job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+				// job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+				// job->client.infectivity);
+				// write_data(file,job_str,strlen(job_str));
 				fprintf(file,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
 				job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
 				job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
 				job->client.infectivity);
 			}
 			if(i != length -1 && job){
+				// char sep[]=",\n";
+				// write_data(file,sep,strlen(sep));
 				fprintf(file,",\n");
 			}
 		}
-		fprintf(file,"]}");
+		// char ending[]="]}]\n";
+		// write_data(file,ending,strlen(ending));
+		// close(file);
+		fprintf(file,"]}]\n");
 		fclose(file);
 	}
 }
 
 void create_json_error(char* error, char* output){
+	//int file;
 	FILE *file;
 	size_t i, length;
+	// file = open(output,'w');
 	file = fopen(output,"w");
 	if(file){
+		// char error_str[200];
+		// snprintf(error_str,200,"{error:%s}",error);
+		// write_data(file,error_str,strlen(error_str));
+		// close(file);
 		fprintf(file,"{error:%s}",error);
 		fclose(file);
 	}
@@ -159,7 +211,7 @@ int main(int argc,char** argv){
 				}
 				else{
 					//printf("hai sa print\n");
-					print_response_get_all(&response);
+					//print_response_get_all(&response);
 					//printf("hai sa save file\n");
 					create_json_get_all(&response,filename);
 					//printf("hai sa stergem raspuns\n");
@@ -179,7 +231,7 @@ int main(int argc,char** argv){
 					perror(msg);
 					create_json_error(msg, filename);
 				}else{
-					print_response_get_updates(&response);
+					//print_response_get_updates(&response);
 					create_json_get_updates(&response,filename);
 					clear_response(&response,true);
 				}

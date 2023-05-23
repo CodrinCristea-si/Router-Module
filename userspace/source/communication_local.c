@@ -104,7 +104,7 @@ struct response receive_from_monitor(int *sockfd){
 				else{
 					push_to_list(response.data,buf);
 					//printf("received ");
-					print_client_infectivity(buf);
+					//print_client_infectivity(buf);
 				}
 			}
 		}
@@ -122,7 +122,7 @@ struct response receive_from_monitor(int *sockfd){
 			printf("Invalid type %x\n",type);
 		}
 	}
-	printf("Exit commun\n");
+	//printf("Exit commun\n");
 	//free(type);
 	return response;
 	
