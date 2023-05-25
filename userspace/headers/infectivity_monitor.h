@@ -1,6 +1,6 @@
 #include "communication_kernel.h"
-#include "networking.h"
 #include "list.h"
+#include "communicator_network.h"
 
 
 #define MAX_FILE_PATH_SIZE 200

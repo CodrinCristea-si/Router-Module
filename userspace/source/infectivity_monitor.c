@@ -189,6 +189,23 @@ bool check_for_same_user_in_file(char* filename, struct client_infectivity* to_f
 	return in_file;
 }
 
+void convert_from_infectivity_to_network(struct client_infectivity* from, struct network_client_data *to, unsigned char type){
+	size_t i;
+	for (i=0;i<IPV4_SIZE;i++)
+		to->ipv4[i] = from->ipv4[i];
+	for (i=0;i<MAC_SIZE;i++)
+		to->mac[i] = from->mac[i];
+	to->infectivity = from->infectivity;
+	to->type = type;
+}
+
+void send_client_to_network(struct client_infectivity* client,unsigned char type){
+	printf("hai sa trimitem la server\n");
+	struct network_client_data pack;
+	convert_from_infectivity_to_network(client,&pack,type);
+	send_to_network((unsigned char*)&pack,type);
+}
+
 void process_add_job(struct job *job){
 	FILE *file;
 	//printf("add\n");
@@ -215,6 +232,9 @@ void process_add_job(struct job *job){
 			// struct client_repr cl_rpr;
 			// convert_infectivity_2_repr(&job->client,&cl_rpr);
 			// send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
+
+			//network
+			send_client_to_network(&job->client,CLIENT_CONNECT);
 		}
 		
 	}
@@ -274,6 +294,9 @@ void process_remove_job(struct job *job){
 			// struct client_repr cl_rpr;
 			// convert_infectivity_2_repr(&job->client,&cl_rpr);
 			// send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
+
+			//network
+			send_client_to_network(&job->client,CLIENT_DISCONNECT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -315,6 +338,9 @@ void process_transfer_job(struct job *job){
 			// struct client_repr cl_rpr;
 			// convert_infectivity_2_repr(&job->client,&cl_rpr);
 			// send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
+
+			//network
+			send_client_to_network(&job->client,CLIENT_TRANSFER);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
