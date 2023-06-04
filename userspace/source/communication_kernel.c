@@ -142,7 +142,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
 	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
 	if(msg_infec){
-		//print_infec_msg(msg_infec);
+		print_infec_msg(msg_infec);
 		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(INF_MSG_LEN(msg_infec)));
 		//printf("done malloc\n");
 		//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
@@ -153,7 +153,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		payload_id = msg_infec->header.payload_id;
 		// printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
 		// 	((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-		// printf("nhl created\n");
+		printf("nhl created\n");
 		struct iovec iov; 
 		memset(&iov, 0, sizeof(iov));
 		iov.iov_base = (void *) nlh;
@@ -254,7 +254,18 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 			}
 		}
 		else{
-			//ceva update
+			switch (msg_infec->header.payload_type){
+			//ceva pachet
+			case PACKAGE:
+				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
+				//collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
+				response->data = (unsigned char*)malloc(msg_infec->header.payload_len * sizeof(unsigned char));
+				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,msg_infec->header.payload_len);
+				response->type= PACKAGE;
+				response->opt = msg_infec->header.payload_len;
+				break;
+			}
+
 		}
 		nlh = NLMSG_NEXT(nlh, data_len);
 	}
@@ -275,13 +286,55 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 	}
+	printf("Socket created\n");
+
+	struct sockaddr_nl addr; 
+	memset(&addr, 0, sizeof(addr));
+	addr.nl_family = AF_NETLINK;
+	addr.nl_pid = 0;  // For Linux kernel
+	addr.nl_groups = 1; //unicast
+
+	char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
+
+    	int res = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+	if(res < 0){
+		perror("Error while binding!\n");
+		return  NULL;
+	}
+	printf("kernel bind created\n");
+	len = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
+	if(len<0){
+		perror("Error while receiving!\n");
+	
+	}
+	else{
+		response = extract_kernel_response((struct nlmsghdr *)buf,len,payload_id);
+	}
+	free(buf);
+	return response;
+}
+
+struct kernel_response* receive_from_kernel_broadcast(){
+	struct nlmsghdr *nh;
+	struct ndmsg *ndm;
+	struct infec_msg* msg_infec;
+	unsigned char* collector;
+	struct kernel_response* response = NULL;
+	int nr_cl;
+	int fd;
+	int len;
+
+	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
+	if (fd < 0) {
+		perror("Cannot open socket\n");
+	}
 	//printf("Socket created\n");
 
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));
 	addr.nl_family = AF_NETLINK;
 	addr.nl_pid = 0;  // For Linux kernel
-	addr.nl_groups = 0; //unicast
+	addr.nl_groups = 1; //unicast
 
 	char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
 
@@ -292,11 +345,12 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	
 	}
 	else{
-		response = extract_kernel_response((struct nlmsghdr *)buf,len,payload_id);
+		response = extract_kernel_response((struct nlmsghdr *)buf,len,0);
 	}
 	free(buf);
 	return response;
 }
+
 
 void clear_response_kernel(struct kernel_response* response){
 	int nr;

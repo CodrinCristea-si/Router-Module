@@ -27,7 +27,7 @@ struct network_client_data create_package_by_type(unsigned char * data, unsigned
 		.type = 0,
 		.ipv4 = {0},
 		.mac = {0},
-		.infectivity = {0}
+		.infectivity = 0
 	};
 	size_t i;
 	struct network_client_data *cl_data = (struct network_client_data*)data;
@@ -78,7 +78,7 @@ int send_to_network(unsigned char * data, unsigned char type){
 	}
 	printf("connected\n");
 	pack = create_package_by_type(data,type);
-	printf("ack size %d\n",sizeof(struct network_client_data));
+	printf("ack size %ld\n",sizeof(struct network_client_data));
 	print_package_client(&pack);
 	if (pack.type == 0) {
 		perror("cannot create network package\n");

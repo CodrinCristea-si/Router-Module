@@ -118,7 +118,7 @@ void print_response_get_updates(struct response *response){
 	printf("Nr ent %d\n", response->nr_ent);
 	length = response->nr_ent;
 	for(i =0;i<length;i++){
-		struct job *job = get_from_list(response->data,i);
+		struct client_job *job = get_from_list(response->data,i);
 		if(job){
 			printf("Action %d with client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->job_type,job->client.ipv4[0],
 				job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
@@ -143,7 +143,7 @@ void create_json_get_updates(struct response *response, char* output){
 		fprintf(file,"[{\"updates\":[");
 		length = response->nr_ent;
 		for(i =0;i<length;i++){
-			struct job *job = get_from_list(response->data,i);
+			struct client_job *job = get_from_list(response->data,i);
 			if(job){
 				// char job_str[100]={0};
 				// sprintf(job_str,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],

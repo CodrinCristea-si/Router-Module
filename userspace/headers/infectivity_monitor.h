@@ -40,7 +40,8 @@ enum{
 	REMOVE,
 	TRANSFER,
 	GET_ALL,
-	GET_UPDATES
+	GET_UPDATES,
+	PACKAGE_RECEIVED
 };
 
 enum{
@@ -54,19 +55,24 @@ struct client_infectivity{
 	unsigned char infectivity;
 };
 
-struct job{
+struct client_job{
 	unsigned char job_type;
 	struct client_infectivity client;
 };
 
-struct task{
-	int len;
-	struct job job;
-	int sender;
+struct kernel_job{
+	unsigned char job_type;
+	void *pack;
 };
 
-int start_monitoring(char* filename);
+struct task{
+	int len;
+	int sender;
+	void* job;
+};
 
-void print_job(struct job *job);
+int start_monitoring(char *filename, struct network_details* main_net);
+
+void print_job(struct client_job *job);
 
 void print_client_infectivity(struct client_infectivity* client);

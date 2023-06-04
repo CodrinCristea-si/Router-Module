@@ -7,7 +7,7 @@ struct response{
 	List* data;
 };
 
-struct job* create_job(unsigned char* data, unsigned char type);
+struct client_job* create_job(unsigned char* data, unsigned char type);
 
 int send_to_monitor(unsigned char*data, unsigned char type);
 

@@ -12,9 +12,9 @@
 
 
 
-struct job* create_job(unsigned char* data, unsigned char type){
-	struct job* jobs = NULL;
-	jobs =(struct job*) malloc(sizeof(struct job));
+struct client_job* create_job(unsigned char* data, unsigned char type){
+	struct client_job* jobs = NULL;
+	jobs =(struct client_job*) malloc(sizeof(struct client_job));
 	jobs->job_type=type;
 	if(data){
 		struct client_infectivity *client;
@@ -28,7 +28,7 @@ struct job* create_job(unsigned char* data, unsigned char type){
 }
 
 int send_to_monitor(unsigned char*data, unsigned char type){
-	struct job* job = create_job(data,type);
+	struct client_job* job = create_job(data,type);
 	if(!job){
 		perror("Failed to create job\n");
 		return -1;
@@ -57,7 +57,7 @@ int send_to_monitor(unsigned char*data, unsigned char type){
 		return -1;
 	}
 	//printf("Connected\n");
-	len = send_data(sockfd,(unsigned char*)job,sizeof(struct job));
+	len = send_data(sockfd,(unsigned char*)job,sizeof(struct client_job));
 	if(len <= 0){
 		perror("error while sending the message");
 		return -1;
@@ -110,7 +110,7 @@ struct response receive_from_monitor(int *sockfd){
 		}
 		else if(type == UPDATES){
 			for(i=0;i<nr_ent;i++){
-				struct job *buf= (struct job *)malloc(sizeof(struct job));
+				struct job *buf= (struct job *)malloc(sizeof(struct client_job));
 				len = receive_data(*sockfd,(unsigned char*)buf);
 				if(len<=0) break;
 				else{
@@ -129,7 +129,7 @@ struct response receive_from_monitor(int *sockfd){
 }
 
 struct response send_and_receive_from_monitor(unsigned char*data, unsigned char type){
-	struct job* job = create_job(data,type);
+	struct client_job* job = create_job(data,type);
 	if(!job){
 		perror("Failed to create job\n");
 		return create_invalid_response();
@@ -158,7 +158,7 @@ struct response send_and_receive_from_monitor(unsigned char*data, unsigned char 
 		return create_invalid_response();
 	}
 	//printf("connected\n");
-	len = send_data(sockfd,(unsigned char*)job,sizeof(struct job));
+	len = send_data(sockfd,(unsigned char*)job,sizeof(struct client_job));
 	if(len <= 0){
 		perror("error while sending the message");
 		return create_invalid_response();

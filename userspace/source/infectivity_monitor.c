@@ -37,14 +37,34 @@ void print_client_infectivity(struct client_infectivity* client){
 			client->infectivity);
 }
 
-void print_job(struct job *job){
+void print_job(struct client_job *job){
 	printf("Action type %d\n", job->job_type);
 	print_client_infectivity(&job->client);
 }
 
 void print_task(struct task *task){
 	printf("Task len %d and sender %d\n",task->len, task->sender);
-	print_job(&task->job);
+	if(task->sender != -1)
+		print_job(task->job);
+}
+
+void print_package_data(unsigned char* pack, unsigned int size){
+	size_t i;
+	printf("Pointer pack %p\n",pack);
+	if(pack){
+		// printf("%pI4:%d -> %pI4:%d\n",&pack->sourceIP,pack->sourcePort,&pack->destIP,pack->destPort);
+		// printf("NP:%x, TP:%x\n",pack->network_proto, pack->transport_proto);
+		// printf("Data size: %d\n",pack->data_len);
+		for(i=0;i<size;i++){
+			printf("%02x ", pack[i]);
+			if(i > 0 && i%20 == 0)
+				printf("\n");
+			if(i > 100) break;
+		}
+
+	}else{
+		printf("NULL\n");
+	}
 }
 
 void write_client(FILE* file, struct client_infectivity* client){
@@ -208,7 +228,7 @@ void send_client_to_network(struct client_infectivity* client,unsigned char type
 	send_to_network((unsigned char*)&pack,type);
 }
 
-void process_add_job(struct job *job){
+void process_add_job(struct client_job *job){
 	FILE *file;
 	//printf("add\n");
 	bool added = false;
@@ -224,9 +244,9 @@ void process_add_job(struct job *job){
 			added = true;
 			//printf("closed\n");
 			//updates
-			struct job *job_copy = (struct job *)malloc(sizeof(struct job));
+			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
 			//printf("malloc\n");
-			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job));
+			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job));
 			//printf("copy\n"); 
 			push_to_list(updates,(void*)job_copy);
 			//printf("push\n");
@@ -261,7 +281,7 @@ void transfer_between_files(char* filename_from, char* filename_to){
 	}
 }
 
-void process_remove_job(struct job *job){
+void process_remove_job(struct client_job *job){
 	FILE *file, *file_aux;
 	struct client_infectivity *client;
 	bool deleted = false;
@@ -289,8 +309,8 @@ void process_remove_job(struct job *job){
 		transfer_between_files(aux_file,storage_file);
 		if(deleted){
 			//updates
-			struct job *job_copy = (struct job *)malloc(sizeof(struct job));
-			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job)); 
+			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
+			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job)); 
 			push_to_list(updates,(void*)job_copy);
 			//kernel
 			// struct client_repr cl_rpr;
@@ -304,7 +324,7 @@ void process_remove_job(struct job *job){
 	pthread_mutex_unlock(&mutex_storage);
 }
 
-void process_transfer_job(struct job *job){
+void process_transfer_job(struct client_job *job){
 	FILE *file, *file_aux;
 	struct client_infectivity *client;
 	bool transfered = false;
@@ -333,8 +353,8 @@ void process_transfer_job(struct job *job){
 		transfer_between_files(aux_file,storage_file);
 		if(transfered){
 			//updates
-			struct job *job_copy = (struct job *)malloc(sizeof(struct job));
-			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct job));
+			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
+			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job));
 			push_to_list(updates,(void*)job_copy);
 			//kernel
 			// struct client_repr cl_rpr;
@@ -384,7 +404,7 @@ void send_to_sender(int sockfd, unsigned char type, unsigned char* data){
 					length = list->size;
 					for(i=0;i< length;i++){
 						void* data = pop_from_list(list);
-						send_data(sockfd,data,sizeof(struct job));
+						send_data(sockfd,data,sizeof(struct client_job));
 					}
 					clear_list(list);
 				}
@@ -448,31 +468,64 @@ List* process_get_all_job(){
 	return list;
 }
 
+void process_package_received(unsigned char *pack, unsigned int size){
+	print_package_data(pack, size);
+}
+
+void clear_job(unsigned char *job, bool is_kernel){
+	if(is_kernel){
+		if(job){
+			if(((struct kernel_job*)job)->pack)
+				free(((struct kernel_job*)job)->pack);
+			free(job);
+		}
+	}else{
+		if(job) free(job);
+	}
+}
+
 void process_task(struct task to_execute){
 	//printf("enter process\n");
 	List* list;
-	switch (to_execute.job.job_type)
+	switch (to_execute.sender)
 	{
-	case ADD:
-		process_add_job(&to_execute.job);
+	case -1: ///kernel
+		switch (((struct kernel_job*)(to_execute.job))->job_type){
+		case PACKAGE_RECEIVED:
+			process_package_received(to_execute.job, to_execute.len);
+			break;
+		default:
+			break;
+		}
+		clear_job(to_execute.job,true);
 		break;
-	case REMOVE:
-		process_remove_job(&to_execute.job);
-		break;
-	case TRANSFER:
-		process_transfer_job(&to_execute.job);
-		break;
-	case GET_ALL:
-		list = process_get_all_job();
-		send_to_sender(to_execute.sender,ALL_DATA,(unsigned char*)list);
-		break;
-	case GET_UPDATES:
-		list = process_get_updates_job();
-		send_to_sender(to_execute.sender,UPDATES,(unsigned char*)list);
-		break;
-	default:
+	default: ///userspace or network
+		switch (((struct client_job*)(to_execute.job))->job_type)
+		{
+		case ADD:
+			process_add_job(to_execute.job);
+			break;
+		case REMOVE:
+			process_remove_job(to_execute.job);
+			break;
+		case TRANSFER:
+			process_transfer_job(to_execute.job);
+			break;
+		case GET_ALL:
+			list = process_get_all_job();
+			send_to_sender(to_execute.sender,ALL_DATA,(unsigned char*)list);
+			break;
+		case GET_UPDATES:
+			list = process_get_updates_job();
+			send_to_sender(to_execute.sender,UPDATES,(unsigned char*)list);
+			break;
+		default:
+			break;
+		}
+		clear_job(to_execute.job,false);
 		break;
 	}
+	
 	//printf("exit process\n");
 }
 
@@ -480,25 +533,56 @@ bool is_job_a_getter(unsigned char job_type){
 	return job_type == GET_ALL || job_type == GET_UPDATES;
 }
 
-struct job parse_job(unsigned char *data,int size){
-	struct job job;
+struct client_job* parse_client_job(unsigned char *data,int size){
+	struct client_job* job;
 	size_t i;
 	int poz =0;
-	job.job_type = data[poz];
+	job = (struct client_job*)malloc(sizeof(struct client_job));
+	job->job_type = data[poz];
 	poz++;
-	if(!is_job_a_getter(job.job_type)){
+	if(!is_job_a_getter(job->job_type)){
 		for(i=0;i<IPV4_SIZE;i++){
-			job.client.ipv4[i]= data[poz];
+			job->client.ipv4[i]= data[poz];
 			//printf("ip %d\n",data[poz]);
 			poz++;
 		}
 		for(i=0;i<MAC_LEN;i++){
-			job.client.mac[i]= data[poz];
+			job->client.mac[i]= data[poz];
 			//printf("mac %x\n",data[poz]);
 			poz++;
 		}
-		job.client.infectivity = data[poz];
+		job->client.infectivity = data[poz];
 	}
+	return job;
+}
+
+unsigned char get_job_type_from_data(unsigned char *data){
+	return data[0];
+}
+
+struct kernel_job* parse_kernel_job(unsigned char *data,int size){
+	struct kernel_job* job;
+	size_t i;
+	int poz =0;
+	job = (struct kernel_job*)malloc(sizeof(struct kernel_job));
+	job->job_type = PACKAGE_RECEIVED;
+	//memcpy(&job->pack,data,size);
+	job->pack = (unsigned char*)malloc(size * sizeof(unsigned char));
+	memcpy(job->pack,data,size);
+	// poz++;
+	// if(!is_job_a_getter(job->job_type)){
+	// 	for(i=0;i<IPV4_SIZE;i++){
+	// 		job->client.ipv4[i]= data[poz];
+	// 		//printf("ip %d\n",data[poz]);
+	// 		poz++;
+	// 	}
+	// 	for(i=0;i<MAC_LEN;i++){
+	// 		job->client.mac[i]= data[poz];
+	// 		//printf("mac %x\n",data[poz]);
+	// 		poz++;
+	// 	}
+	// 	job->client.infectivity = data[poz];
+	// }
 	return job;
 }
 
@@ -508,7 +592,11 @@ struct task* parse_task(unsigned char *data,int size, int sender){
 	//printf("ok1\n");
 	new_task->len=size;
 	//printf("ok2\n");
-	new_task->job = parse_job(data,size);
+	if (sender > 0 )
+		new_task->job = parse_client_job(data,size);
+	else{
+		new_task->job = parse_kernel_job(data,size);
+	}
 	//printf("ok3\n");
 	new_task->sender= sender;
 	//printf("ok4\n");
@@ -524,7 +612,7 @@ void inject_task(char* data,int size, int sender){
 	push_to_list(task_pool,new_task);
 	//printf("ok5\n");
 	//printf("Task added\n");
-	//print_task(new_task);
+	print_task(new_task);
 	pthread_cond_signal(&cond);
 	pthread_mutex_unlock(&mutex);
 }
@@ -557,6 +645,19 @@ void *worker(){
 	}
 }
 
+
+void *kernel_listener(){
+	printf("listener awake\n");
+	struct kernel_response *resp;
+	while(1){
+		resp = receive_from_kernel(0);
+		printf("received %p from kernel\n",resp);
+		if(resp){
+			inject_task(resp->data,resp->opt,-1);
+			clear_response_kernel(resp);
+		}
+	}
+}
 
 void send_ready_signal_to_kernel(){
 	send_message_to_kernel((unsigned char*)&main_network,CONFIGURE);
@@ -607,6 +708,11 @@ void* main_server(){
 		clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&len);
 		//printf("client with ip %s connected\n", inet_ntoa(client_addr.sin_addr));
 		size = receive_data(clientfd,buf);
+		if(size <= 5){
+			int res;
+			ch2int(buf,&res);
+			printf("Package data size %d\n",res);
+		}
 		if(size > 0)
 			inject_task(buf,size,clientfd);
 		else{
@@ -640,16 +746,18 @@ int start_monitoring(char *filename, struct network_details* main_net){
 		//fprintf(filedesc,"\n");
 		fclose(filedesc);
 		//printf("File opened\n");
-		for(i=0;i<NUMBER_OF_WORKERS+1;i++){
+		for(i=0;i<NUMBER_OF_WORKERS+2;i++){
 			if(i == 0){
 				pthread_create(&thr[i],NULL,main_server,NULL);
+			}if(i == 1){
+				pthread_create(&thr[i],NULL,kernel_listener,NULL);
 			}
 			else{
 				pthread_create(&thr[i],NULL,worker,NULL);
 			}
 		}
 		//printf("Threads created\n");
-		for(i=0;i<NUMBER_OF_WORKERS+1;i++){
+		for(i=0;i<NUMBER_OF_WORKERS+2;i++){
 			pthread_join(thr[i],NULL);
 		}
 	}
