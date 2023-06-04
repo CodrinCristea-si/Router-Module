@@ -20,27 +20,44 @@
 
 struct nf_hook_ops *interceptor_hook_ops = NULL;
 struct sock *netlink_socket = NULL;
+struct mutex *nl_mutex;
 
 //struct nf_hook_ops *local_hook_ops = NULL;
 struct network_details lan;
 struct network_details *collector = NULL; 
+bool is_configured = false;
+
 
 unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const struct nf_hook_state *state){
 
 	struct iphdr* ip_h;
+	struct tcphdr* tcp_h;
+	struct udphdr* udp_h;
 	__be32 source_ip, dest_ip;
+	//struct package_data* pack;
+	unsigned char* pack;
+	int pack_size =0;
 
 	// if(is_lockdown_mode())
 	// 	return NF_DROP;
+
+	// if(!is_configured){
+	// 	return NF_ACCEPT;
+	// }
 
 	//only ipv4 based packages allowed
 	if (!skb || skb->protocol != htons(ETH_P_IP))
 		return NF_ACCEPT;
 
-	ip_h = ip_hdr(skb);
-	source_ip = ip_h->saddr;
-	dest_ip = ip_h->daddr;
+	// ip_h = ip_hdr(skb);
+	// source_ip = ip_h->saddr;
+	// dest_ip = ip_h->daddr;
 
+	pack = create_package_data_v2(skb,&pack_size,true);
+	print_package_data_v2(pack,pack_size,true);
+	send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
+	//send_to_user_server((unsigned char*)pack,get_size_of_package_data(pack));
+	clear_package_data_v2(pack,true);
 	//printk(KERN_INFO "Intercepted package from %pI4 to %pI4 of type %02x\n", &source_ip, &dest_ip, ip_h->protocol);
 	//if the client is not part of any kind, then no packages are allowed
 	//check if the package comes from the router

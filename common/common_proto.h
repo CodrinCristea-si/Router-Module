@@ -69,7 +69,8 @@ enum{
 #define ERROR ERROR
 	CLIENTS_DATA,		//12
 #define CLIENTS_DATA CLIENTS_DATA
-//inca ceva
+	PACKAGE,		//13
+#define PACKAGE PACKAGE
 };
 
 /*
@@ -243,6 +244,16 @@ layout payload ERROR:
    --------------------------
 */
 
+struct package_data{
+	__be32 sourceIP;
+	__be32 destIP;
+	unsigned int sourcePort;
+	unsigned int destPort;
+	unsigned int data_len;
+	unsigned char network_proto;
+	unsigned char transport_proto;
+	//unsigned char* data;
+};
 
 struct configure{
 	__be32 subnet;
@@ -473,9 +484,9 @@ static int create_header(char id,char type,int len_data, struct header_payload *
 
 static int create_message(struct header_payload *header, unsigned char* data, struct infec_msg* collector){
 	if(header){
-		copy_uchar_values((unsigned char*)header, (unsigned char*)INF_MSG_HEADER(collector),INF_MSG_HEADER_LEN(collector));
+		memcpy((unsigned char*)INF_MSG_HEADER(collector),(unsigned char*)header,INF_MSG_HEADER_LEN(collector));
 		if(data)
-			copy_uchar_values((unsigned char*)data, (unsigned char*)INF_MSG_DATA(collector), header->payload_len);
+			memcpy((unsigned char*)INF_MSG_DATA(collector),(unsigned char*)data, header->payload_len);
 		return 0;
 	}
 	return -1;
