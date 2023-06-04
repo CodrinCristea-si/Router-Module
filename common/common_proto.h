@@ -53,11 +53,12 @@ enum {
 #define REMOVE_CLIENT REMOVE_CLIENT
 	TRANSFER_CLIENT,	//3
 #define TRANSFER_CLIENT TRANSFER_CLIENT
-	GET_CLIENT,			//4
+	GET_CLIENT,		//4
 #define GET_CLIENT GET_CLIENT
 	GET_CLIENTS,		//5
 #define GET_CLIENTS GET_CLIENTS
-
+	CONFIGURE,		//6
+#define CONFIGURE CONFIGURE
 };
 
 //RESPONSES
@@ -107,6 +108,27 @@ byte
 
 REQUESTS
 
+layout payload CONFIGURE:
+	   payload
+     0  1  2  3  4  5  6  7   bite
+   --------------------------
+ 0 |                        |
+ 1 |        SUBNET          |
+ 2 |                        |
+ 3 |                        |
+   |------------------------|
+ 4 |                        |
+ 5 |        NETMASK         |
+ 6 |                        |
+ 7 |                        |
+   |------------------------|
+ 8 |                        |
+ 9 |      IP_ROUTER         |
+10 |                        |
+11 |                        |
+   --------------------------
+byte
+
 layout payload ADD_CLIENT:
 	   payload
      0  1  2  3  4  5  6  7   bite
@@ -128,7 +150,7 @@ layout payload ADD_CLIENT:
 11 |                        |
    |------------------------|
 12 |                        |
-13 |        Padding         |
+13 |        Padding         | (optional)
    --------------------------
 byte
 
@@ -187,7 +209,7 @@ c  |      STANDARD GET      |                                          }
 -  |                        |                                          }
 s  |                        | _________________________________________}
    |------------------------|
-t  |                        |
+t  |                        | (optional)
 u  |        Padding         |
    --------------------------
 byte
@@ -217,9 +239,16 @@ layout payload ERROR:
    |                        | ____}
    |------------------------|
    |                        |
-   |        Padding         |
+   |        Padding         |  (optional)
    --------------------------
 */
+
+
+struct configure{
+	__be32 subnet;
+	__be32 netmask;
+	__be32 ip_router;
+};
 
 struct client_repr{
 	int ip_addr;

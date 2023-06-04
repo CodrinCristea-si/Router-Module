@@ -10,6 +10,12 @@ struct kernel_response{
 	unsigned char *data;
 };
 
+struct network_details{
+	int subnet;
+	int netmask;
+	int ip_router;
+};
+
 struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned char type);
 
 struct infec_msg* create_get_clients_msg(unsigned char type);

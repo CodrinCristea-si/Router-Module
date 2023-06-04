@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include "../headers/infectivity_monitor.h"
+#include "../headers/utils.h"
 
 char pid_file[30] =".pid_monitor";
 
@@ -38,7 +39,7 @@ int shutdown_thread(){
 }
 
 
-int deploy_thread(char* filename){
+int deploy_thread(char* filename, struct network_details* main_net){
 	printf("Atempting to deploy...\n");
 	pid_t pid_th,sid_th;
 	char file[MAX_FILE_PATH_SIZE];
@@ -86,7 +87,7 @@ int deploy_thread(char* filename){
 		// }
 
 		//Start working
-		start_monitoring(file);
+		start_monitoring(file, main_net);
 		return 0;
 	}
 	return 0;
@@ -96,18 +97,52 @@ int main(int argc, char** argv){
 	srand(time(NULL));
 	if(argc>1){
 		if(strncmp("-start",argv[1],6) == 0){
-			char *filename;
+			char *filename, *subnet, *netmask, *ip_router;
+			struct network_details network;
 			if(argc>2){
 				filename = (char *)malloc(sizeof(char)*strlen(argv[2])+2);
 				strncpy(filename,argv[2],strlen(argv[2]));
 				printf("file1 %s\n",filename);
 			}
+			if(argc>5){
+				subnet = (char *)malloc(sizeof(char)*strlen(argv[3])+2);
+				strncpy(subnet,argv[3],strlen(argv[3]));
+				printf("subnet %s\n",subnet);	
+
+				netmask = (char *)malloc(sizeof(char)*strlen(argv[4])+2);
+				strncpy(netmask,argv[4],strlen(argv[4]));
+				printf("netmask %s\n",netmask);	
+
+				ip_router = (char *)malloc(sizeof(char)*strlen(argv[5])+2);
+				strncpy(ip_router,argv[5],strlen(argv[5]));
+				printf("ip_router %s\n",ip_router);	
+				if(compare_regex(subnet,REGEX_IPV4) != 0) {
+					perror("Invalid subnet\n");
+					return -1;
+				}
+				if(compare_regex(netmask,REGEX_IPV4) != 0) {
+					perror("Invalid netmask\n");
+					return -1;
+				}
+				if(compare_regex(ip_router,REGEX_IPV4) != 0) {
+					perror("Invalid IP router\n");
+					return -1;
+				}
+				str2ipv4(subnet,(unsigned char*)&network.subnet);
+				str2ipv4(netmask,(unsigned char*)&network.netmask);
+				str2ipv4(ip_router,(unsigned char*)&network.ip_router);
+			}
 			// else{
 			// 	perror("No file location\n");
 			// 	return -1;
 			// }
-			deploy_thread(filename);
+			deploy_thread(filename,&network);
 			if(argc>2)free(filename);
+			if(argc>5){
+				free(subnet);
+				free(netmask);
+				free(ip_router);
+			}
 		}
 		else if(strncmp("-stop",argv[1],5) == 0){
 			shutdown_thread();

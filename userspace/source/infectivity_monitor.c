@@ -28,6 +28,8 @@ pthread_mutex_t mutex_storage;
 
 List *updates;
 
+struct network_details main_network;
+
 void print_client_infectivity(struct client_infectivity* client){
 	printf("Client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",client->ipv4[0],
 			client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
@@ -555,7 +557,11 @@ void *worker(){
 	}
 }
 
-//should change to tcp
+
+void send_ready_signal_to_kernel(){
+	send_message_to_kernel((unsigned char*)&main_network,CONFIGURE);
+}
+
 void* main_server(){
 	int sockfd, clientfd;
 	struct sockaddr_in serv_addr;
@@ -596,6 +602,7 @@ void* main_server(){
 	// printf("Hello message sent.\n");
 	char *buf = (char*)malloc(MAX_BUFFER_SIZE*sizeof(char));
 	int size;
+	send_ready_signal_to_kernel();
 	while(1){
 		clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&len);
 		//printf("client with ip %s connected\n", inet_ntoa(client_addr.sin_addr));
@@ -614,9 +621,10 @@ void* main_server(){
 	close(sockfd);
 }
 
-int start_monitoring(char *filename){
+int start_monitoring(char *filename, struct network_details* main_net){
 	if(filename && strlen(filename) > 0)
 		strncpy(storage_file,filename,sizeof(filename));
+	main_network = *main_net;
 	pthread_t thr[NUMBER_OF_WORKERS +1];
 	size_t i;
 	//printf("Creating threads ... \n");

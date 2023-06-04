@@ -153,6 +153,9 @@ struct infec_msg* create_infec_msg(unsigned char* data,unsigned char type, int p
 		package= create_error_msg(data,type);
 		if(payload_id > 0)package->header.payload_id=payload_id;
 		return package;
+	case PACKAGE:
+		package = create_packet_msg(data,payload_id,type);
+		return package;
 	default:
 		break;
 	}

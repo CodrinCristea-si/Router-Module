@@ -72,6 +72,32 @@ struct infec_msg* create_get_clients_msg(unsigned char type){
 	return msg_infec;
 }
 
+struct infec_msg* create_config_msg(struct network_details *network, unsigned char type){
+	struct header_payload *hdr_inf;
+	struct infec_msg* msg_infec = NULL;
+	if(network){
+		unsigned char *data = (unsigned char *)calloc(sizeof(struct network_details),sizeof(char));
+		memcpy(data, network, sizeof(struct network_details));
+		printf("Data created %ld\n", sizeof(struct network_details));
+		/// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
+		// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
+
+		hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
+		create_header(rand()%(int)(MAX_ID), type, sizeof(struct network_details),hdr_inf);
+		printf("Header created\n");
+		// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
+		// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
+		msg_infec = (struct infec_msg *)calloc(INF_MSG_LEN_H(hdr_inf), sizeof(char));
+		create_message(hdr_inf,data,msg_infec);
+
+		free(data);
+		free(hdr_inf);
+
+		printf("Msg created\n");
+	}
+	return msg_infec;
+}
+
 struct infec_msg* create_infec_msg_by_type(unsigned char* data, unsigned char type){
 	switch (type)
 	{
@@ -86,6 +112,8 @@ struct infec_msg* create_infec_msg_by_type(unsigned char* data, unsigned char ty
 		break;
 	case GET_CLIENTS:
 		return create_get_clients_msg(type);
+	case CONFIGURE:
+		return create_config_msg((struct network_details *)data, type);
 		break;
 	default:
 		break;
@@ -98,13 +126,13 @@ void clear_infec_msg(struct infec_msg * msg_infec){
 
 
 int send_message_to_kernel(unsigned char* data, unsigned char type){
-	int payload_id;
+	int payload_id, res;
 	int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 		return -1;
 	}
-	//printf("Socket created\n");
+	printf("Socket kernel created\n");
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));
 	addr.nl_family = AF_NETLINK;
@@ -137,12 +165,18 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		msg.msg_namelen = sizeof(addr);
 		msg.msg_iov = &iov;
 		msg.msg_iovlen = 1;
-		//printf("Message created\n");
+		printf("Message created\n");
 		
-		sendmsg(fd, &msg, 0);
+		res = sendmsg(fd, &msg, 0);
+		if (res < 0){
+			perror("Cannot send to kernel\n");
+		}
+		else{
+			printf("Sent message to kernel\n");
+		}
 		clear_infec_msg(msg_infec);
 		
-		//printf("Sent message to kernel\n");
+		
 		return payload_id;
 	}
 	else{

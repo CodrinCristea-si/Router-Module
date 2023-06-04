@@ -4,10 +4,14 @@
 #include <linux/netfilter.h>
 #include <linux/netfilter_ipv4.h>
 #include <linux/ip.h>
+#include <linux/tcp.h>
 #include <linux/udp.h>
 #include <linux/types.h>
 #include <linux/netlink.h>
+#include <linux/netdevice.h>
 #include <net/sock.h>
+#include <linux/mutex.h>
+
 #include <linux/net_namespace.h>
 //#include <linux/dhcp.h>
 #include "../headers/interceptor.h"
@@ -107,6 +111,32 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 //     return true;
 //}
 
+int init_hook(void){
+	if(!interceptor_hook_ops){
+		interceptor_hook_ops = (struct nf_hook_ops*)kcalloc(1,sizeof(struct nf_hook_ops), GFP_KERNEL);
+		if(interceptor_hook_ops){
+			interceptor_hook_ops->hook = (nf_hookfn*)interceptor_hook_handle;
+			interceptor_hook_ops->hooknum = NF_INET_PRE_ROUTING;
+			interceptor_hook_ops->pf = NFPROTO_IPV4;
+			interceptor_hook_ops->priority = NF_IP_PRI_FIRST;
+			
+			nf_register_net_hook(&init_net, interceptor_hook_ops);
+			printk(KERN_INFO "Hook initialized with success\n");
+			return 0;
+		}
+		return -1;
+	}
+	return 0;
+}
+
+void clear_hook(void){
+	if(interceptor_hook_ops){
+		nf_unregister_net_hook(&init_net, interceptor_hook_ops);
+		kfree(interceptor_hook_ops);
+		interceptor_hook_ops=NULL;
+		printk(KERN_INFO "Interceptor removed\n");
+	}
+}
 
 static void netlink_handle(struct sk_buff *skb){
 	struct nlmsghdr *nhl;
@@ -114,6 +144,7 @@ static void netlink_handle(struct sk_buff *skb){
 	struct header_payload* hdr;
 	struct client_def *client, *empty_client;
 	struct clients_list *all_clients;
+	struct configure* config;
 
 	int nr_cl, size;
 	int ret;
@@ -160,6 +191,24 @@ static void netlink_handle(struct sk_buff *skb){
 			else printk(KERN_INFO "Transfered client %pI4 to %x\n",&client->ip_addr, client->infectivity);
 			kfree(client);
 			break;
+
+		case CONFIGURE:
+			if(!is_configured){
+				config = INF_MSG_DATA(msg);
+				if(config){
+					struct network_details lan_network = {
+						.subnet_ip = config->subnet,
+						.mask = config->netmask,
+						.ip_addr = config->ip_router,
+						.list = NULL,
+					};
+					is_configured = true;
+					if(init_hook())clear_hook();
+					printk(KERN_INFO "CONFIGURE successfull on %pI4(%pI4)\n",&config->subnet, &config->netmask);
+				}
+			}
+			break;
+		// usefull and broken, maybe some rework and it may become something 
 		// case GET_CLIENT:
 		// 	client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 		// 	extract_client_repr_payload(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
@@ -228,20 +277,17 @@ int initialise_interceptor(void){
 		clear_interceptor();
 		goto end;
 	}
-	printk(KERN_INFO "Socket initialized with success\n");
-	interceptor_hook_ops = (struct nf_hook_ops*)kcalloc(1,sizeof(struct nf_hook_ops), GFP_KERNEL);
-	if(interceptor_hook_ops){
-		interceptor_hook_ops->hook = (nf_hookfn*)interceptor_hook_handle;
-		interceptor_hook_ops->hooknum = NF_INET_PRE_ROUTING;
-		interceptor_hook_ops->pf = NFPROTO_IPV4;
-		interceptor_hook_ops->priority = NF_IP_PRI_FIRST;
-		
-		nf_register_net_hook(&init_net, interceptor_hook_ops);
-		printk(KERN_INFO "Hook initialized with success\n");
-		return 0;
+	
+	nl_mutex = (struct mutex *)kcalloc(1,sizeof(struct mutex), GFP_KERNEL);
+	if (!nl_mutex) {
+		printk(KERN_INFO "Mutex initialize failed\n");
+		clear_interceptor();
+		goto end;
 	}
+	mutex_init(nl_mutex);
 
-
+	printk(KERN_INFO "Socket initialized with success\n");
+	return 0;
 	// local_hook_ops = (struct nf_hook_ops*)kcalloc(1,sizeof(struct nf_hook_ops), GFP_KERNEL);
 	// if(local_hook_ops){
 	// 	local_hook_ops->hook = (nf_hookfn*)local_hook_handle;
@@ -268,6 +314,11 @@ int clear_interceptor(void){
 		kfree(interceptor_hook_ops);
 		interceptor_hook_ops=NULL;
 		printk(KERN_INFO "Interceptor removed\n");
+	}
+
+	if(nl_mutex){
+		mutex_destroy(nl_mutex);
+		kfree(nl_mutex);
 	}
 
 	// if(local_hook_ops){
