@@ -30,7 +30,14 @@ class InfectivityManager:
         self.__client_manager.remove_client(ip,mac)
 
     def __check_if_client_can_be_reaced(self,ip:str):
-        pass
+        com = ITC(Server._MAIN_IP,ITC._TESTER_PORT,self.__logger)
+        com.connect()
+        com.send_request(InfectivityRequest(InfectivityRequestType.CHECK_CLIENT,[ip]))
+        response = com.read_response()
+        is_reachable = False
+        if response.type == InfectivityResponseType.STATUS_AVAILABLE:
+            is_reachable = True
+        return is_reachable
 
     
 
