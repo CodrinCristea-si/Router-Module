@@ -18,20 +18,23 @@ struct network_details{
 #define BIG_ENDIAN
 #endif
 
-#ifdef BIG_ENDIAN 
+#ifdef __LITTLE_ENDIAN_BITFIELD
 #define SUBNET_A 0X0000000A
 #define MASK_A   0X000000FF
 #define SUBNET_B 0X000001AC
 #define MASK_B   0X00000FFF
 #define SUBNET_C 0X0000A8C0
 #define MASK_C   0X0000FFFF
-#else
+#define LOOPBACK_IP 0X0100007F
+#endif
+#ifdef __BIG_ENDIAN_BITFIELD
 #define SUBNET_A 0X0A000000
 #define MASK_A   0XFF000000
 #define SUBNET_B 0XAC010000
 #define MASK_B   0XFF0F0000
 #define SUBNET_C 0XC0A80000
 #define MASK_C   0XFFFF0000
+#define LOOPBACK_IP 0X7F000001
 #endif
 
 int get_network_interfaces_list(struct network_details* collector);

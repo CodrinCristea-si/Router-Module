@@ -27,6 +27,17 @@ struct network_details lan;
 struct network_details *collector = NULL; 
 bool is_configured = false;
 
+ bool check_if_not_belonged_to_router(struct sk_buff *skb){
+	struct iphdr* ip_h;
+	__be32 tmp = LOOPBACK_IP;
+	if (!skb) return true;
+	ip_h = ip_hdr(skb);
+	if(!ip_h) return true;
+	printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan.ip_addr);
+	if (ip_h->saddr == tmp || ip_h->saddr == lan.ip_addr)
+		return true;
+	return false;
+ }
 
 unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const struct nf_hook_state *state){
 
@@ -35,7 +46,7 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	struct udphdr* udp_h;
 	__be32 source_ip, dest_ip;
 	//struct package_data* pack;
-	unsigned char* pack;
+	unsigned char* pack=NULL;
 	int pack_size =0;
 
 	// if(is_lockdown_mode())
@@ -52,10 +63,15 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	// ip_h = ip_hdr(skb);
 	// source_ip = ip_h->saddr;
 	// dest_ip = ip_h->daddr;
-
+	if (check_if_not_belonged_to_router(skb)){
+		return NF_ACCEPT;
+	}
 	pack = create_package_data_v2(skb,&pack_size,true);
-	print_package_data_v2(pack,pack_size,true);
-	send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
+	if (pack_size){
+		print_package_data_v2(pack,pack_size,true);
+		send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
+	}
+	//send_to_user_broadcast_v2((unsigned char*)pack, pack_size, PACKAGE, NETLINK_PROTO_INFECTED , 2);
 	//send_to_user_server((unsigned char*)pack,get_size_of_package_data(pack));
 	clear_package_data_v2(pack,true);
 	//printk(KERN_INFO "Intercepted package from %pI4 to %pI4 of type %02x\n", &source_ip, &dest_ip, ip_h->protocol);
@@ -213,12 +229,9 @@ static void netlink_handle(struct sk_buff *skb){
 			if(!is_configured){
 				config = INF_MSG_DATA(msg);
 				if(config){
-					struct network_details lan_network = {
-						.subnet_ip = config->subnet,
-						.mask = config->netmask,
-						.ip_addr = config->ip_router,
-						.list = NULL,
-					};
+					lan.subnet_ip = config->subnet;
+					lan.mask = config->netmask;
+					lan.ip_addr = config->ip_router;
 					is_configured = true;
 					if(init_hook())clear_hook();
 					printk(KERN_INFO "CONFIGURE successfull on %pI4(%pI4)\n",&config->subnet, &config->netmask);
@@ -288,13 +301,6 @@ int initialise_interceptor(void){
 	get_network_interfaces_list(collector);
 	lan = get_lan_network_from_list(collector);
 	
-	netlink_socket = netlink_kernel_create(&init_net, NETLINK_PROTO_INFECTED, &config);
-	if (!netlink_socket) {
-		printk(KERN_INFO "Socket initialize failed\n");
-		clear_interceptor();
-		goto end;
-	}
-	
 	nl_mutex = (struct mutex *)kcalloc(1,sizeof(struct mutex), GFP_KERNEL);
 	if (!nl_mutex) {
 		printk(KERN_INFO "Mutex initialize failed\n");
@@ -302,6 +308,14 @@ int initialise_interceptor(void){
 		goto end;
 	}
 	mutex_init(nl_mutex);
+	config.cb_mutex = nl_mutex;
+
+	netlink_socket = netlink_kernel_create(&init_net, NETLINK_PROTO_INFECTED, &config);
+	if (!netlink_socket) {
+		printk(KERN_INFO "Socket initialize failed\n");
+		clear_interceptor();
+		goto end;
+	}
 
 	printk(KERN_INFO "Socket initialized with success\n");
 	return 0;

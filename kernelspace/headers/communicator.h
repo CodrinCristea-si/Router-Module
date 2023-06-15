@@ -31,3 +31,7 @@ void send_to_user_server(unsigned char* data,int data_size);
 //void send_to_user_package(struct sock* netlink_socket,unsigned char* data,int data_size);
 
 void send_to_user_broadcast(struct sock* netlink_socket,unsigned char* data, int size, unsigned char type, int payload_id, struct mutex *nl_mutex);
+
+void send_to_user_multicast(struct sock* netlink_socket,unsigned char* data, int size, unsigned char type,int payload_id , struct mutex *nl_mutex);
+
+void send_to_user_broadcast_v2(unsigned char* data, int size, unsigned char type, int netlink_ch , int netlink_gr);
