@@ -484,6 +484,19 @@ void clear_job(unsigned char *job, bool is_kernel){
 	}
 }
 
+void clear_task(struct task *to_execute){
+	if(to_execute){
+		if (to_execute->job){
+			if(to_execute->sender == -1){
+				clear_job(to_execute->job,true);
+			}else{
+				clear_job(to_execute->job,false);
+			}
+		}
+		free(to_execute);
+	}
+}
+
 void process_task(struct task to_execute){
 	//printf("enter process\n");
 	List* list;
@@ -497,7 +510,7 @@ void process_task(struct task to_execute){
 		default:
 			break;
 		}
-		clear_job(to_execute.job,true);
+		//clear_job(to_execute.job,true);
 		break;
 	default: ///userspace or network
 		switch (((struct client_job*)(to_execute.job))->job_type)
@@ -522,7 +535,7 @@ void process_task(struct task to_execute){
 		default:
 			break;
 		}
-		clear_job(to_execute.job,false);
+		//clear_job(to_execute.job,false);
 		break;
 	}
 	
@@ -568,21 +581,7 @@ struct kernel_job* parse_kernel_job(unsigned char *data,int size){
 	job->job_type = PACKAGE_RECEIVED;
 	//memcpy(&job->pack,data,size);
 	job->pack = (unsigned char*)malloc(size * sizeof(unsigned char));
-	memcpy(job->pack,data,size);
-	// poz++;
-	// if(!is_job_a_getter(job->job_type)){
-	// 	for(i=0;i<IPV4_SIZE;i++){
-	// 		job->client.ipv4[i]= data[poz];
-	// 		//printf("ip %d\n",data[poz]);
-	// 		poz++;
-	// 	}
-	// 	for(i=0;i<MAC_LEN;i++){
-	// 		job->client.mac[i]= data[poz];
-	// 		//printf("mac %x\n",data[poz]);
-	// 		poz++;
-	// 	}
-	// 	job->client.infectivity = data[poz];
-	// }
+	copy_uchar_values(data,job->pack,size);
 	return job;
 }
 
@@ -642,6 +641,8 @@ void *worker(){
 		task_to_execute = extract_task();
 		process_task(task_to_execute);
 		close(task_to_execute.sender);
+		//clear_task(task_to_execute);
+
 	}
 }
 
@@ -649,12 +650,22 @@ void *worker(){
 void *kernel_listener(){
 	printf("listener awake\n");
 	struct kernel_response *resp;
+	struct task* new_task;
 	while(1){
-		resp = receive_from_kernel(0);
+		//resp = receive_from_kernel(0);
+		resp = receive_from_kernel_multicast();
 		printf("received %p from kernel\n",resp);
-		if(resp){
-			inject_task(resp->data,resp->opt,-1);
+		if(resp && resp->data){
+			//inject_task(resp->data,resp->opt,-1);
+			//new_task = parse_task(resp->data,resp->opt,-1);
+			//process_package_received(new_task->job, new_task->len);
+			send_to_network_udp(resp->data,resp->opt);
+			//print_kernel_response(resp);
 			clear_response_kernel(resp);
+			//clear_task(new_task);
+		}
+		else{
+			printf("NULL PACK\n");
 		}
 	}
 }

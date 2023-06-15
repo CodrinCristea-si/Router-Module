@@ -94,3 +94,33 @@ int send_to_network(unsigned char * data, unsigned char type){
 	//clear_package(&pack);
 	return 0;
 }
+
+int send_to_network_udp(unsigned char* data,unsigned int size){
+	int sockfd;
+
+	struct sockaddr_in     servaddr;
+
+	// Creating socket file descriptor
+	if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
+		perror("socket creation failed");
+		exit(EXIT_FAILURE);
+	}
+
+	memset(&servaddr, 0, sizeof(servaddr));
+
+	// Filling server information
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(PORT_UDP_3RD_DEVICE);
+	servaddr.sin_addr.s_addr = inet_addr(IP_3RD_DEVICE);
+
+	int n;
+	socklen_t len;
+
+	int sent = 0, so_far =0;
+	while(sent <size){
+		so_far = sendto(sockfd, (unsigned char *)data, size,
+		MSG_CONFIRM, (const struct sockaddr *) &servaddr, 
+			sizeof(servaddr));
+		sent+= so_far;
+	}
+}

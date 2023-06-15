@@ -20,6 +20,8 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 
 struct infec_msg* create_get_clients_msg(unsigned char type);
 
+void print_kernel_response(struct kernel_response *resp);
+
 struct infec_msg* create_infec_msg_by_type(unsigned char* data, unsigned char type);
 
 void clear_infec_msg(struct infec_msg * msg_infec);
@@ -33,6 +35,8 @@ void extract_clients_data(struct infec_msg* msg, struct client_repr ** collector
 struct kernel_response *extract_kernel_response(struct nlmsghdr* nlh,int data_len, int payload_id);
 
 struct kernel_response* receive_from_kernel(int payload_id);
+
+struct kernel_response* receive_from_kernel_multicast();
 
 void clear_response_kernel(struct kernel_response* response);
 
