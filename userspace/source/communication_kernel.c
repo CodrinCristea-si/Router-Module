@@ -257,17 +257,43 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 			switch (msg_infec->header.payload_type){
 			//ceva pachet
 			case PACKAGE:
+				printf("package 1\n");
 				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
+				printf("package 2\n");
 				//collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
 				response->data = (unsigned char*)malloc(msg_infec->header.payload_len * sizeof(unsigned char));
-				copy_uchar_values(INF_MSG_DATA(msg_infec),response->data,msg_infec->header.payload_len);
+				printf("package 3\n");
+				memcpy(response->data, INF_MSG_DATA(msg_infec), msg_infec->header.payload_len);
+				printf("package 4\n");
 				response->type= PACKAGE;
+				printf("package 5\n");
 				response->opt = msg_infec->header.payload_len;
+				printf("package 5\n");
 				break;
 			}
 
 		}
 		nlh = NLMSG_NEXT(nlh, data_len);
+	}
+	printf("Am iesit\n");
+	return response;
+}
+
+void print_kernel_response(struct kernel_response *resp){
+	int i;
+	switch (resp->type)
+	{
+	case PACKAGE:
+		printf("PACK LEN %d \n", resp->opt);
+		for(i =0;i< resp->opt;i++){
+			printf("%02x ",resp->data[i]);
+		}
+		printf("\n");
+		break;
+	
+	default:
+		printf("Not implemented\n");
+		break;
 	}
 }
 
@@ -309,10 +335,77 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	}
 	else{
 		response = extract_kernel_response((struct nlmsghdr *)buf,len,payload_id);
+		print_kernel_response(response);
 	}
 	free(buf);
+	close(fd);
 	return response;
 }
+
+
+
+struct kernel_response* receive_from_kernel_multicast(){
+	struct nlmsghdr *nh;
+	struct ndmsg *ndm;
+	struct infec_msg* msg_infec;
+	unsigned char* collector;
+	struct kernel_response* response = NULL;
+	struct sockaddr_nl addr; 
+	struct nlmsghdr *nl_msghdr;
+	struct msghdr msghdr;
+	struct iovec iov;
+	int nr_cl;
+	int fd;
+	int len;
+
+	fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_PROTO_INFECTED);
+	if (fd < 0) {
+		perror("Cannot open socket\n");
+	}
+	printf("Socket created\n");
+
+	
+	memset(&addr, 0, sizeof(addr));
+	addr.nl_family = AF_NETLINK;
+	addr.nl_pid = 0;  // For Linux kernel
+	addr.nl_groups = 1; //unicast
+
+	char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
+
+    	int res = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+	if(res < 0){
+		perror("Error while binding!\n");
+		return  NULL;
+	}
+	printf("kernel bind created\n");
+
+	nl_msghdr = (struct nlmsghdr*) malloc(NLMSG_SPACE(MAX_SIZE_PAYLOAD));
+        memset(nl_msghdr, 0, NLMSG_SPACE(MAX_SIZE_PAYLOAD));
+
+        iov.iov_base = (void*) nl_msghdr;
+        iov.iov_len = NLMSG_SPACE(MAX_SIZE_PAYLOAD);
+
+        msghdr.msg_name = (void*) &addr;
+        msghdr.msg_namelen = sizeof(addr);
+        msghdr.msg_iov = &iov;
+        msghdr.msg_iovlen = 1;
+
+        printf("Waiting to receive message\n");
+        len = recvmsg(fd, &msghdr, 0);
+	//len = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
+	if(len<0){
+		perror("Error while receiving!\n");
+	
+	}
+	else{
+		response = extract_kernel_response(nl_msghdr,len,0);
+		print_kernel_response(response);
+	}
+	free(buf);
+	close(fd);
+	return response;
+}
+
 
 struct kernel_response* receive_from_kernel_broadcast(){
 	struct nlmsghdr *nh;
