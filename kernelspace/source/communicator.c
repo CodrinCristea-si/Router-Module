@@ -428,9 +428,12 @@ unsigned char* create_package_data_v2(struct sk_buff* skb, int *col_size, bool w
 	unsigned char current_poz=0;
 
 	if(with_data){
-		pack = (unsigned char*)kcalloc(skb->len ,sizeof(char),GFP_KERNEL);
+		
 		if (skb_is_nonlinear(skb)) {
+			pack = (unsigned char*)kcalloc(skb->len ,sizeof(char),GFP_KERNEL);
 			current_poz = 0;
+			memcpy(pack + current_poz, skb->data, skb_headlen(skb));
+			current_poz += skb_headlen(skb);
 			nr_frags = skb_shinfo(skb)->nr_frags;
 			for(frag_index=0;frag_index<nr_frags;frag_index++){
 				skb_frag = &skb_shinfo(skb)->frags[frag_index];
@@ -445,6 +448,7 @@ unsigned char* create_package_data_v2(struct sk_buff* skb, int *col_size, bool w
 
 		}
 		else{
+			pack = (unsigned char*)kcalloc(skb->len ,sizeof(char),GFP_KERNEL);
 			memcpy(pack, skb->data, skb->len);
 			*col_size = skb->len;
 		}
