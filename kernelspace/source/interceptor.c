@@ -17,6 +17,7 @@
 #include "../headers/interceptor.h"
 #include "../headers/communicator.h"
 #include "../headers/utils.h"
+#include "../headers/rules.h"
 
 struct nf_hook_ops *interceptor_hook_ops = NULL;
 struct sock *netlink_socket = NULL;
@@ -27,45 +28,76 @@ struct network_details lan;
 struct network_details *collector = NULL; 
 bool is_configured = false;
 
- bool check_if_not_belonged_to_router(struct sk_buff *skb){
-	struct iphdr* ip_h;
-	__be32 tmp = LOOPBACK_IP;
-	if (!skb) return true;
-	ip_h = ip_hdr(skb);
-	if(!ip_h) return true;
-	printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan.ip_addr);
-	if (ip_h->saddr == tmp || ip_h->saddr == lan.ip_addr)
-		return true;
-	return false;
- }
+
 
 unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const struct nf_hook_state *state){
 
 	struct iphdr* ip_h;
 	struct tcphdr* tcp_h;
 	struct udphdr* udp_h;
+	struct ethhdr *mac_header;
 	__be32 source_ip, dest_ip;
 	//struct package_data* pack;
 	unsigned char* pack=NULL;
+	struct client_def *client = NULL;
 	int pack_size =0;
 
+	bool can_communicate = false;
+
+	//must be thread safe
 	// if(is_lockdown_mode())
 	// 	return NF_DROP;
-
-	// if(!is_configured){
-	// 	return NF_ACCEPT;
-	// }
 
 	//only ipv4 based packages allowed
 	if (!skb || skb->protocol != htons(ETH_P_IP))
 		return NF_ACCEPT;
-
-	// ip_h = ip_hdr(skb);
-	// source_ip = ip_h->saddr;
-	// dest_ip = ip_h->daddr;
-	if (check_if_not_belonged_to_router(skb)){
+	//check if the package is sent from the router
+	if (check_if_not_belonged_to_router(skb,&lan)){
 		return NF_ACCEPT;
 	}
+	//ip forwarding, dhcp or others
+	if (check_if_outside_network(skb,&lan))
+		return NF_ACCEPT;
+
+	if(check_for_special_clients(skb,&lan))
+		return NF_ACCEPT;
+
+	ip_h = ip_hdr(skb);
+	//if cannot retrive ipv4 data then drop
+	if(!ip_h) 
+		return NF_DROP;
+
+	mac_header = eth_hdr(skb);
+	//if cannot retrive mac data then drop
+	if(!mac_header) 
+		return NF_DROP;
+
+	///get client details
+	if (!check_if_outside_network_source(skb,&lan)){
+		client = GET_CLIENT_GENERIC(ip_h->saddr, mac_header->h_source);
+		//no client details then drop, possible MitM
+		if (!client)
+			return NF_DROP;
+		if(check_if_client_can_send_message(skb,&lan,client))
+			can_communicate = true;
+		else
+			can_communicate = false;
+		
+	}
+	else if (!check_if_outside_network_destination(skb,&lan)){
+		client = GET_CLIENT_GENERIC(ip_h->daddr, mac_header->h_dest);
+		//no client details then drop, possible MitM
+		if (!client)
+			return NF_DROP;
+		if(check_if_client_can_receive_message(skb,&lan,client))
+			can_communicate = true;
+		else
+			can_communicate = false;
+	}
+
+	
+	
+
 	pack = create_package_data_v2(skb,&pack_size,true);
 	if (pack_size){
 		print_package_data_v2(pack,pack_size,true);
@@ -91,58 +123,6 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	// }
 	return NF_ACCEPT;
 }
-// unsigned int local_hook_handle(void *priv, struct sk_buff *skb, const struct nf_hook_state *state){
-//
-// 	struct iphdr* ip_h;
-// 	__be32 source_ip, dest_ip;
-//
-// 	// if(is_lockdown_mode())
-// 	// 	return NF_DROP;
-//
-// 	//only ipv4 based packages allowed
-// 	if (!skb || skb->protocol != htons(ETH_P_IP))
-// 		return NF_ACCEPT;
-//
-// 	ip_h = ip_hdr(skb);
-// 	source_ip = ip_h->saddr;
-// 	dest_ip = ip_h->daddr;
-//
-// 	printk(KERN_INFO "Intercepted package from %pI4 to %pI4 of type %02x\n", &source_ip, &dest_ip, ip_h->protocol);
-//	if the client is not part of any kind, then no packages are allowed
-//	check if the package comes from the router
-//	if (source_ip == lan.ip_addr){
-//     if(is_a_new_client_connection(ip_h)){
-//
-//     }
-// }
-//
-//	check if a new client wants to connect
-//
-//	check if the package comes from the lan network 
-//	if(check_ip_belong_to_network(&lan,source_ip)){
-//		
-// }
-// 	return NF_ACCEPT;
-// }
-//
-// static bool is_a_new_client_connection(struct iphdr* ip_h){
-//     struct udphdr *udp_h;
-//     struct dhcp_packet *dhcp_pack;
-//     unsigned char *dhcp_options;
-//
-//     if (ip_h->protocol != IPPROTO_UDP) {
-//         return false;
-//     }
-//
-//     udp_h = (struct udphdr *)((unsigned char *)ip_h + (ip_h->ihl * 4));
-//     dhcp_pack = (struct dhcp_packet *)((unsigned char *)udp_h + sizeof(struct udphdr));
-//     dhcp_options = (unsigned char *)dhcp_pack + sizeof(struct dhcp_packet);
-//
-//     if (dhcp_pack->op != BOOTREPLY || dhcp_pack->htype != 1 || dhcp_pack->hlen != 6 || dhcp_pack->cookie != htonl(0x63825363)) {
-//         return false;
-//     }
-//     return true;
-//}
 
 int init_hook(void){
 	if(!interceptor_hook_ops){
