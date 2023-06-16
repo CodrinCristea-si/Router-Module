@@ -75,6 +75,10 @@ bool check_ip_belong_to_network(struct network_details* network, __be32 ip_add){
     return (network->mask & ip_add) == network ->subnet_ip;
 }
 
+bool check_if_broadcast(struct network_details* network, __be32 ip_add){
+	return (!network->mask)|network->subnet_ip == ip_add;
+}
+
 inline int copy_mac_address(const unsigned char* from, unsigned char* to){
     unsigned char i;
     if(from && to){

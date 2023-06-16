@@ -1,3 +1,6 @@
+#ifndef __UTILS_INTERCEPTOR_H__
+#define __UTILS_INTERCEPTOR_H__
+
 #include <linux/module.h>
 #include <linux/netdevice.h>
 #include <linux/inetdevice.h>
@@ -43,6 +46,8 @@ struct network_details get_lan_network_from_list(struct network_details* collect
 
 bool check_ip_belong_to_network(struct network_details* network, __be32 ip_add);
 
+bool check_if_broadcast(struct network_details* network, __be32 ip_add);
+
 inline int copy_mac_address(const unsigned char* from, unsigned char* to);
 
 inline int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2);
@@ -50,3 +55,5 @@ inline int cmp_mac_address(const unsigned char* mac1, const unsigned char* mac2)
 int initialize_network_interfaces_list(struct network_details* collector);
 
 int clear_network_interfaces_list(struct network_details* collector);
+
+#endif
