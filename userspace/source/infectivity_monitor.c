@@ -251,9 +251,9 @@ void process_add_job(struct client_job *job){
 			push_to_list(updates,(void*)job_copy);
 			//printf("push\n");
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
 
 			//network
 			send_client_to_network(&job->client,CLIENT_CONNECT);
@@ -313,9 +313,9 @@ void process_remove_job(struct client_job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job)); 
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
 
 			//network
 			send_client_to_network(&job->client,CLIENT_DISCONNECT);
@@ -357,9 +357,9 @@ void process_transfer_job(struct client_job *job){
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job));
 			push_to_list(updates,(void*)job_copy);
 			//kernel
-			// struct client_repr cl_rpr;
-			// convert_infectivity_2_repr(&job->client,&cl_rpr);
-			// send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
+			struct client_repr cl_rpr;
+			convert_infectivity_2_repr(&job->client,&cl_rpr);
+			send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
 
 			//network
 			send_client_to_network(&job->client,CLIENT_TRANSFER);
@@ -760,9 +760,10 @@ int start_monitoring(char *filename, struct network_details* main_net){
 		for(i=0;i<NUMBER_OF_WORKERS+2;i++){
 			if(i == 0){
 				pthread_create(&thr[i],NULL,main_server,NULL);
-			}if(i == 1){
-				pthread_create(&thr[i],NULL,kernel_listener,NULL);
 			}
+			// if(i == 1){
+			// 	pthread_create(&thr[i],NULL,kernel_listener,NULL);
+			// }
 			else{
 				pthread_create(&thr[i],NULL,worker,NULL);
 			}
