@@ -39,7 +39,7 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	__be32 source_ip, dest_ip;
 	//struct package_data* pack;
 	unsigned char* pack=NULL;
-	struct client_def *client = NULL;
+	struct client_def *client = NULL, *res_cl;
 	int pack_size =0;
 
 	bool can_communicate = false;
@@ -49,63 +49,94 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	// 	return NF_DROP;
 
 	//only ipv4 based packages allowed
-	if (!skb || skb->protocol != htons(ETH_P_IP))
+	if (!skb || skb->protocol != htons(ETH_P_IP)){
+		printk(KERN_WARNING "Intercept 1\n");
 		return NF_ACCEPT;
+	}
 	//check if the package is sent from the router
 	if (check_if_not_belonged_to_router(skb,&lan)){
+		printk(KERN_WARNING "Intercept 2\n");
 		return NF_ACCEPT;
 	}
 	//ip forwarding, dhcp or others
-	if (check_if_outside_network(skb,&lan))
+	if (check_if_outside_network(skb,&lan)){
+		printk(KERN_WARNING "Intercept 3\n");
 		return NF_ACCEPT;
-
-	if(check_for_special_clients(skb,&lan))
+	}
+	if(check_for_special_clients(skb,&lan)){
+		printk(KERN_WARNING "Intercept 4\n");
 		return NF_ACCEPT;
-
+	}
 	ip_h = ip_hdr(skb);
 	//if cannot retrive ipv4 data then drop
-	if(!ip_h) 
+	if(!ip_h){
+		printk(KERN_WARNING "Intercept 5\n");
 		return NF_DROP;
-
+	}
 	mac_header = eth_hdr(skb);
 	//if cannot retrive mac data then drop
-	if(!mac_header) 
+	if(!mac_header){
+		printk(KERN_WARNING "Intercept 6\n");
 		return NF_DROP;
+	}
 
+
+	client = (struct client_def *)kcalloc(1, sizeof(struct client_def), GFP_KERNEL);
 	///get client details
 	if (!check_if_outside_network_source(skb,&lan)){
-		client = GET_CLIENT_GENERIC(ip_h->saddr, mac_header->h_source);
+		res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->saddr, mac_header->h_source,client);
+
 		//no client details then drop, possible MitM
-		if (!client)
+		if (!res_cl){
+			printk(KERN_WARNING "Intercept 7\n");
+			kfree(client);
 			return NF_DROP;
+		}
 		if(check_if_client_can_send_message(skb,&lan,client))
 			can_communicate = true;
-		else
+		else{
+			printk(KERN_WARNING "Intercept 7.5\n");
 			can_communicate = false;
+		}
 		
 	}
 	else if (!check_if_outside_network_destination(skb,&lan)){
-		client = GET_CLIENT_GENERIC(ip_h->daddr, mac_header->h_dest);
+		res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->daddr, mac_header->h_dest,client);
 		//no client details then drop, possible MitM
-		if (!client)
+		if (!res_cl){
+			printk(KERN_WARNING "Intercept 8\n");
+			kfree(client);
 			return NF_DROP;
+		}
 		if(check_if_client_can_receive_message(skb,&lan,client))
 			can_communicate = true;
-		else
+		else{
+			printk(KERN_WARNING "Intercept 8.5\n");
 			can_communicate = false;
+		}
 	}
 
 	
-	
-
-	pack = create_package_data_v2(skb,&pack_size,true);
-	if (pack_size){
-		print_package_data_v2(pack,pack_size,true);
+	pack = create_pack_based_on_infectivity(skb,client,&pack_size);
+	if(pack && pack_size){
 		send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
 	}
+
+	kfree(client);
+	if(can_communicate){
+		return NF_ACCEPT;
+	}else{
+		return NF_DROP;
+	}
+	
+	// pack = create_package_data_v2(skb,&pack_size,true);
+	// if (pack_size){
+	// 	print_package_data_v2(pack,pack_size,true);
+	// 	send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
+	// }
 	//send_to_user_broadcast_v2((unsigned char*)pack, pack_size, PACKAGE, NETLINK_PROTO_INFECTED , 2);
 	//send_to_user_server((unsigned char*)pack,get_size_of_package_data(pack));
-	clear_package_data_v2(pack,true);
+	// clear_package_data_v2(pack,true);
 	//printk(KERN_INFO "Intercepted package from %pI4 to %pI4 of type %02x\n", &source_ip, &dest_ip, ip_h->protocol);
 	//if the client is not part of any kind, then no packages are allowed
 	//check if the package comes from the router
@@ -181,7 +212,7 @@ static void netlink_handle(struct sk_buff *skb){
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
 			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
-			ret = ADD_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
+			ret = ADD_CLIENT_GENERIC_SAFE(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to add client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Added client %pI4\n",&client->ip_addr);
 			kfree(client);
@@ -190,7 +221,7 @@ static void netlink_handle(struct sk_buff *skb){
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC);
 			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
-			ret = REMOVE_CLIENT_GENERIC(client->ip_addr, client->mac_addr);
+			ret = REMOVE_CLIENT_GENERIC_SAFE(client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to remove client %pI4 err %d\n",&client->ip_addr,ret);
 			else printk(KERN_INFO "Removed client %pI4\n",&client->ip_addr);
 			kfree(client);
@@ -199,7 +230,7 @@ static void netlink_handle(struct sk_buff *skb){
 			client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
 			extract_client_repr_payload_ext(msg,(struct client_repr *)client,0,FLAG_WITH_IP|FLAG_WITH_MAC|FLAG_WITH_INFECTIVITY);
 			//printk(KERN_INFO "Client with %pI4 extracted\n", &client->ip_addr);
-			ret = TRANSFER_CLIENT_GENERIC(client->infectivity,client->ip_addr, client->mac_addr);
+			ret = TRANSFER_CLIENT_GENERIC_SAFE(client->infectivity,client->ip_addr, client->mac_addr);
 			if(!ret) printk(KERN_ERR "Failed to transfer client %pI4 to %x err %d\n",&client->ip_addr,client->infectivity,ret);
 			else printk(KERN_INFO "Transfered client %pI4 to %x\n",&client->ip_addr, client->infectivity);
 			kfree(client);
@@ -252,13 +283,13 @@ static void netlink_handle(struct sk_buff *skb){
 			printk(KERN_ERR "Not implemented\n");
 			break;
 	}
-	// all_clients = __create_empty_list();
-	// if(all_clients){
-	// 	nr_cl = GET_ALL_CLIENTS(all_clients);
-	// 	__print_list(all_clients);
-	// 	__clear_list(all_clients);
-	// 	kfree(all_clients);
-	// }
+	all_clients = __create_empty_list();
+	if(all_clients){
+		nr_cl = GET_ALL_CLIENTS_SAFE(all_clients);
+		__print_list(all_clients,NULL);
+		__clear_list(all_clients);
+		kfree(all_clients);
+	}
 	// printk(KERN_INFO "Done\n");
 }
 

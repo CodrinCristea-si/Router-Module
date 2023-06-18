@@ -30,4 +30,6 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 
 bool check_if_client_can_receive_message(struct sk_buff *skb, struct network_details* lan, struct client_def *client);
 
+unsigned char* create_pack_based_on_infectivity( struct sk_buff *skb, struct client_def *client, unsigned int* col_size);
+
 #endif

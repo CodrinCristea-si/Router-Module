@@ -84,7 +84,7 @@ struct infec_msg* create_clients_data_msg(struct clients_list* clients_data, uns
 
 	if(clients_data){
 		//creating data payload
-		nr_cl = __get_size_of_clients_list(clients_data);
+		nr_cl = __get_size_of_clients_list(clients_data, NULL);
 		data = (unsigned char *)kcalloc(1,MULTI_CLIENTS_PAYLOAD_SIZE(nr_cl),GFP_KERNEL);
 		len_payload = create_multi_clients_payload(clients_data,data, nr_cl);
 		printk(KERN_INFO "Data created\n");
