@@ -58,7 +58,7 @@ struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned cha
 	return msg_infec;
 }
 
-struct infec_msg* create_get_clients_msg(unsigned char type){
+struct infec_msg* create_empty_msg(unsigned char type){
 	struct header_payload *hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
 	create_header(rand()%(int)(MAX_ID), type,0,hdr_inf);
 	//printf("Header created\n");
@@ -111,10 +111,14 @@ struct infec_msg* create_infec_msg_by_type(unsigned char* data, unsigned char ty
 		return create_add_client_msg((struct client_repr *)data,type);
 		break;
 	case GET_CLIENTS:
-		return create_get_clients_msg(type);
+		return create_empty_msg(type);
 	case CONFIGURE:
 		return create_config_msg((struct network_details *)data, type);
 		break;
+	case LOCK_UP:
+		return create_empty_msg(type);
+	case LOCK_DOWN:
+		return create_empty_msg(type);
 	default:
 		break;
 	}

@@ -1,3 +1,7 @@
+
+#ifndef __UTILS_USERSPACE_C__
+#define __UTILS_USERSPACE_H__
+
 #include "../headers/utils.h"
 #include <stdlib.h>
 #include <string.h>
@@ -101,3 +105,6 @@ void str2mac(unsigned char * str, unsigned char* collector){
     collector[poz]=nr;
     poz++;
 }
+
+
+#endif

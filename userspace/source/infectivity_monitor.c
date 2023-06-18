@@ -1,3 +1,7 @@
+
+#ifndef __INFECTIVITY_MONITOR_C__
+#define __INFECTIVITY_MONITOR_C__
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,6 +33,10 @@ pthread_mutex_t mutex_storage;
 List *updates;
 
 struct network_details main_network;
+
+int nr_total_clients = 0;
+int nr_clients_dangerous = 0;
+bool is_lockdown = false;
 
 void print_client_infectivity(struct client_infectivity* client){
 	printf("Client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",client->ipv4[0],
@@ -228,6 +236,25 @@ void send_client_to_network(struct client_infectivity* client,unsigned char type
 	send_to_network((unsigned char*)&pack,type);
 }
 
+void check_for_lockdown(){
+	if (is_lockdown){
+		if(nr_total_clients < MIN_NR_CLIENT_LOCKDOWN || nr_clients_dangerous/nr_total_clients * 100 < MIN_THRESHOLD_LOCKDOWN){
+			is_lockdown = false;
+			send_message_to_kernel(NULL,LOCK_UP);
+		}
+	}
+	else{
+		if(nr_total_clients >= MIN_NR_CLIENT_LOCKDOWN || nr_clients_dangerous/nr_total_clients * 100 >= MIN_THRESHOLD_LOCKDOWN){
+			is_lockdown = true;
+			send_message_to_kernel(NULL,LOCK_DOWN);
+		}
+	}
+}
+
+bool is_client_dangerous(struct client_infectivity* client){
+	return client->infectivity == INFECTED_MAJOR || client->infectivity == INFECTED_SEVER;
+}
+
 void process_add_job(struct client_job *job){
 	FILE *file;
 	//printf("add\n");
@@ -241,6 +268,7 @@ void process_add_job(struct client_job *job){
 			write_client(file,&job->client);
 			//printf("wrote\n");
 			fclose(file);
+			nr_total_clients++;
 			added = true;
 			//printf("closed\n");
 			//updates
@@ -250,6 +278,10 @@ void process_add_job(struct client_job *job){
 			//printf("copy\n"); 
 			push_to_list(updates,(void*)job_copy);
 			//printf("push\n");
+
+			//check for lockdown
+			check_for_lockdown();
+
 			//kernel
 			struct client_repr cl_rpr;
 			convert_infectivity_2_repr(&job->client,&cl_rpr);
@@ -300,6 +332,10 @@ void process_remove_job(struct client_job *job){
 				}
 				else{
 					deleted = true;
+					nr_total_clients--;
+					if(is_client_dangerous(client)){
+						nr_clients_dangerous--;
+					}
 				}
 				free(client);
 			}
@@ -308,6 +344,9 @@ void process_remove_job(struct client_job *job){
 		fclose(file_aux);
 		transfer_between_files(aux_file,storage_file);
 		if(deleted){
+			//check for lockdown
+			check_for_lockdown();
+			
 			//updates
 			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job)); 
@@ -342,6 +381,9 @@ void process_transfer_job(struct client_job *job){
 					if(client->infectivity != job->client.infectivity){
 						client->infectivity=job->client.infectivity;
 						transfered = true;
+						if(is_client_dangerous(client)){
+							nr_clients_dangerous++;
+						}
 					}
 				}
 				write_client(file_aux,client);
@@ -352,6 +394,9 @@ void process_transfer_job(struct client_job *job){
 		fclose(file_aux);
 		transfer_between_files(aux_file,storage_file);
 		if(transfered){
+			//check for lockdown
+			check_for_lockdown();
+			
 			//updates
 			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job));
@@ -787,3 +832,6 @@ int start_monitoring(char *filename, struct network_details* main_net){
 	//printf("Threads killed\n");
 	return 0;
 }
+
+
+#endif

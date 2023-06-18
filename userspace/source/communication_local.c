@@ -1,3 +1,7 @@
+
+#ifndef __COMMUNICATION_LOCAL_C__
+#define __COMMUNICATION_LOCAL_C__
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -175,3 +179,5 @@ void clear_response(struct response* response, bool is_static){
 		if(!is_static)free(response);	
 	}
 }
+
+#endif

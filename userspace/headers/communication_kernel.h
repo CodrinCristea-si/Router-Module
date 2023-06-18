@@ -18,7 +18,7 @@ struct network_details{
 
 struct infec_msg* create_add_client_msg(struct client_repr *client, unsigned char type);
 
-struct infec_msg* create_get_clients_msg(unsigned char type);
+struct infec_msg* create_empty_msg(unsigned char type);
 
 void print_kernel_response(struct kernel_response *resp);
 

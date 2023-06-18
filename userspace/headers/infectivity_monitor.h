@@ -1,3 +1,7 @@
+
+#ifndef __INFECTIVITY_MONITOR_H__
+#define __INFECTIVITY_MONITOR_H__
+
 #include "communication_kernel.h"
 #include "list.h"
 #include "communicator_network.h"
@@ -18,6 +22,9 @@
 #ifndef MAC_SIZE
 #define MAC_SIZE MAC_LEN
 #endif
+
+#define MIN_NR_CLIENT_LOCKDOWN 4
+#define MIN_THRESHOLD_LOCKDOWN 75
 
 #define MIN_GRADE 0
 enum{
@@ -76,3 +83,5 @@ int start_monitoring(char *filename, struct network_details* main_net);
 void print_job(struct client_job *job);
 
 void print_client_infectivity(struct client_infectivity* client);
+
+#endif
