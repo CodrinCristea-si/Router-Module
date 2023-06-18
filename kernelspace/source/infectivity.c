@@ -14,6 +14,7 @@ struct clients_list* infected_minor_list = NULL;
 struct clients_list* infected_major_list = NULL;
 struct clients_list* infected_sever_list = NULL;
 struct mutex* inf_mutex = NULL;
+struct mutex* lockdown_mutex = NULL;
 
 int __add_client_to_list(struct clients_list* list, const __be32 client_ip_addr, const unsigned char* client_mac_addr, const unsigned char type, struct mutex* inf_mutex){
 	struct clients_list* new_client, old_client;
@@ -392,6 +393,12 @@ int __initialize_infectivity_lists(void){
 		mutex_init(inf_mutex);
 	}
 	
+	lockdown_mutex = (struct mutex *)kcalloc(1,sizeof(struct mutex), GFP_KERNEL);
+	if (lockdown_mutex) {
+		mutex_init(lockdown_mutex);
+	}
+	
+
 	if(empty_client)
 		kfree(empty_client);
 	printk(KERN_INFO "Lists initialized with success!\n");
@@ -456,6 +463,10 @@ int __clear_infectivity_lists(void){
 	if(inf_mutex){
 		mutex_destroy(inf_mutex);
 		kfree(inf_mutex);
+	}
+	if(lockdown_mutex){
+		mutex_destroy(lockdown_mutex);
+		kfree(lockdown_mutex);
 	}
 	printk(KERN_INFO "Lists cleared with success!\n");
 	return 0;

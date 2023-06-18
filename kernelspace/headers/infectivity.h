@@ -47,6 +47,7 @@ extern struct clients_list* infected_minor_list;
 extern struct clients_list* infected_major_list;
 extern struct clients_list* infected_sever_list;
 extern struct mutex* inf_mutex;
+extern struct mutex* lockdown_mutex;
 
 int __initialize_infectivity_lists(void);
 
@@ -176,17 +177,29 @@ void __print_list(struct clients_list* list, struct mutex* inf_mutex);
 
 ///LOCKDOWN
 
-#define IS_LOCKDOWN_MODE_ENABLED (LOCKDOWN_MODE == LOCKDOWN_UP)
+#define IS_LOCKDOWN_MODE_ENABLED() __is_lockdown_mode()
 #define DISABLE_LOCKDOWN_MODE() __disable_lockdown_mode()
 #define ENABLE_LOCKDOWN_MODE() __enable_lockdown_mode()
 
+static inline bool __is_lockdown_mode(void){
+	bool is_lockdown = false;
+	if(lockdown_mutex) mutex_lock(lockdown_mutex);
+	is_lockdown = (LOCKDOWN_MODE == LOCKDOWN_UP);
+	if(lockdown_mutex) mutex_unlock(lockdown_mutex);
+	return is_lockdown;
+}
+
 static inline int __enable_lockdown_mode(void){
+	if(lockdown_mutex) mutex_lock(lockdown_mutex);
 	LOCKDOWN_MODE = LOCKDOWN_UP;
+	if(lockdown_mutex) mutex_unlock(lockdown_mutex);
 	return 0;
 }
 
 static inline int __disable_lockdown_mode(void){
+	if(lockdown_mutex) mutex_lock(lockdown_mutex);
 	LOCKDOWN_MODE = LOCKDOWN_DOWN;
+	if(lockdown_mutex) mutex_unlock(lockdown_mutex);
 	return 0;
 }
 
