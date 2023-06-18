@@ -58,12 +58,16 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 		printk(KERN_WARNING "Intercept 2\n");
 		return NF_ACCEPT;
 	}
-	//ip forwarding, dhcp or others
-	if (check_if_outside_network(skb,&lan)){
+	if(check_for_special_clients(skb,&lan)){
 		printk(KERN_WARNING "Intercept 3\n");
 		return NF_ACCEPT;
 	}
-	if(check_for_special_clients(skb,&lan)){
+	if(IS_LOCKDOWN_MODE_ENABLED()){
+		printk(KERN_WARNING "Intercept 3.5\n");
+		return NF_DROP;
+	}
+	//ip forwarding, dhcp or others
+	if (check_if_outside_network(skb,&lan)){
 		printk(KERN_WARNING "Intercept 4\n");
 		return NF_ACCEPT;
 	}
@@ -249,6 +253,16 @@ static void netlink_handle(struct sk_buff *skb){
 				}
 			}
 			break;
+		case LOCK_UP:
+			if(!IS_LOCKDOWN_MODE_ENABLED()){
+				ENABLE_LOCKDOWN_MODE();
+			}
+			break;
+		case LOCK_DOWN:
+			if(IS_LOCKDOWN_MODE_ENABLED()){
+				DISABLE_LOCKDOWN_MODE();
+			}
+			break;
 		// usefull and broken, maybe some rework and it may become something 
 		// case GET_CLIENT:
 		// 	client = (struct client_def *)kcalloc(1,sizeof(struct client_def),GFP_KERNEL);
@@ -283,13 +297,13 @@ static void netlink_handle(struct sk_buff *skb){
 			printk(KERN_ERR "Not implemented\n");
 			break;
 	}
-	all_clients = __create_empty_list();
-	if(all_clients){
-		nr_cl = GET_ALL_CLIENTS_SAFE(all_clients);
-		__print_list(all_clients,NULL);
-		__clear_list(all_clients);
-		kfree(all_clients);
-	}
+	// all_clients = __create_empty_list();
+	// if(all_clients){
+	// 	nr_cl = GET_ALL_CLIENTS_SAFE(all_clients);
+	// 	__print_list(all_clients,NULL);
+	// 	__clear_list(all_clients);
+	// 	kfree(all_clients);
+	// }
 	// printk(KERN_INFO "Done\n");
 }
 

