@@ -1,0 +1,108 @@
+{
+  "places": [
+    {
+      "type": "f",
+      "path": "/home/$(username)/.bash_history"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/.cache"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/.config"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/.mozilla/extensions"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/.wine"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/.local"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Desktop"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Documents"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Downloads"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Music"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Pictures"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Public"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Templates"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Videos"
+    },
+    {
+      "type": "d",
+      "path": "/var/cache"
+    },
+    {
+      "type": "d",
+      "path": "/var/lib"
+    },
+    {
+      "type": "d",
+      "path": "/var/local"
+    },
+    {
+      "type": "d",
+      "path": "/var/log"
+    },
+    {
+      "type": "d",
+      "path": "/var/mail"
+    },
+    {
+      "type": "d",
+      "path": "/var/opt"
+    },
+    {
+      "type": "d",
+      "path": "/var/spool"
+    },
+    {
+      "type": "d",
+      "path": "/var/tmp"
+    },
+    {
+      "type": "d",
+      "path": "/tmp"
+    },
+    {
+      "type": "s",
+      "path": "/bin"
+    },
+    {
+      "type": "s",
+      "path": "/sbin"
+    },
+    {
+      "type": "s",
+      "path": "/lib"
+    }
+  ]
+}

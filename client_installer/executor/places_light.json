@@ -1,0 +1,28 @@
+{
+  "places": [
+    {
+      "type": "f",
+      "path": "/home/$(username)/.bash_history"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Documents"
+    },
+    {
+      "type": "d",
+      "path": "/home/$(username)/Downloads"
+    },
+    {
+      "type": "d",
+      "path": "/var/mail"
+    },
+    {
+      "type": "d",
+      "path": "/var/tmp"
+    },
+    {
+      "type": "d",
+      "path": "/tmp"
+    }
+  ]
+}
