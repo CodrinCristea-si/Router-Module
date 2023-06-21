@@ -91,4 +91,12 @@ create table Heuristics(
 	Requirements varchar(200),
 	Path varchar(200),
 	PRIMARY KEY (HeuristicID)
-)ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
+)ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
+
+create table History(
+	HistoryID bigint not null,
+	Type varchar(100),
+	TimeRegistered datetime,
+	IDTarget bigint,
+	PRIMARY KEY (HistoryID)
+)ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
