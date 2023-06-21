@@ -1,0 +1,100 @@
+/*client list details*/
+.client_list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.client_list_item {
+    margin-bottom: 10px;
+    padding: 10px;
+    /*background-color: transparent;*/
+    background-color: #d2d5d9;
+    border-radius: 5px;
+    text-align:initial;
+}
+
+/*.client_list_item:hover {*/
+/*  background-color: #f2f2f2;*/
+/*}*/
+
+strong {
+    display: inline-block;
+    width: 100px;
+    font-weight: bold;
+}
+
+
+/*tabel clients*/
+.table {
+    /*display: table;*/
+    width:100%;
+    border:1px solid #EEEEEE;
+    box-sizing: border-box;
+}
+
+.table-header {
+    /*display:flex;*/
+    width:100%;
+    background:#000;
+    padding:18px 1%;
+    gap: 30pt;
+}
+
+.table-row {
+    /*display:flex;*/
+    width:100%;
+    padding:18px 0;
+    gap: 30pt;
+}
+
+.table-row:nth-of-type(odd) {
+    background:#EEEEEE;
+}
+
+.table-data{
+    /*flex: 1 1 50%;*/
+    padding:2px 2px;
+    text-align:center;
+}
+
+.header__item {
+    color:#bbbbbb;
+    text-transform:uppercase;
+    width: auto;
+    padding: 2% 10px;
+}
+
+.but_show{
+    border: 1px solid black;
+    padding: 2px 3px;
+}
+
+
+/*.table-header {*/
+/*    !*display: flex;*!*/
+/*    width: 100%;*/
+/*    background: #000;*/
+/*    !*padding: 18px 0;*!*/
+/*    !*gap: auto;*!*/
+/*    align-items: center; !* Add this line to align items vertically *!*/
+/*}*/
+
+/*.table-header .header__item {*/
+/*    flex: 1; !* Add this line to distribute header items evenly *!*/
+/*    color: #FFF; !* Set the color for the header items *!*/
+/*}*/
+
+/*!* Remove the gap property from .table-row and adjust padding for better alignment *!*/
+/*.table-row {*/
+/*    !*display: flex;*!*/
+/*    width: 100%;*/
+/*    padding: 12px 0;*/
+/*    !*gap: 30pt;*!*/
+/*    align-items: center; !* Add this line to align items vertically *!*/
+/*}*/
+
+/*!* Adjust the padding for .table-data *!*/
+/*.table-data {*/
+/*    padding: 6px 0;*/
+/*}*/

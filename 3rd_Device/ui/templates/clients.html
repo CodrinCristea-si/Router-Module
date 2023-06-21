@@ -1,0 +1,36 @@
+<table class="table">
+    <tr class="table-header">
+        <th class="header__item">Client ID</th>
+<!--        <th class="header__item">Current IP</th>-->
+<!--        <th class="header__item">MAC Address</th>-->
+<!--        <th class="header__item">Connectivity</th>-->
+        <th class="header__item">Details</th>
+        <th class="header__item">Is Testing ?</th>
+        <th class="header__item">Score</th>
+        <th class="header__item">Status</th>
+        <th class="header__item">Actions</th>
+    </tr>
+    {% if lista %}
+    {% for el in lista%}
+    <tr class="table-row">
+        <td class="table-data" >{{el.ClientID}}</td>
+<!--        <td class="table-data">{{el.CurrentIP}}</td>-->
+<!--        <td class="table-data">{{el.MAC}}</td>-->
+<!--        <td class="table-data">{{"Connected" if el.IsConnected == 1 else "Offline"}}</td>-->
+        <td class="table-data" >
+            <ul class="client_list">
+                    <li class="client_list_item">
+                        <strong>IP:</strong> <span>{{el.CurrentIP}}</span><br>
+                        <strong>MAC:</strong> <span>{{el.MAC}}</span><br>
+                        <strong>Status:</strong><span>{{"Connected" if el.IsConnected == 1 else "Offline"}}</span><br>
+                    </li>
+            </ul>
+        </td>
+        <td class="table-data">{{"No" if el.IsTesting == 0 else "Yes"}}</td>
+        <td class="table-data">{{el.Score}}</td>
+        <td class="table-data">{{el.InfectivityType}}</td>
+        <td class="table-data">Mai vedem</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
