@@ -83,3 +83,12 @@ create table TestResults(
         ON UPDATE RESTRICT,
 	PRIMARY KEY (TestID,SampleID)
 )ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
+
+create table Heuristics(
+	HeuristicID bigint not null,
+	Name varchar(100),
+	Type smallint,
+	Requirements varchar(200),
+	Path varchar(200),
+	PRIMARY KEY (HeuristicID)
+)ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
