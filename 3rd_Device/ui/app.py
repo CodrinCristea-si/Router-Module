@@ -34,3 +34,48 @@ def clients():
     lista = resp.payload
     return render_template("clients.html", lista = lista)
 
+@app.route('/malware/<int:type>')
+def malware(type:int):
+    if int(type) == 0:
+        return render_template('malware.html')
+    else:
+        lista = []
+        comm = ITC("127.0.0.1", 5004, Logger())
+        comm.connect()
+        if int(type) == 1:
+            pack = InfectivityRequest(InfectivityRequestType.GET_PLATFORMS,[])
+            comm.send_request(pack)
+            resp = comm.read_response()
+            if resp is not None:
+                for plat in resp.payload:
+                    plat_to_send ={
+                        "id":plat.PlatformID,
+                        "name": plat.Name,
+                        "score":plat.Score
+                    }
+                    lista.append(plat_to_send)
+        if int(type) == 2:
+            pack = InfectivityRequest(InfectivityRequestType.GET_CATEGORIES,[])
+            comm.send_request(pack)
+            resp = comm.read_response()
+            if resp is not None:
+                for cat in resp.payload:
+                    cat_to_send ={
+                        "id":cat.CategoryID,
+                        "name": cat.Name,
+                        "score":cat.Score
+                    }
+                    lista.append(cat_to_send)
+        if int(type) == 3 or int(type) == 4:
+            pack = InfectivityRequest(InfectivityRequestType.GET_SAMPLE_STATS,[])
+            comm.send_request(pack)
+            resp = comm.read_response()
+            resp_list = resp.payload[0] if int(type) == 3 else resp.payload[1]
+            if resp is not None:
+                for el in resp_list:
+                    el_to_send ={
+                        "name":el,
+                        "value": resp_list.get(el)
+                    }
+                    lista.append(el_to_send)
+        return lista
