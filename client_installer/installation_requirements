@@ -1,0 +1,3 @@
+install daemon library
+python3 -m  pip install python-daemon
+python3 -m  pip install psutil
