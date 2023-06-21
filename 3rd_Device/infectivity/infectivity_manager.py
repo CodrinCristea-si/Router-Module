@@ -29,6 +29,9 @@ class InfectivityManager:
     def remove_client_connection(self,ip:str,mac:str):
         self.__client_manager.remove_client(ip,mac)
 
+    def get_all_clients(self):
+        return self.__client_manager.get_all_clients()
+
     def __check_if_client_can_be_reaced(self,ip:str):
         com = ITC(Server._MAIN_IP,ITC._TESTER_PORT,self.__logger)
         com.connect()

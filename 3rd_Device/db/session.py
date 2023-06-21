@@ -9,7 +9,7 @@ class SessionMaker():
     __DBNAME = "InfectivityDB"
     __TESTDBNAME = "TestInfectivityDB"
 
-    __engine = create_engine("mariadb+mariadbconnector://%s:%s@%s:%s/%s" % (__USERNAME,__PASSWORD,__HOST,__PORT,__DBNAME))
+    __engine = create_engine("mariadb+mariadbconnector://%s:%s@%s:%s/%s" % (__USERNAME,__PASSWORD,__HOST,__PORT,__DBNAME), pool_size=20, max_overflow=0)
 
     @staticmethod
     def create_session():

@@ -1,4 +1,4 @@
-from infectivity.infectivity_type import IntefectivityTypes
+from infectivity.infectivity_type import InfectivityTypes
 from db.session import SessionMaker
 from db.db_manager import DBManager
 from orm.client import Client
@@ -15,13 +15,13 @@ class DBClientManager(DBManager):
         # self.__session = SessionMaker.create_session()
         client = self.get_client_by_mac(mac)
         if client is None:
-            client_new = Client(CurrentIP= ip, MAC=mac,IsConnected = 1, Score=0, IsTesting=0, InfectivityType=IntefectivityTypes.DEFAULT.value)
+            client_new = Client(CurrentIP= ip, MAC=mac, IsConnected = 1, Score=0, IsTesting=0, InfectivityType=InfectivityTypes.DEFAULT.value)
             self._session.add(client_new)
         else:
             client.IsTesting=0
             client.CurrentIP = ip
             client.IsConnected = 1
-            client.InfectivityType=IntefectivityTypes.DEFAULT.value
+            client.InfectivityType=InfectivityTypes.DEFAULT.value
         self._session.commit()
         # self._session.close()
         return 0
@@ -89,3 +89,7 @@ class DBClientManager(DBManager):
     def get_client_by_mac(self,mac:str):
         client = self._session.query(Client).filter(Client.MAC == mac).first()
         return client
+
+    def get_all_clients(self):
+        clients = self._session.query(Client).all()
+        return clients

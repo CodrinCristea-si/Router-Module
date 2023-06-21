@@ -1,6 +1,6 @@
 from enum import Enum
 
-class IntefectivityTypes(Enum):
+class InfectivityTypes(Enum):
     UNKNOWN = 0
     UNINFECTED = 1
     SUSPICIOUS = 2

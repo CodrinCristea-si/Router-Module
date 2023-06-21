@@ -7,6 +7,7 @@ from server.server import Server
 from concurrent.futures import ThreadPoolExecutor
 from infectivity.infectivity_manager import InfectivityManager
 from packages.infectivity_request import *
+from packages.infectivity_response import *
 from db.session import SessionMaker
 from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator
 
@@ -38,6 +39,11 @@ class InfectivityServer(Server):
                 self._logger.info("remove client")
                 ip,mac = package.payload
                 infectivity_manager.remove_client_connection(ip,mac)
+            if package.type == InfectivityRequestType.GET_ALL_CLIENTS:
+                self._logger.info("get all clients")
+                clients = infectivity_manager.get_all_clients()
+                response = InfectivityResponse(InfectivityResponseType.ALL_CLIENTS, clients)
+                InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
         except Exception as e:
             self._logger.error("Error: %s" %(e))
         if session is not None:
