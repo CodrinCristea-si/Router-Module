@@ -61,59 +61,67 @@ class DBSampleManager(DBManager):
     }
 
     __categories = {
-'Swf':10,
-'Infostealer':10,
-'Trojan':70,
-'Win':10,
-'Email':1,
-'Doc':10,
-'Malware':100,
-'Packed':100,
-'File':50,
-'CA':10,
-'Php':10,
-'Java':10,
-'Rootkit':100,
-'Rtf':10,
-'Adware':1,
-'Ircbot':100,
-'Coinminer':1,
-'Ransomware':100,
-'Spyware':30,
-'Loader':100,
-'Worm':100,
-'Filetype':30,
-'Embedded':30,
-'Downloader':100,
-'Dropper':100,
-'Andr':10,
-'Exploit':100,
-'Proxy':5,
-'TS':10,
-'Spy':50,
-'Backdoor':100,
-'Test':1,
-'Html':10,
-'Tool':100,
-'Virus':100,
-'Macro':10,
-'Revoked':50,
-'Unix':10,
-'Js':10,
-'Keylogger':50,
-'CRT':5,
-'Countermeasure':100,
-'Pdf':30,
-'Joke':1,
-'Phishing':30,
-'Osx':10,
-'Packer':30,
-'Cert':5
-}
+        'Swf':10,
+        'Infostealer':10,
+        'Trojan':70,
+        'Win':10,
+        'Email':1,
+        'Doc':10,
+        'Malware':100,
+        'Packed':100,
+        'File':50,
+        'CA':10,
+        'Php':10,
+        'Java':10,
+        'Rootkit':100,
+        'Rtf':10,
+        'Adware':1,
+        'Ircbot':100,
+        'Coinminer':1,
+        'Ransomware':100,
+        'Spyware':30,
+        'Loader':100,
+        'Worm':100,
+        'Filetype':30,
+        'Embedded':30,
+        'Downloader':100,
+        'Dropper':100,
+        'Andr':10,
+        'Exploit':100,
+        'Proxy':5,
+        'TS':10,
+        'Spy':50,
+        'Backdoor':100,
+        'Test':1,
+        'Html':10,
+        'Tool':100,
+        'Virus':100,
+        'Macro':10,
+        'Revoked':50,
+        'Unix':10,
+        'Js':10,
+        'Keylogger':50,
+        'CRT':5,
+        'Countermeasure':100,
+        'Pdf':30,
+        'Joke':1,
+        'Phishing':30,
+        'Osx':10,
+        'Packer':30,
+        'Cert':5
+        }
 
     def __init__(self, session: SessionMaker = None):
         # self._session = None
         super().__init__(session)
+
+    @staticmethod
+    def get_list_platforms():
+        return DBSampleManager.__platforms.copy()
+
+    @staticmethod
+    def get_list_categories():
+        return DBSampleManager.__categories.copy()
 
     def add_platform(self,name:str,score:int):
         plat = self.get_platform(name)
@@ -146,6 +154,9 @@ class DBSampleManager(DBManager):
         plat = self._session.query(Platform).filter(Platform.Name == name).first()
         return plat
 
+    def get_all_platforms(self):
+        plats = self._session.query(Platform).all()
+        return plats
     def add_category(self,name:str,score:int):
         cat = self.get_category(name)
         if cat is not None:
@@ -177,7 +188,9 @@ class DBSampleManager(DBManager):
         cat = self._session.query(Category).filter(Category.Name == name).first()
         return cat
 
-
+    def get_all_categories(self):
+        cats = self._session.query(Category).all()
+        return cats
     def add_sample(self,platform_name:str,category_name:str,sample_name:str,score:int = -1):
         plat = self.get_platform(platform_name)
         if plat is None:
@@ -253,3 +266,19 @@ class DBSampleManager(DBManager):
             return None
         samp = self._session.query(Sample).filter(Sample.PlatformID == plat.PlatformID, Sample.CategoryID==cat.CategoryID,Sample.Name==sample_name).first()
         return samp
+
+    def get_samples_stats_by_platforms(self):
+        plats = self._session.query(Platform).all()
+        samps = {}
+        for plat in plats:
+            nr_samps = self._session.query(Sample).filter(Sample.PlatformID == plat.PlatformID).count()
+            samps[plat.Name] = nr_samps
+        return samps
+
+    def get_samples_stats_by_categories(self):
+        cats = self._session.query(Category).all()
+        samps = {}
+        for cat in cats:
+            nr_samps = self._session.query(Sample).filter(Sample.CategoryID==cat.CategoryID).count()
+            samps[cat.Name] = nr_samps
+        return samps

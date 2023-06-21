@@ -39,6 +39,24 @@ class InfectivityServer(Server):
                 self._logger.info("remove client")
                 ip,mac = package.payload
                 infectivity_manager.remove_client_connection(ip,mac)
+            if package.type == InfectivityRequestType.GET_PLATFORMS:
+                self._logger.info("get all platforms")
+                plats = infectivity_manager.get_all_platforms()
+                print(plats)
+                response = InfectivityResponse(InfectivityResponseType.PLATFORMS,plats)
+                InfectivityTesterCommunicator.send_data(client_socket,response,self._logger)
+            if package.type == InfectivityRequestType.GET_CATEGORIES:
+                self._logger.info("get all categories")
+                cats = infectivity_manager.get_all_categories()
+                print(cats)
+                response = InfectivityResponse(InfectivityResponseType.CATEGORIES,cats)
+                InfectivityTesterCommunicator.send_data(client_socket,response,self._logger)
+            if package.type == InfectivityRequestType.GET_SAMPLE_STATS:
+                self._logger.info("get sample stats")
+                stats = infectivity_manager.get_sample_stats()
+                print(stats)
+                response = InfectivityResponse(InfectivityResponseType.SAMPLE_STATS,stats)
+                InfectivityTesterCommunicator.send_data(client_socket,response,self._logger)
             if package.type == InfectivityRequestType.GET_ALL_CLIENTS:
                 self._logger.info("get all clients")
                 clients = infectivity_manager.get_all_clients()

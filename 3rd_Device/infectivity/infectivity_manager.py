@@ -1,5 +1,6 @@
 from db.client_manager import DBClientManager
 from db.test_manager import DBTestManagement
+from db.sample_manager import DBSampleManager
 
 from db.session import SessionMaker
 
@@ -17,6 +18,7 @@ class InfectivityManager:
             self.__session = SessionMaker.create_scoped_session()
         self.__client_manager = DBClientManager(self.__session)
         self.__test_manager = DBTestManagement(self.__session)
+        self.__sample_manager = DBSampleManager(self.__session)
         self.__logger = logger
 
     def new_client_connection(self,ip:str,mac:str):
@@ -42,8 +44,17 @@ class InfectivityManager:
             is_reachable = True
         return is_reachable
 
-    
+    def get_all_platforms(self):
+        return self.__sample_manager.get_all_platforms()
 
+    def get_all_categories(self):
+        return self.__sample_manager.get_all_categories()
+
+    def get_sample_stats(self):
+        stat_plat = self.__sample_manager.get_samples_stats_by_platforms()
+        stat_cat = self.__sample_manager.get_samples_stats_by_categories()
+        return stat_plat, stat_cat
+    
     def __test_client(self,ip:str,mac:str):
         self.__test_manager.add_test(ip,mac)
         self.__test_manager.begin_test(ip,mac)

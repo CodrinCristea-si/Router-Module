@@ -5,7 +5,11 @@ from packages.abstract_package import AbstractPackage
 class InfectivityResponseType(Enum):
     TEST_RESULTS = 1,
     STATUS_AVAILABLE = 2,
-    STATUS_UNAVAILABLE =3
+    STATUS_UNAVAILABLE = 3,
+    PLATFORMS = 4,
+    CATEGORIES = 5,
+    SAMPLE_STATS = 6,
+    ALL_CLIENTS = 7,
 
 
 class InfectivityResponse(AbstractPackage):
