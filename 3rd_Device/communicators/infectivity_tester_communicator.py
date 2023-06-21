@@ -9,7 +9,7 @@ from packages.abstract_package import AbstractPackage
 from logger.logger import Logger
 
 class InfectivityTesterCommunicator(AbstractCommunicator):
-    _MAX_BYTES = 4096
+    _MAX_BYTES = 16384
     _TESTER_PORT = 5003
     _INFECTIVITY_SERVER_PORT = 5000
 
@@ -81,7 +81,9 @@ class InfectivityTesterCommunicator(AbstractCommunicator):
         try:
             resp_bytes = self.__server_socket.recv(InfectivityTesterCommunicator._MAX_BYTES)
             response = pickle.loads(resp_bytes)
-        except:
+            self.__logger.info("Response read")
+        except Exception as e:
+            self.__logger.error("Response failed to receive: %s" % (e))
             response=None
         return response
 
