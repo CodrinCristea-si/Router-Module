@@ -1,0 +1,57 @@
+* {
+    box-sizing: border-box
+}
+
+.show {
+    display: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.sidebar {
+    position: static;
+    top: 0;
+    left: 0;
+    width: 100px; /* Adjust the width as needed */
+    height: 100vh; /* Adjust the height as needed */
+    background-color: lightgray;
+    padding: 0;
+    z-index: 1;
+}
+
+.content {
+    /*margin-left: 200px; !* Adjust the margin to match the sidebar width *!*/
+    padding: 20px;
+}
+
+.box-list {
+    display: flex;
+    flex-direction: column;
+    gap:0;
+    /*align-items: flex-start;*/
+}
+
+.box-list button {
+    background-color: #bbb;
+    display: block;
+    margin-bottom: 10px; /* Adjust the spacing between buttons as needed */
+    padding: 0px;
+    height: 30pt;
+    width: 100%;
+}
+
+.toggle-button {
+    position: relative;
+    z-index: 2;
+}
+
+.scrollable_item{
+    overflow-y: scroll;
+    /*overflow: auto;*/
+    width: 400px; /* Set the desired width */
+    height: 300px; /* Set the desired height */
+}
