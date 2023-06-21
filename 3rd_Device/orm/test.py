@@ -11,5 +11,6 @@ class Test(Base):
    TestID = Column(BIGINT,autoincrement=True,primary_key=True,nullable=False)
    ClientID = Column(Integer,ForeignKey(Client.ClientID), nullable=False)
    TimeTaken = Column(DATETIME)
+   TimeFinished = Column(DATETIME)
    Status = Column(sqlalchemy.SMALLINT)
 

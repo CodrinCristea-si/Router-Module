@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column,Integer,String,BOOLEAN, SMALLINT
+from sqlalchemy import Column,Integer,String,BOOLEAN, SMALLINT, DATETIME
 
 Base = declarative_base()
 
@@ -13,7 +13,7 @@ class Client(Base):
    IsTesting = Column(SMALLINT,default=0)
    InfectivityType = Column(sqlalchemy.SMALLINT)
    Score = Column(sqlalchemy.SMALLINT)
-
+   LastConnected = Column(DATETIME)
    def __repr__(self):
       attributes = vars(self)
       attribute_strings = []

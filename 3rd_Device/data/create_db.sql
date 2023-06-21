@@ -9,6 +9,7 @@ create table Clients(
 	IsTesting smallint,
 	InfectivityType smallint,
 	Score smallint,
+	LastConnected datetime,
 	PRIMARY KEY(ClientID)
 ) ENGINE=InnoDB COLLATE=utf8mb4_general_ci; 
  
@@ -60,6 +61,7 @@ create table Tests(
 	TestID bigint primary key not null auto_increment,
 	ClientID int not null,
 	TimeTaken datetime,
+	TimeFinished datetime,
 	Status smallint,
 	CONSTRAINT `fk_test_client` 
 		FOREIGN KEY (ClientID) REFERENCES Clients(ClientID)
