@@ -50,56 +50,57 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 
 	//only ipv4 based packages allowed
 	if (!skb || skb->protocol != htons(ETH_P_IP)){
-		printk(KERN_WARNING "Intercept 1\n");
+		//printk(KERN_WARNING "Intercept 1\n");
 		return NF_ACCEPT;
 	}
 	//check if the package is sent from the router
 	if (check_if_not_belonged_to_router(skb,&lan)){
-		printk(KERN_WARNING "Intercept 2\n");
+		//printk(KERN_WARNING "Intercept 2\n");
 		return NF_ACCEPT;
 	}
 	if(check_for_special_clients(skb,&lan)){
-		printk(KERN_WARNING "Intercept 3\n");
+		//printk(KERN_WARNING "Intercept 3\n");
 		return NF_ACCEPT;
 	}
 	if(IS_LOCKDOWN_MODE_ENABLED()){
-		printk(KERN_WARNING "Intercept 3.5\n");
+		//printk(KERN_WARNING "Intercept 3.5\n");
 		return NF_DROP;
 	}
 	//ip forwarding, dhcp or others
 	if (check_if_outside_network(skb,&lan)){
-		printk(KERN_WARNING "Intercept 4\n");
+		//printk(KERN_WARNING "Intercept 4\n");
 		return NF_ACCEPT;
 	}
 	ip_h = ip_hdr(skb);
 	//if cannot retrive ipv4 data then drop
 	if(!ip_h){
-		printk(KERN_WARNING "Intercept 5\n");
-		return NF_DROP;
+		//printk(KERN_WARNING "Intercept 5\n");
+		return NF_ACCEPT;
 	}
 	mac_header = eth_hdr(skb);
 	//if cannot retrive mac data then drop
 	if(!mac_header){
-		printk(KERN_WARNING "Intercept 6\n");
-		return NF_DROP;
+		//printk(KERN_WARNING "Intercept 6\n");
+		return NF_ACCEPT;
 	}
 
 
 	client = (struct client_def *)kcalloc(1, sizeof(struct client_def), GFP_KERNEL);
-	///get client details
+	//get client details
 	if (!check_if_outside_network_source(skb,&lan)){
 		res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->saddr, mac_header->h_source,client);
 
 		//no client details then drop, possible MitM
+		//or static in that case accept
 		if (!res_cl){
-			printk(KERN_WARNING "Intercept 7\n");
+			//printk(KERN_WARNING "Intercept 7\n");
 			kfree(client);
-			return NF_DROP;
+			return NF_ACCEPT;
 		}
 		if(check_if_client_can_send_message(skb,&lan,client))
 			can_communicate = true;
 		else{
-			printk(KERN_WARNING "Intercept 7.5\n");
+			//printk(KERN_WARNING "Intercept 7.5\n");
 			can_communicate = false;
 		}
 		
@@ -107,15 +108,16 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	else if (!check_if_outside_network_destination(skb,&lan)){
 		res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->daddr, mac_header->h_dest,client);
 		//no client details then drop, possible MitM
+		//or static in that case accept
 		if (!res_cl){
-			printk(KERN_WARNING "Intercept 8\n");
+			//printk(KERN_WARNING "Intercept 8\n");
 			kfree(client);
-			return NF_DROP;
+			return NF_ACCEPT;
 		}
 		if(check_if_client_can_receive_message(skb,&lan,client))
 			can_communicate = true;
 		else{
-			printk(KERN_WARNING "Intercept 8.5\n");
+			//printk(KERN_WARNING "Intercept 8.5\n");
 			can_communicate = false;
 		}
 	}
@@ -135,7 +137,7 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 	
 	// pack = create_package_data_v2(skb,&pack_size,true);
 	// if (pack_size){
-	// 	print_package_data_v2(pack,pack_size,true);
+	// 	//print_package_data_v2(pack,pack_size,true);
 	// 	send_to_user_broadcast(netlink_socket,(unsigned char*)pack,pack_size,PACKAGE,0,nl_mutex);
 	// }
 	//send_to_user_broadcast_v2((unsigned char*)pack, pack_size, PACKAGE, NETLINK_PROTO_INFECTED , 2);
@@ -248,19 +250,20 @@ static void netlink_handle(struct sk_buff *skb){
 					lan.mask = config->netmask;
 					lan.ip_addr = config->ip_router;
 					is_configured = true;
+					DISABLE_LOCKDOWN_MODE();
 					if(init_hook())clear_hook();
 					printk(KERN_INFO "CONFIGURE successfull on %pI4(%pI4)\n",&config->subnet, &config->netmask);
 				}
 			}
 			break;
 		case LOCK_UP:
-			if(!IS_LOCKDOWN_MODE_ENABLED()){
-				ENABLE_LOCKDOWN_MODE();
+			if(IS_LOCKDOWN_MODE_ENABLED()){
+				DISABLE_LOCKDOWN_MODE();
 			}
 			break;
 		case LOCK_DOWN:
-			if(IS_LOCKDOWN_MODE_ENABLED()){
-				DISABLE_LOCKDOWN_MODE();
+			if(!IS_LOCKDOWN_MODE_ENABLED()){
+				ENABLE_LOCKDOWN_MODE();
 			}
 			break;
 		// usefull and broken, maybe some rework and it may become something 

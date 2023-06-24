@@ -31,8 +31,8 @@ int __add_client_to_list(struct clients_list* list, const __be32 client_ip_addr,
 	if(inf_mutex) mutex_lock(inf_mutex);
 	list_add(&new_client->list,&list->list);
 	if(inf_mutex) mutex_unlock(inf_mutex);
-	printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X added to type %d\n", &client_ip_addr,
-		client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], type);
+	//printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X added to type %d\n", &client_ip_addr,
+	//	client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], type);
 	return 0;
 
 cleanup:
@@ -42,8 +42,8 @@ cleanup:
 	if(new_client){
 		kfree(new_client);
 	}
-    	printk(KERN_ERR "Failed to add client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X \n",&client_ip_addr,
-            client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5]);
+    	//printk(KERN_ERR "Failed to add client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X \n",&client_ip_addr,
+        //    client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5]);
 	return -1;
 }
 //todo
@@ -58,7 +58,7 @@ bool __add_client_generic(const __be32 client_ip_addr, const unsigned char* clie
 	//printk(KERN_INFO "old_client %p\n", old_client);
 	if(res_cl == NULL){
 		res = ADD_CLIENT_SUSPICIOUS(client_ip_addr,client_mac_addr);
-		printk(KERN_INFO "res %d\n", res);
+		//printk(KERN_INFO "res %d\n", res);
 		if(res >= 0) added = true; 
 	}
 	if(inf_mutex) mutex_unlock(inf_mutex);
@@ -138,8 +138,8 @@ bool __remove_client_from_list(struct clients_list* list_from, const __be32 clie
                 list_del(&listptr->list);
                 kfree(listptr);
                 deleted = true;
-                printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X removed from type %d\n", &client_ip_addr,
-                    client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], list_from->client.infectivity);
+                //printk(KERN_INFO "Client with ip %pI4 and mac %02X:%02X:%02X:%02X:%02X:%02X removed from type %d\n", &client_ip_addr,
+                //    client_mac_addr[0],client_mac_addr[1],client_mac_addr[2],client_mac_addr[3],client_mac_addr[4],client_mac_addr[5], list_from->client.infectivity);
                 break;
             }
         }
@@ -182,7 +182,7 @@ struct client_def* __get_client_from_list(struct clients_list* list_from, const 
     if(list_from){
         list_for_each(listptr, &list_from->list) {
             tmp = list_entry(listptr, struct clients_list, list);
-	    printk(KERN_INFO "SEARCH FOR %pI4\n",&tmp->client.ip_addr );
+	    //printk(KERN_INFO "SEARCH FOR %pI4\n",&tmp->client.ip_addr );
             if(tmp->client.ip_addr == client_ip_addr &&  cmp_mac_address(tmp->client.mac_addr, client_mac_addr) == 0){
 		is_found = true;
                 break;
@@ -203,33 +203,33 @@ struct client_def* __get_client_generic(const __be32 client_ip_addr, const unsig
 	struct client_def* res_cl = NULL;
 	bool is_found = false;
 	if(inf_mutex) mutex_lock(inf_mutex);
-	printk(KERN_INFO "try for ip %pI4  and mac %02x:%02x:%02x:%02x:%02x:%02x\n",&client_ip_addr, client_mac_addr[0], client_mac_addr[1], client_mac_addr[2], client_mac_addr[3], client_mac_addr[4], client_mac_addr[5]);
+	//printk(KERN_INFO "try for ip %pI4  and mac %02x:%02x:%02x:%02x:%02x:%02x\n",&client_ip_addr, client_mac_addr[0], client_mac_addr[1], client_mac_addr[2], client_mac_addr[3], client_mac_addr[4], client_mac_addr[5]);
 	if (!is_found){
-		printk(KERN_INFO "try 1\n");
+		//printk(KERN_INFO "try 1\n");
 		res_cl = GET_CLIENT_UNINFECTED(client_ip_addr,client_mac_addr,client_collector);
 		if(res_cl != NULL)
 			is_found = true;
 	}
 	if (!is_found){
-		printk(KERN_INFO "try 2\n");
+		//printk(KERN_INFO "try 2\n");
 		res_cl = GET_CLIENT_SUSPICIOUS(client_ip_addr,client_mac_addr,client_collector);
 		if(res_cl != NULL)
 			is_found = true;
 	}
 	if (!is_found){
-		printk(KERN_INFO "try 3\n");
+		//printk(KERN_INFO "try 3\n");
 		res_cl = GET_CLIENT_INFECTED_MINOR(client_ip_addr,client_mac_addr,client_collector);
 		if(res_cl != NULL)
 			is_found = true;
 	}
 	if (!is_found){
-		printk(KERN_INFO "try 4\n");
+		//printk(KERN_INFO "try 4\n");
 		res_cl = GET_CLIENT_INFECTED_MAJOR(client_ip_addr,client_mac_addr,client_collector);
 		if(res_cl != NULL)
 			is_found = true;
 	}
 	if (!is_found){
-		printk(KERN_INFO "try 5\n");
+		//printk(KERN_INFO "try 5\n");
 		res_cl = GET_CLIENT_INFECTED_SEVER(client_ip_addr,client_mac_addr,client_collector);
 		if(res_cl != NULL)
 			is_found = true;
@@ -434,31 +434,31 @@ int __clear_infectivity_lists(void){
 		__clear_list(uninfected_list);
 		kfree(uninfected_list);
 		uninfected_list = NULL;
-		printk(KERN_INFO "cleared uninfected_list\n");
+		//printk(KERN_INFO "cleared uninfected_list\n");
 	} 
 	if(suspicious_list){
 		__clear_list(suspicious_list);
 		kfree(suspicious_list);
 		suspicious_list=NULL;
-		printk(KERN_INFO "cleared suspicious_list\n");
+		//printk(KERN_INFO "cleared suspicious_list\n");
 	}
 	if(infected_minor_list){
 		__clear_list(infected_minor_list);
 		kfree(infected_minor_list);
 		infected_minor_list=NULL;
-		printk(KERN_INFO "cleared infected_minor_list\n");
+		//printk(KERN_INFO "cleared infected_minor_list\n");
 	}
 	if(infected_major_list){
 		__clear_list(infected_major_list);
 		kfree(infected_major_list);
 		infected_major_list=NULL;
-		printk(KERN_INFO "cleared infected_major_list\n");
+		//printk(KERN_INFO "cleared infected_major_list\n");
 	}
 	if(infected_sever_list){
 		__clear_list(infected_sever_list);
 		kfree(infected_sever_list);
 		infected_sever_list=NULL;
-		printk(KERN_INFO "cleared infected_sever_list\n");
+		//printk(KERN_INFO "cleared infected_sever_list\n");
 	}
 	if(inf_mutex){
 		mutex_destroy(inf_mutex);

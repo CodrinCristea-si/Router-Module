@@ -29,7 +29,6 @@ int send_data(int sockfd,unsigned char* buf, int size_data){
 		len_data = write(sockfd,&buf[curr_len],sizeof(size_payload-curr_len));
 		if(len_data <0 ) return -1; 
 		curr_len += len_data;
-		//printf("trimis in pizda %d\n",sockfd);
 	}
 	//printf("Data sent\n");
 	return size_payload;
@@ -43,7 +42,6 @@ int send_data_udp(int sockfd,unsigned char* buf, int size_data){
 		len_data = write(sockfd,&buf[curr_len],sizeof(size_payload-curr_len));
 		if(len_data <0 ) return -1; 
 		curr_len += len_data;
-		//printf("trimis in pizda %d\n",sockfd);
 	}
 	//printf("Data sent\n");
 	return size_payload;

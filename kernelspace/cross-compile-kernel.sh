@@ -35,7 +35,7 @@ if [ $? -eq 0 ];
 then 
     echo "Compilation Success"
     output_file=$module_name.ko
-    cp /home/babushka19/Desktop/openwrt_build/openwrt/build_dir/target-mipsel_24kc_musl/linux-ramips_mt76x8/infectivity-test/$output_file $old_dir
+    cp /home/babushka19/Desktop/openwrt_build/openwrt/build_dir/target-mipsel_24kc_musl/linux-ramips_mt76x8/infectivity_kernel/$output_file $old_dir
     cd $old_dir
     exit 0
 else 

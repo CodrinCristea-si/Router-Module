@@ -105,15 +105,15 @@ int main(int argc, char** argv){
 				printf("file1 %s\n",filename);
 			}
 			if(argc>5){
-				subnet = (char *)malloc(sizeof(char)*strlen(argv[3])+2);
+				subnet = (char *)calloc(1,sizeof(char)*strlen(argv[3])+2);
 				strncpy(subnet,argv[3],strlen(argv[3]));
 				printf("subnet %s\n",subnet);	
 
-				netmask = (char *)malloc(sizeof(char)*strlen(argv[4])+2);
+				netmask = (char *)calloc(1,sizeof(char)*strlen(argv[4])+2);
 				strncpy(netmask,argv[4],strlen(argv[4]));
 				printf("netmask %s\n",netmask);	
 
-				ip_router = (char *)malloc(sizeof(char)*strlen(argv[5])+2);
+				ip_router = (char *)calloc(1,sizeof(char)*strlen(argv[5])+2);
 				strncpy(ip_router,argv[5],strlen(argv[5]));
 				printf("ip_router %s\n",ip_router);	
 				if(compare_regex(subnet,REGEX_IPV4) != 0) {

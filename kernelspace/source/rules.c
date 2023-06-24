@@ -37,9 +37,7 @@ bool check_if_not_belonged_to_router(struct sk_buff *skb, struct network_details
 
 bool check_if_outside_network_source(struct sk_buff *skb, struct network_details* lan){
 	struct iphdr* ip_h;
-	if (!skb || !lan) return true;
 	ip_h = ip_hdr(skb);
-	if(!ip_h) return true;
 	//printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan.ip_addr);
 	if (check_ip_belong_to_network(lan,ip_h->saddr))
 		return false;
@@ -49,9 +47,9 @@ bool check_if_outside_network_source(struct sk_buff *skb, struct network_details
 bool check_for_special_clients(struct sk_buff *skb, struct network_details* lan){
 	bool is_special = false;
 	struct iphdr* ip_h;
-	if (!skb || !lan) return true;
+	if (!skb || !lan) return false;
 	ip_h = ip_hdr(skb);
-	if(!ip_h) return true;
+	if(!ip_h) return false;
 #ifdef __LITTLE_ENDIAN_BITFIELD
 	if (ip_h->saddr == (lan->ip_addr + (1<<18)) || ip_h->daddr == (lan->ip_addr + (1<<18))) //3rd_device
 		is_special = true;
@@ -65,9 +63,7 @@ bool check_for_special_clients(struct sk_buff *skb, struct network_details* lan)
 
 bool check_if_outside_network_destination(struct sk_buff *skb, struct network_details* lan){
 	struct iphdr* ip_h;
-	if (!skb || !lan) return true;
 	ip_h = ip_hdr(skb);
-	if(!ip_h) return true;
 	//printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan.ip_addr);
 	if (check_ip_belong_to_network(lan,ip_h->daddr))
 		return false;
@@ -76,10 +72,8 @@ bool check_if_outside_network_destination(struct sk_buff *skb, struct network_de
 
 bool check_if_outside_network(struct sk_buff *skb, struct network_details* lan){
 	struct iphdr* ip_h;
-	if (!skb || !lan) return true;
 	ip_h = ip_hdr(skb);
-	if(!ip_h) return true;
-	printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &ip_h->daddr, &lan->ip_addr);
+	//printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &ip_h->daddr, &lan->ip_addr);
 	if (check_ip_belong_to_network(lan,ip_h->saddr) || check_ip_belong_to_network(lan,ip_h->daddr)) 
 		return false;
 	return true;
@@ -202,7 +196,7 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 		else {
 			inf_dest_status = get_inf_status_for_destination_client(skb);
 			if(inf_dest_status == -1) //possible MitM
-				return false;
+				return true;
 			else {
 				if(check_if_broadcast_message(skb,lan)) //cannot broadcast
 					return false;
@@ -227,7 +221,7 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 		else {
 			inf_dest_status = get_inf_status_for_destination_client(skb);
 			if(inf_dest_status == -1) //possible MitM
-				return false;
+				return true;
 			else {
 				if(check_if_broadcast_message(skb,lan)) //cannot broadcast
 					return false;
@@ -237,7 +231,7 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 				if(is_ok_status_for_inf_major(inf_dest_status)){ //can communivcate with others
 					dest_port = get_destination_port(skb);
 					if(dest_port == -1) //maybe other proto
-						return false; 
+						return true; 
 					else if (check_if_banned_port(dest_port, banned_ports_major, size_banned_ports_major)) //banned ports
 						return false;
 					else 
@@ -262,35 +256,35 @@ bool check_if_client_can_receive_message(struct sk_buff *skb, struct network_det
 	switch (client->infectivity)
 	{
 	case UNINFECTED:
-		printk(KERN_WARNING "hapciu 1\n");
+		//printk(KERN_WARNING "hapciu 1\n");
 		return true;
 	case SUSPICIOUS:
 		if (check_if_outside_network_source(skb,lan)){ //from Internet
-			printk(KERN_WARNING "hapciu 2\n");
+			//printk(KERN_WARNING "hapciu 2\n");
 			return true;
 		}
 		else{
-			printk(KERN_WARNING "hapciu 3\n");
+			//printk(KERN_WARNING "hapciu 3\n");
 			return false;
 		}
 	case INFECTED_MINOR:
 		if (check_if_outside_network_source(skb,lan)){ //from Internet
-			printk(KERN_WARNING "hapciu 4\n");
+			//printk(KERN_WARNING "hapciu 4\n");
 			return true;
 		}
 		else{
 			inf_source_status = get_inf_status_for_source_client(skb);
 			if(inf_source_status == -1){ //possible MitM
-				printk(KERN_WARNING "hapciu 5\n");
-				return false;
+				//printk(KERN_WARNING "hapciu 5\n");
+				return true;
 			}
 			else {
 				if(is_ok_status_for_inf_minor(inf_source_status)){
-					printk(KERN_WARNING "hapciu 6\n");
+					//printk(KERN_WARNING "hapciu 6\n");
 					return true;
 				}
 				else{
-					printk(KERN_WARNING "hapciu 7\n");
+					//printk(KERN_WARNING "hapciu 7\n");
 					return false;
 				}
 			}
@@ -298,39 +292,39 @@ bool check_if_client_can_receive_message(struct sk_buff *skb, struct network_det
 		break;
 	case INFECTED_MAJOR:
 		if (check_if_outside_network_source(skb,lan)){ //from Internet
-			printk(KERN_WARNING "hapciu 8\n");
+			//printk(KERN_WARNING "hapciu 8\n");
 			return true;
 		}
 		else{
 			if (check_for_icmp_protocol(skb)){
-				printk(KERN_WARNING "hapciu 9\n");
+				//printk(KERN_WARNING "hapciu 9\n");
 				return false; //no ICMP
 			}
 			inf_source_status = get_inf_status_for_source_client(skb);
 			if(inf_source_status == -1){ //possible MitM
-				printk(KERN_WARNING "hapciu 10\n");
-				return false;
+				//printk(KERN_WARNING "hapciu 10\n");
+				return true;
 			}
 			else {
 				if(is_ok_status_for_inf_major(inf_source_status)){
-					printk(KERN_WARNING "hapciu 11\n");
+					//printk(KERN_WARNING "hapciu 11\n");
 					return true;
 				}
 				else{
-					printk(KERN_WARNING "hapciu 12\n");
+					//printk(KERN_WARNING "hapciu 12\n");
 					return false;
 				}
 			}
 		}
 		break;
 	case INFECTED_SEVER:
-		printk(KERN_WARNING "hapciu 13\n");
+		//printk(KERN_WARNING "hapciu 13\n");
 		return false;
 	default:
-		printk(KERN_WARNING "hapciu 14\n");
+		//printk(KERN_WARNING "hapciu 14\n");
 		return false;
 	}
-	printk(KERN_WARNING "hapciu 15\n");
+	//printk(KERN_WARNING "hapciu 15\n");
 	return false; //for any
 }
 

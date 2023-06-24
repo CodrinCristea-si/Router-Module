@@ -48,7 +48,12 @@ enum{
 	TRANSFER,
 	GET_ALL,
 	GET_UPDATES,
-	PACKAGE_RECEIVED
+	PACKAGE_RECEIVED,
+	AUTO_UP,
+	AUTO_DOWN,
+	LOCKDOWN_UP,
+	LOCKDOWN_DOWN,
+	
 };
 
 enum{
@@ -72,6 +77,11 @@ struct kernel_job{
 	void *pack;
 };
 
+struct ui_job{
+	unsigned char job_type;
+	void *ui_data;
+};
+
 struct task{
 	int len;
 	int sender;
@@ -83,5 +93,11 @@ int start_monitoring(char *filename, struct network_details* main_net);
 void print_job(struct client_job *job);
 
 void print_client_infectivity(struct client_infectivity* client);
+
+bool is_lockdown_job(unsigned char job_type);
+
+unsigned char get_job_type_from_data(unsigned char *data);
+
+unsigned char is_ui_job(unsigned char job_type);
 
 #endif

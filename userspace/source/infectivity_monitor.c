@@ -37,6 +37,7 @@ struct network_details main_network;
 int nr_total_clients = 0;
 int nr_clients_dangerous = 0;
 bool is_lockdown = false;
+bool is_automatic_lockdown = true;
 
 void print_client_infectivity(struct client_infectivity* client){
 	printf("Client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",client->ipv4[0],
@@ -52,7 +53,7 @@ void print_job(struct client_job *job){
 
 void print_task(struct task *task){
 	printf("Task len %d and sender %d\n",task->len, task->sender);
-	if(task->sender != -1)
+	if(task->sender != -1 && !is_ui_job(get_job_type_from_data(task->job))) //rework
 		print_job(task->job);
 }
 
@@ -229,6 +230,11 @@ void convert_from_infectivity_to_network(struct client_infectivity* from, struct
 	to->type = type;
 }
 
+unsigned char is_ui_job(unsigned char job_type){
+	return job_type == AUTO_DOWN || job_type == AUTO_UP ||
+		job_type == LOCKDOWN_UP || job_type == LOCKDOWN_DOWN;
+}
+
 void send_client_to_network(struct client_infectivity* client,unsigned char type){
 	printf("hai sa trimitem la server\n");
 	struct network_client_data pack;
@@ -237,16 +243,34 @@ void send_client_to_network(struct client_infectivity* client,unsigned char type
 }
 
 void check_for_lockdown(){
-	if (is_lockdown){
-		if(nr_total_clients < MIN_NR_CLIENT_LOCKDOWN || nr_clients_dangerous/nr_total_clients * 100 < MIN_THRESHOLD_LOCKDOWN){
-			is_lockdown = false;
-			send_message_to_kernel(NULL,LOCK_UP);
+	if(is_automatic_lockdown){
+		if (is_lockdown){
+			if(nr_total_clients < MIN_NR_CLIENT_LOCKDOWN || nr_clients_dangerous/nr_total_clients * 100 < MIN_THRESHOLD_LOCKDOWN){
+				is_lockdown = false;
+				printf("Lockdown disabled\n");
+				//kernel
+				send_message_to_kernel(NULL,LOCK_UP);
+
+				// update
+				struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+				job_copy->job_type=LOCKDOWN_UP;
+				push_to_list(updates,(void*)job_copy);
+			}
 		}
-	}
-	else{
-		if(nr_total_clients >= MIN_NR_CLIENT_LOCKDOWN || nr_clients_dangerous/nr_total_clients * 100 >= MIN_THRESHOLD_LOCKDOWN){
-			is_lockdown = true;
-			send_message_to_kernel(NULL,LOCK_DOWN);
+		else{
+			printf("lockdown details %d and %d and %f\n",nr_clients_dangerous,nr_total_clients, (float)(nr_clients_dangerous)/(float)(nr_total_clients) * (float)(100) );
+			if(nr_total_clients >= MIN_NR_CLIENT_LOCKDOWN && (float)(nr_clients_dangerous)/(float)nr_total_clients * (float)(100) >= (float)(MIN_THRESHOLD_LOCKDOWN) - 1){
+				
+				is_lockdown = true;
+				printf("Lockdown enabled\n");
+				//kernel
+				send_message_to_kernel(NULL,LOCK_DOWN);
+
+				// update
+				struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+				job_copy->job_type=LOCKDOWN_DOWN;
+				push_to_list(updates,(void*)job_copy);
+			}
 		}
 	}
 }
@@ -288,7 +312,7 @@ void process_add_job(struct client_job *job){
 			send_message_to_kernel((unsigned char*)&cl_rpr,ADD_CLIENT);
 
 			//network
-			send_client_to_network(&job->client,CLIENT_CONNECT);
+			//send_client_to_network(&job->client,CLIENT_CONNECT);
 		}
 		
 	}
@@ -357,7 +381,7 @@ void process_remove_job(struct client_job *job){
 			send_message_to_kernel((unsigned char*)&cl_rpr,REMOVE_CLIENT);
 
 			//network
-			send_client_to_network(&job->client,CLIENT_DISCONNECT);
+			//send_client_to_network(&job->client,CLIENT_DISCONNECT);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -379,6 +403,9 @@ void process_transfer_job(struct client_job *job){
 			else{
 				if(cmp_clients(&job->client,client) ==0){
 					if(client->infectivity != job->client.infectivity){
+						if(is_client_dangerous(client)){
+							nr_clients_dangerous--;
+						}
 						client->infectivity=job->client.infectivity;
 						transfered = true;
 						if(is_client_dangerous(client)){
@@ -401,13 +428,14 @@ void process_transfer_job(struct client_job *job){
 			struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
 			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct client_job));
 			push_to_list(updates,(void*)job_copy);
+
 			//kernel
 			struct client_repr cl_rpr;
 			convert_infectivity_2_repr(&job->client,&cl_rpr);
 			send_message_to_kernel((unsigned char*)&cl_rpr,TRANSFER_CLIENT);
 
 			//network
-			send_client_to_network(&job->client,CLIENT_TRANSFER);
+			//send_client_to_network(&job->client,CLIENT_TRANSFER);
 		}
 	}
 	pthread_mutex_unlock(&mutex_storage);
@@ -431,7 +459,10 @@ void send_to_sender(int sockfd, unsigned char type, unsigned char* data){
 					length = list->size;
 					for(i=0;i< length;i++){
 						void* data = pop_from_list(list);
-						send_data(sockfd,data,sizeof(struct client_infectivity));
+						if(is_ui_job(get_job_type_from_data(data)))
+							send_data(sockfd,data,sizeof(struct ui_job));
+						else
+							send_data(sockfd,data,sizeof(struct client_job));
 					}
 					clear_list(list);
 				}
@@ -449,7 +480,10 @@ void send_to_sender(int sockfd, unsigned char type, unsigned char* data){
 					length = list->size;
 					for(i=0;i< length;i++){
 						void* data = pop_from_list(list);
-						send_data(sockfd,data,sizeof(struct client_job));
+						if(is_ui_job(get_job_type_from_data(data)))
+							send_data(sockfd,data,sizeof(struct ui_job));
+						else
+							send_data(sockfd,data,sizeof(struct client_job));
 					}
 					clear_list(list);
 				}
@@ -500,12 +534,21 @@ List* process_get_all_job(){
 				break;
 			}
 			else{
-				print_client_infectivity(client);
-				push_to_list(list,(void*)client);
+				struct client_job *job_copy = (struct client_job *)malloc(sizeof(struct client_job));
+				job_copy->client = *client;
+				//print_client_infectivity(client);
+				push_to_list(list,(void*)job_copy);
 				//printf("pushed\n");
 			}
 			//i++;
 		}
+		struct ui_job *job_lock = (struct ui_job *)malloc(sizeof(struct ui_job));
+		job_lock->job_type= is_lockdown ? LOCKDOWN_DOWN : LOCKDOWN_UP;
+		push_to_list(list,(void*)job_lock);
+
+		struct ui_job *job_auto = (struct ui_job *)malloc(sizeof(struct ui_job));
+		job_auto->job_type= is_automatic_lockdown ? AUTO_UP : AUTO_DOWN;
+		push_to_list(list,(void*)job_auto);
 	}
 	fclose(file);
 	//printf("closed\n");
@@ -515,6 +558,59 @@ List* process_get_all_job(){
 
 void process_package_received(unsigned char *pack, unsigned int size){
 	print_package_data(pack, size);
+}
+
+bool is_lockdown_job(unsigned char job_type){
+	return job_type == LOCKDOWN_UP || job_type == LOCKDOWN_DOWN;
+}
+
+void process_auto_request(struct ui_job* job){
+	pthread_mutex_lock(&mutex_storage);
+	if (job->job_type == AUTO_UP && !is_automatic_lockdown){
+		is_automatic_lockdown = true;
+		// update
+		struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+		job_copy->job_type=AUTO_UP;
+		push_to_list(updates,(void*)job_copy);
+		check_for_lockdown();
+	}
+	if (job->job_type == AUTO_DOWN && is_automatic_lockdown){
+		is_automatic_lockdown = false;
+		// update
+		struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+		job_copy->job_type=AUTO_DOWN;
+		push_to_list(updates,(void*)job_copy);
+	}
+	pthread_mutex_unlock(&mutex_storage);
+}
+
+void process_lockdown_request(struct ui_job* job){
+	pthread_mutex_lock(&mutex_storage);
+	if(is_automatic_lockdown){
+		if(job->job_type == LOCKDOWN_DOWN && !is_lockdown){
+			is_lockdown=true;
+			printf("Lockdown enabled\n");
+			//kernel
+			send_message_to_kernel(NULL,LOCK_DOWN);
+
+			//update
+			struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct ui_job));
+			push_to_list(updates,(void*)job_copy);
+		}
+		else if(job->job_type == LOCKDOWN_UP&& is_lockdown){
+			is_lockdown=false;
+			printf("Lockdown disabled\n");
+			//kernel
+			send_message_to_kernel(NULL,LOCK_UP);
+
+			// update
+			struct ui_job *job_copy = (struct ui_job *)malloc(sizeof(struct ui_job));
+			copy_uchar_values((unsigned char*)job,(unsigned char*)job_copy,sizeof(struct ui_job));
+			push_to_list(updates,(void*)job_copy);
+		}
+	}
+	pthread_mutex_unlock(&mutex_storage);
 }
 
 void clear_job(unsigned char *job, bool is_kernel){
@@ -577,6 +673,14 @@ void process_task(struct task to_execute){
 			list = process_get_updates_job();
 			send_to_sender(to_execute.sender,UPDATES,(unsigned char*)list);
 			break;
+		case AUTO_DOWN:
+		case AUTO_UP:
+			process_auto_request((struct ui_job*)to_execute.job);
+			break;
+		case LOCKDOWN_UP:
+		case LOCKDOWN_DOWN:
+			process_lockdown_request((struct ui_job*)to_execute.job);
+			break;
 		default:
 			break;
 		}
@@ -630,15 +734,29 @@ struct kernel_job* parse_kernel_job(unsigned char *data,int size){
 	return job;
 }
 
+struct ui_job* parse_ui_job(unsigned char *data,int size){
+	struct ui_job* job;
+	size_t i;
+	int poz =0;
+	job = (struct ui_job*)malloc(sizeof(struct ui_job));
+	job->job_type = data[poz];
+	job->ui_data = NULL;
+	return job;
+}
+
 struct task* parse_task(unsigned char *data,int size, int sender){
 	//printf("Task creation\n");
 	struct task *new_task = (struct task *)malloc(sizeof(struct task ));
 	//printf("ok1\n");
 	new_task->len=size;
 	//printf("ok2\n");
-	if (sender > 0 )
-		new_task->job = parse_client_job(data,size);
-	else{
+	if (sender > 0 ){
+		if(is_ui_job(get_job_type_from_data(data)))
+			new_task->job = parse_ui_job(data,size);
+		else
+			new_task->job = parse_client_job(data,size);
+	}
+	else if (sender == -1 ){
 		new_task->job = parse_kernel_job(data,size);
 	}
 	//printf("ok3\n");
@@ -656,7 +774,7 @@ void inject_task(char* data,int size, int sender){
 	push_to_list(task_pool,new_task);
 	//printf("ok5\n");
 	//printf("Task added\n");
-	print_task(new_task);
+	//print_task(new_task);
 	pthread_cond_signal(&cond);
 	pthread_mutex_unlock(&mutex);
 }
@@ -699,18 +817,18 @@ void *kernel_listener(){
 	while(1){
 		//resp = receive_from_kernel(0);
 		resp = receive_from_kernel_multicast();
-		printf("received %p from kernel\n",resp);
+		//printf("received %p from kernel\n",resp);
 		if(resp && resp->data){
 			//inject_task(resp->data,resp->opt,-1);
 			//new_task = parse_task(resp->data,resp->opt,-1);
 			//process_package_received(new_task->job, new_task->len);
 			send_to_network_udp(resp->data,resp->opt);
-			//print_kernel_response(resp);
+			print_kernel_response(resp);
 			clear_response_kernel(resp);
 			//clear_task(new_task);
 		}
 		else{
-			printf("NULL PACK\n");
+			//printf("NULL PACK\n");
 		}
 	}
 }
@@ -806,9 +924,9 @@ int start_monitoring(char *filename, struct network_details* main_net){
 			if(i == 0){
 				pthread_create(&thr[i],NULL,main_server,NULL);
 			}
-			// if(i == 1){
-			// 	pthread_create(&thr[i],NULL,kernel_listener,NULL);
-			// }
+			if(i == 1){
+				pthread_create(&thr[i],NULL,kernel_listener,NULL);
+			}
 			else{
 				pthread_create(&thr[i],NULL,worker,NULL);
 			}

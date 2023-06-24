@@ -58,14 +58,28 @@ void print_response_get_all(struct response *response){
 	printf("Nr ent %d\n", response->nr_ent);
 	length = response->nr_ent;
 	for(i =0;i<length;i++){
-		struct client_infectivity *client = get_from_list(response->data,i);
-		if(client)
-			printf("Client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",client->ipv4[0],
-				client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
-				client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
-				client->infectivity);
+		void *data = get_from_list(response->data,i);
+		if(is_ui_job(get_job_type_from_data(data))){
+			struct ui_job *job = data;
+			if(job){
+				if(is_lockdown_job(job->job_type))
+					printf("Lockdown %d \n",job->job_type == LOCKDOWN_UP ? 0 : 1);
+				else
+					printf("Automatic %d \n",job->job_type == AUTO_UP ? 1 : 0);
+			}else{
+				printf("NULL\n");
+			}
+		}
 		else{
-			printf("NULL\n");
+			struct client_job *job = data;;
+			if(job)
+				printf("Client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->client.ipv4[0],
+					job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+					job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+					job->client.infectivity);
+			else{
+				printf("NULL\n");
+			}
 		}
 	}
 }
@@ -82,21 +96,33 @@ void create_json_get_all(struct response *response, char* output){
 		fprintf(file,"[{\"data\":[");
 		length = response->nr_ent;
 		for(i =0;i<length;i++){
-			struct client_infectivity *client = get_from_list(response->data,i);
-			if(client){
-				// char client_str[100]={0};
-				// sprintf(client_str,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",client->ipv4[0],
-				// client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
-				// client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
-				// client->infectivity);
-				// write_data(file,client_str,strlen(client_str));
-
-				fprintf(file,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",client->ipv4[0],
-				client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
-				client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
-				client->infectivity);
+			void *data = get_from_list(response->data,i);
+			if(is_ui_job(get_job_type_from_data(data))){
+				struct ui_job *job = data;
+				if(job){
+					if(is_lockdown_job(job->job_type))
+						fprintf(file,"{\"lockdown\":\"%d\"}", job->job_type == LOCKDOWN_UP ? 0 : 1);
+					else
+						fprintf(file,"{\"autmoatic\":\"%d\"}", job->job_type == AUTO_UP ? 1 : 0);
+				}
 			}
-			if(i != length -1 && client){
+			else{
+				struct client_job *job = data;
+				if(job){
+					// char client_str[100]={0};
+					// sprintf(client_str,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",client->ipv4[0],
+					// client->ipv4[1],client->ipv4[2],client->ipv4[3],client->mac[0],
+					// client->mac[1],client->mac[2],client->mac[3],client->mac[4],client->mac[5],
+					// client->infectivity);
+					// write_data(file,client_str,strlen(client_str));
+
+					fprintf(file,"{\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->client.ipv4[0],
+					job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+					job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+					job->client.infectivity);
+				}
+			}
+			if(i != length -1 && data){
 				// char sep[]=",\n";
 				// write_data(file,sep,strlen(sep));
 				fprintf(file,",\n");
@@ -118,14 +144,28 @@ void print_response_get_updates(struct response *response){
 	printf("Nr ent %d\n", response->nr_ent);
 	length = response->nr_ent;
 	for(i =0;i<length;i++){
-		struct client_job *job = get_from_list(response->data,i);
-		if(job){
-			printf("Action %d with client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->job_type,job->client.ipv4[0],
-				job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
-				job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
-				job->client.infectivity);
-		}else{
-			printf("NULL\n");
+		void *data = get_from_list(response->data,i);
+		if(is_ui_job(get_job_type_from_data(data))){
+			struct ui_job *job = data;
+			if(job){
+				if(is_lockdown_job(job->job_type))
+					printf("Lockdown %d \n",job->job_type == LOCKDOWN_UP ? 0 : 1);
+				else
+					printf("Automatic %d \n",job->job_type == AUTO_UP ? 1 : 0);
+			}else{
+				printf("NULL\n");
+			}
+		}
+		else{
+			struct client_job *job = data;
+			if(job){
+				printf("Action %d with client with ip %d.%d.%d.%d  mac %x:%x:%x:%x:%x:%x infectivity %d\n",job->job_type,job->client.ipv4[0],
+					job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+					job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+					job->client.infectivity);
+			}else{
+				printf("NULL\n");
+			}
 		}
 	}
 }
@@ -143,20 +183,33 @@ void create_json_get_updates(struct response *response, char* output){
 		fprintf(file,"[{\"updates\":[");
 		length = response->nr_ent;
 		for(i =0;i<length;i++){
-			struct client_job *job = get_from_list(response->data,i);
-			if(job){
-				// char job_str[100]={0};
-				// sprintf(job_str,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
-				// job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
-				// job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
-				// job->client.infectivity);
-				// write_data(file,job_str,strlen(job_str));
-				fprintf(file,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
-				job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
-				job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
-				job->client.infectivity);
+			void *data = get_from_list(response->data,i);
+			if(is_ui_job(get_job_type_from_data(data))){
+				struct ui_job *job = data;
+				if(job){
+					//printf("UI Action %d \n",job->job_type);
+					if(is_lockdown_job(job->job_type))
+					printf("Lockdown %d \n",job->job_type == LOCKDOWN_UP ? 0 : 1);
+				else
+					printf("Automatic %d \n",job->job_type == AUTO_UP ? 1 : 0);
+				}
 			}
-			if(i != length -1 && job){
+			else{
+				struct client_job *job = data;
+				if(job){
+					// char job_str[100]={0};
+					// sprintf(job_str,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
+					// job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+					// job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+					// job->client.infectivity);
+					// write_data(file,job_str,strlen(job_str));
+					fprintf(file,"{\"type\":\"%d\",\"ip\":\"%d.%d.%d.%d\",\"mac\":\"%x:%x:%x:%x:%x:%x\",\"infect\":\"%d\"}",job->job_type,job->client.ipv4[0],
+					job->client.ipv4[1],job->client.ipv4[2],job->client.ipv4[3],job->client.mac[0],
+					job->client.mac[1],job->client.mac[2],job->client.mac[3],job->client.mac[4],job->client.mac[5],
+					job->client.infectivity);
+				}
+			}
+			if(i != length -1 && data){
 				// char sep[]=",\n";
 				// write_data(file,sep,strlen(sep));
 				fprintf(file,",\n");
@@ -270,6 +323,38 @@ int main(int argc,char** argv){
 				free(mac);
 			}else{
 				perror("Missing ip, mac or infectivity type\n");
+			}
+		}
+		else if(strncmp(argv[1], "--set-lockdown", 20) == 0){
+			if(argc > 2){
+				if(strncmp(argv[2], "true", 20) == 0){
+					send_to_monitor(NULL,LOCKDOWN_DOWN);
+				}
+				else if(strncmp(argv[2], "false", 20) == 0){
+					send_to_monitor(NULL,LOCKDOWN_UP);
+				}
+				else{
+					perror("Invalid setting type, try true or false\n");
+				}
+			}
+			else{
+				perror("Missing setting type (true/false)\n");
+			}
+		}
+		else if(strncmp(argv[1], "--set-automatic", 20) == 0){
+			if(argc > 2){
+				if(strncmp(argv[2], "true", 20) == 0){
+					send_to_monitor(NULL,AUTO_UP);
+				}
+				else if(strncmp(argv[2], "false", 20) == 0){
+					send_to_monitor(NULL,AUTO_DOWN);
+				}
+				else{
+					perror("Invalid setting type, try true or false\n");
+				}
+			}
+			else{
+				perror("Missing setting type (true/false)\n");
 			}
 		}
 	}

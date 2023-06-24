@@ -63,7 +63,7 @@ int send_to_network(unsigned char * data, unsigned char type){
 		perror("socket creation failed...\n");
 		return -1;
 	}
-	printf("Socket created\n");
+	//printf("Socket created\n");
 	memset(&servaddr,0, sizeof(servaddr));
 
 	// assign IP, PORT
@@ -76,9 +76,9 @@ int send_to_network(unsigned char * data, unsigned char type){
 		perror("connection with the server failed...\n");
 		return -1;
 	}
-	printf("connected\n");
+	//printf("connected\n");
 	pack = create_package_by_type(data,type);
-	printf("ack size %ld\n",sizeof(struct network_client_data));
+	//printf("ack size %ld\n",sizeof(struct network_client_data));
 	print_package_client(&pack);
 	if (pack.type == 0) {
 		perror("cannot create network package\n");
@@ -90,8 +90,9 @@ int send_to_network(unsigned char * data, unsigned char type){
 		perror("error while sending the message");
 		return -1;
 	}
-	printf("Message sent\n");
+	//printf("Message sent\n");
 	//clear_package(&pack);
+	close(sockfd);
 	return 0;
 }
 
@@ -123,4 +124,5 @@ int send_to_network_udp(unsigned char* data,unsigned int size){
 			sizeof(servaddr));
 		sent+= so_far;
 	}
+	close(sockfd);
 }

@@ -78,13 +78,13 @@ struct infec_msg* create_config_msg(struct network_details *network, unsigned ch
 	if(network){
 		unsigned char *data = (unsigned char *)calloc(sizeof(struct network_details),sizeof(char));
 		memcpy(data, network, sizeof(struct network_details));
-		printf("Data created %ld\n", sizeof(struct network_details));
+		//printf("Data created %ld\n", sizeof(struct network_details));
 		/// printf("data p %p si %x ip %x.%x.%x.%x sm %x mac %x:%x:%x:%x:%x:%x \n", data, data[0],data[1],data[2],
 		// 	data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11]);
 
 		hdr_inf = (struct header_payload *)calloc(1, sizeof(struct header_payload));
 		create_header(rand()%(int)(MAX_ID), type, sizeof(struct network_details),hdr_inf);
-		printf("Header created\n");
+		//printf("Header created\n");
 		// printf("hdr p %p  s %x%x%x%x t %x i %x\n",hdr_inf,hdr_inf->signiture[0], hdr_inf->signiture[1], hdr_inf->signiture[2],
 		// 	hdr_inf->signiture[3], hdr_inf->payload_type, hdr_inf->payload_id);
 		msg_infec = (struct infec_msg *)calloc(INF_MSG_LEN_H(hdr_inf), sizeof(char));
@@ -93,7 +93,7 @@ struct infec_msg* create_config_msg(struct network_details *network, unsigned ch
 		free(data);
 		free(hdr_inf);
 
-		printf("Msg created\n");
+		//printf("Msg created\n");
 	}
 	return msg_infec;
 }
@@ -136,7 +136,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		perror("Cannot open socket\n");
 		return -1;
 	}
-	printf("Socket kernel created\n");
+	//printf("Socket kernel created\n");
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));
 	addr.nl_family = AF_NETLINK;
@@ -146,7 +146,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 	// printf("len %ld\n", INF_MSG_LEN(msg_infec));
 	struct infec_msg* msg_infec = create_infec_msg_by_type(data,type);
 	if(msg_infec){
-		print_infec_msg(msg_infec);
+		//print_infec_msg(msg_infec);
 		struct nlmsghdr *nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(INF_MSG_LEN(msg_infec)));
 		//printf("done malloc\n");
 		//memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
@@ -157,7 +157,7 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		payload_id = msg_infec->header.payload_id;
 		// printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
 		// 	((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-		printf("nhl created\n");
+		//printf("nhl created\n");
 		struct iovec iov; 
 		memset(&iov, 0, sizeof(iov));
 		iov.iov_base = (void *) nlh;
@@ -169,15 +169,15 @@ int send_message_to_kernel(unsigned char* data, unsigned char type){
 		msg.msg_namelen = sizeof(addr);
 		msg.msg_iov = &iov;
 		msg.msg_iovlen = 1;
-		printf("Message created\n");
+		//printf("Message created\n");
 		
 		res = sendmsg(fd, &msg, 0);
 		if (res < 0){
 			perror("Cannot send to kernel\n");
 		}
-		else{
-			printf("Sent message to kernel\n");
-		}
+		// else{
+		// 	printf("Sent message to kernel\n");
+		// }
 		clear_infec_msg(msg_infec);
 		
 		
@@ -261,18 +261,18 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 			switch (msg_infec->header.payload_type){
 			//ceva pachet
 			case PACKAGE:
-				printf("package 1\n");
+				//printf("package 1\n");
 				response = (struct kernel_response*)calloc(1,sizeof(struct kernel_response));
-				printf("package 2\n");
+				//printf("package 2\n");
 				//collector = (char*)malloc(strlen(INF_MSG_DATA(msg_infec))*sizeof(char));
 				response->data = (unsigned char*)malloc(msg_infec->header.payload_len * sizeof(unsigned char));
-				printf("package 3\n");
+				//printf("package 3\n");
 				memcpy(response->data, INF_MSG_DATA(msg_infec), msg_infec->header.payload_len);
-				printf("package 4\n");
+				//printf("package 4\n");
 				response->type= PACKAGE;
-				printf("package 5\n");
+				//printf("package 5\n");
 				response->opt = msg_infec->header.payload_len;
-				printf("package 5\n");
+				//printf("package 5\n");
 				break;
 			}
 
@@ -316,7 +316,7 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 	}
-	printf("Socket created\n");
+	//printf("Socket created\n");
 
 	struct sockaddr_nl addr; 
 	memset(&addr, 0, sizeof(addr));
@@ -331,7 +331,7 @@ struct kernel_response* receive_from_kernel(int payload_id){
 		perror("Error while binding!\n");
 		return  NULL;
 	}
-	printf("kernel bind created\n");
+	//printf("kernel bind created\n");
 	len = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
 	if(len<0){
 		perror("Error while receiving!\n");
@@ -339,7 +339,7 @@ struct kernel_response* receive_from_kernel(int payload_id){
 	}
 	else{
 		response = extract_kernel_response((struct nlmsghdr *)buf,len,payload_id);
-		print_kernel_response(response);
+		//print_kernel_response(response);
 	}
 	free(buf);
 	close(fd);
@@ -366,7 +366,8 @@ struct kernel_response* receive_from_kernel_multicast(){
 	if (fd < 0) {
 		perror("Cannot open socket\n");
 	}
-	printf("Socket created\n");
+	// else 
+	// 	printf("Socket created\n");
 
 	
 	memset(&addr, 0, sizeof(addr));
@@ -381,7 +382,8 @@ struct kernel_response* receive_from_kernel_multicast(){
 		perror("Error while binding!\n");
 		return  NULL;
 	}
-	printf("kernel bind created\n");
+	// else
+	// 	printf("kernel bind created\n");
 
 	nl_msghdr = (struct nlmsghdr*) malloc(NLMSG_SPACE(MAX_SIZE_PAYLOAD));
         memset(nl_msghdr, 0, NLMSG_SPACE(MAX_SIZE_PAYLOAD));
@@ -394,7 +396,7 @@ struct kernel_response* receive_from_kernel_multicast(){
         msghdr.msg_iov = &iov;
         msghdr.msg_iovlen = 1;
 
-        printf("Waiting to receive message\n");
+        //printf("Waiting to receive message\n");
         len = recvmsg(fd, &msghdr, 0);
 	//len = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
 	if(len<0){
@@ -403,8 +405,9 @@ struct kernel_response* receive_from_kernel_multicast(){
 	}
 	else{
 		response = extract_kernel_response(nl_msghdr,len,0);
-		print_kernel_response(response);
+		//print_kernel_response(response);
 	}
+	free(nl_msghdr);
 	free(buf);
 	close(fd);
 	return response;
@@ -438,8 +441,7 @@ struct kernel_response* receive_from_kernel_broadcast(){
     	bind(fd, (struct sockaddr*)&addr, sizeof(addr));
 	len = recv(fd, buf, MAX_SIZE_PAYLOAD, 0);
 	if(len<0){
-		printf("Error while receiving!\n");
-	
+		perror("Error while receiving!\n");
 	}
 	else{
 		response = extract_kernel_response((struct nlmsghdr *)buf,len,0);
@@ -494,7 +496,7 @@ struct kernel_response* send_and_receive_kernel(unsigned char* data, unsigned ch
 		perror("Cannot open socket\n");
 		return NULL;
 	}
-	printf("Socket created\n");
+	//printf("Socket created\n");
 	
 	memset(&dest_addr, 0, sizeof(dest_addr));
 	dest_addr.nl_family = AF_NETLINK;
@@ -523,9 +525,9 @@ struct kernel_response* send_and_receive_kernel(unsigned char* data, unsigned ch
 	nlh->nlmsg_flags = 0;
 
 	copy_uchar_values((unsigned char*)msg_infec,(unsigned char *) NLMSG_DATA(nlh), INF_MSG_LEN(msg_infec));
-	printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
-		((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
-	printf("nhl created\n");
+	//printf("nhl dat s %x%x%x%x\n",((unsigned char*)NLMSG_DATA(nlh))[0],((unsigned char *)NLMSG_DATA(nlh))[1],
+	//	((unsigned char *)NLMSG_DATA(nlh))[2],((unsigned char *)NLMSG_DATA(nlh))[3]);
+	//printf("nhl created\n");
 	
 	memset(&iov, 0, sizeof(iov));
 	iov.iov_base = (void *) nlh;
@@ -537,7 +539,7 @@ struct kernel_response* send_and_receive_kernel(unsigned char* data, unsigned ch
 	msg.msg_namelen = sizeof(dest_addr);
 	msg.msg_iov = &iov;
 	msg.msg_iovlen = 1;
-	printf("Message created\n");
+	//printf("Message created\n");
 
 	
 	len_data = sendmsg(fd, &msg, 0);
@@ -550,7 +552,7 @@ struct kernel_response* send_and_receive_kernel(unsigned char* data, unsigned ch
 	memset(nlh, 0, NLMSG_SPACE(MAX_PAYLOAD_SIZE));
 	//char *buf = (char*)calloc(MAX_SIZE_PAYLOAD,sizeof(char));
 	len_data = recvmsg(fd, &msg, 0);
-	printf("Received len %d\n", len_data);
+	//printf("Received len %d\n", len_data);
 	if(len_data < 0){
 		perror("Failed to receive message from kernel\n");
 		goto cleanup;

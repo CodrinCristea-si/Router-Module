@@ -163,22 +163,22 @@ struct infec_msg* create_packet_msg(unsigned char* pack_data, int size, unsigned
 
 	if(pack_data){
 		//creating data payload
-		printk(KERN_INFO "data size %d\n",size);
+		//printk(KERN_INFO "data size %d\n",size);
 		data = (unsigned char *)kcalloc(1,size,GFP_KERNEL);
 		memcpy(data,pack_data,size);
-		printk(KERN_INFO "Data created\n");
+		//printk(KERN_INFO "Data created\n");
 		
 		hdr_inf = (struct header_payload *)kcalloc(1, sizeof(struct header_payload),GFP_KERNEL);
 		get_random_bytes(&id, sizeof(id));
 		create_header(id, type, size, hdr_inf);
-		printk(KERN_INFO "Header created\n");
+		//printk(KERN_INFO "Header created\n");
 
 		msg_infec = (struct infec_msg *)kcalloc(1,INF_MSG_LEN_H(hdr_inf),GFP_KERNEL);
 		create_message(hdr_inf,data,msg_infec);
 
 		kfree(data);
 		kfree(hdr_inf);
-		printk(KERN_INFO "Message created\n");
+		//printk(KERN_INFO "Message created\n");
 
 	}
 	return msg_infec;
@@ -462,7 +462,7 @@ unsigned char* create_package_data_v2(struct sk_buff* skb, int *col_size, bool w
 		
 		if (!skb) {return NULL;}
 		if (skb->len < 0 || skb->protocol < 0 || !skb->data){
-			printk(KERN_ERR "Validation failed\n");
+			//printk(KERN_ERR "Validation failed\n");
 			return NULL;
 		}
 		ip_h = ip_hdr(skb);
@@ -610,29 +610,29 @@ void send_to_user_broadcast(struct sock* netlink_socket,unsigned char* data, int
 	int res;
 
 	if(!netlink_socket){
-		printk(KERN_ERR "Netlink socket is not created \n");
+		//printk(KERN_ERR "Netlink socket is not created \n");
 		goto cleanup;
 	}
 
 	//msg = create_infec_msg(data,type,size);
 	msg = create_packet_msg(data,size,type);
 	if(!msg){
-		printk(KERN_ERR "Failed to create new message\n");
+		//printk(KERN_ERR "Failed to create new message\n");
 		goto cleanup;
 	}
 	//printk(KERN_INFO "msg created\n");
-	print_infec_msg(msg);
+	//print_infec_msg(msg);
 	
 	//create reply
 	skb_out = nlmsg_new(INF_MSG_LEN(msg), 0);
 	if (!skb_out) {
-		printk(KERN_ERR "Failed to allocate new skb\n");
+		//printk(KERN_ERR "Failed to allocate new skb\n");
 		goto cleanup;
 	}
 
 	nlh = nlmsg_put(skb_out, 0, 0, NLMSG_DONE, INF_MSG_LEN(msg), 0);
 	if (!nlh){
-		printk(KERN_ERR "Failed to create netlink header\n");
+		//printk(KERN_ERR "Failed to create netlink header\n");
 		if(skb_out) nlmsg_free(skb_out);
 		goto cleanup;
 	}
@@ -645,9 +645,10 @@ void send_to_user_broadcast(struct sock* netlink_socket,unsigned char* data, int
 		//mutex_unlock(nl_mutex);
 	}
 
-	if (res < 0)
-		printk(KERN_ERR "Error while sending bak to user\n");
-	printk(KERN_INFO "msg sent to user\n");
+	// if (res < 0)
+	// 	printk(KERN_ERR "Error while sending bak to user\n");
+	// else 
+	// 	printk(KERN_INFO "msg sent to user\n");
 cleanup:
 	if(msg) kfree(msg);
 	//if(skb_out) nlmsg_free(skb_out);
@@ -670,7 +671,7 @@ void send_to_user_multicast(struct sock* netlink_socket,unsigned char* data, int
 		goto cleanup;
 	}
 	//printk(KERN_INFO "msg created\n");
-	print_infec_msg(msg);
+	//print_infec_msg(msg);
 	
 	//create reply
 	skb_out = nlmsg_new(INF_MSG_LEN(msg), GFP_KERNEL);

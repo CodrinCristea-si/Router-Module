@@ -184,7 +184,7 @@ void __print_list(struct clients_list* list, struct mutex* inf_mutex);
 static inline bool __is_lockdown_mode(void){
 	bool is_lockdown = false;
 	if(lockdown_mutex) mutex_lock(lockdown_mutex);
-	is_lockdown = (LOCKDOWN_MODE == LOCKDOWN_UP);
+	is_lockdown = LOCKDOWN_MODE == LOCKDOWN_UP ? true : false;
 	if(lockdown_mutex) mutex_unlock(lockdown_mutex);
 	return is_lockdown;
 }
