@@ -23,6 +23,7 @@ class ClientTester(Server):
         manager = InfectivityTesterCommunicator("127.0.0.1",5004,self._logger)
         manager.connect()
         manager.send_response(response)
+        manager.close_connection()
 
     def __process_request(self,client_socket:socket):
         request = InfectivityTesterCommunicator.read_data(client_socket)
@@ -46,7 +47,7 @@ class ClientTester(Server):
                 response = InfectivityResponse(InfectivityResponseType.STATUS_UNAVAILABLE, [host])
                 self._logger.info("Host %s is unreachable" % (host))
             InfectivityTesterCommunicator.send_data(client_socket,response)
-
+            client.close_connection()
 
         #case for SCAN_CLIENT
         #self.__send_infectivity_response(response)

@@ -6,6 +6,7 @@ from logger.logger import Logger
 from threading import Thread
 from packages.infectivity_request import *
 from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator
+from domain.package import Package as PackageDOM
 
 
 class RouterServer(Server):
@@ -26,10 +27,17 @@ class RouterServer(Server):
             manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
             manager.connect()
             manager.send_request(req)
+            manager.close_connection()
         # print("data",repr(data))
 
     def __process_request_udp(self, client_data: bytes):
-        details, payload = RouterCommunicator.read_data(client_data)
+        network_package = RouterCommunicator.read_data(client_data)
+        print(network_package)
+        req = InfectivityRequest(InfectivityRequestType.ADD_PACKAGE,[network_package])
+        manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
+        manager.connect()
+        manager.send_request(req)
+        manager.close_connection()
 
     def run_server(self):
         # print(self.__port_tcp, self.__port_udp)

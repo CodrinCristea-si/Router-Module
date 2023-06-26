@@ -3,6 +3,7 @@ from network.router_server import RouterServer
 from logger.logger import Logger
 from infectivity.infectivity_server import InfectivityServer
 from network.client_tester import ClientTester
+from heuristics.heuristic_server import HeuristicServer
 from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator as ITC
 from threading import Thread
 samples = {}
@@ -65,55 +66,55 @@ platforms = {
     }
 
 categories = {
-'Swf':10,
-'Infostealer':10,
-'Trojan':70,
-'Win':10,
-'Email':1,
-'Doc':10,
-'Malware':100,
-'Packed':100,
-'File':50,
-'CA':10,
-'Php':10,
-'Java':10,
-'Rootkit':100,
-'Rtf':10,
-'Adware':1,
-'Ircbot':100,
-'Coinminer':1,
-'Ransomware':100,
-'Spyware':30,
-'Loader':100,
-'Worm':100,
-'Filetype':30,
-'Embedded':30,
-'Downloader':100,
-'Dropper':100,
-'Andr':10,
-'Exploit':100,
-'Proxy':5,
-'TS':10,
-'Spy':50,
-'Backdoor':100,
-'Test':1,
-'Html':10,
-'Tool':100,
-'Virus':100,
-'Macro':10,
-'Revoked':50,
-'Unix':10,
-'Js':10,
-'Keylogger':50,
-'CRT':5,
-'Countermeasure':100,
-'Pdf':30,
-'Joke':1,
-'Phishing':30,
-'Osx':10,
-'Packer':30,
-'Cert':5
-}
+        'Swf':10,
+        'Infostealer':10,
+        'Trojan':70,
+        'Win':10,
+        'Email':1,
+        'Doc':10,
+        'Malware':100,
+        'Packed':100,
+        'File':50,
+        'CA':10,
+        'Php':10,
+        'Java':10,
+        'Rootkit':100,
+        'Rtf':10,
+        'Adware':1,
+        'Ircbot':100,
+        'Coinminer':1,
+        'Ransomware':100,
+        'Spyware':30,
+        'Loader':100,
+        'Worm':100,
+        'Filetype':30,
+        'Embedded':30,
+        'Downloader':100,
+        'Dropper':100,
+        'Andr':10,
+        'Exploit':100,
+        'Proxy':5,
+        'TS':10,
+        'Spy':50,
+        'Backdoor':100,
+        'Test':1,
+        'Html':10,
+        'Tool':100,
+        'Virus':100,
+        'Macro':10,
+        'Revoked':50,
+        'Unix':10,
+        'Js':10,
+        'Keylogger':50,
+        'CRT':5,
+        'Countermeasure':100,
+        'Pdf':30,
+        'Joke':1,
+        'Phishing':30,
+        'Osx':10,
+        'Packer':30,
+        'Cert':5
+    }
 
 # < 20 minor
 # > 100 sever
@@ -187,15 +188,19 @@ if __name__ == "__main__":
     logger = Logger()
 
     tester = ClientTester("192.168.1.2",ITC._TESTER_PORT,logger)
-    router = RouterServer("192.168.1.2",5005,logger)
+    analyser = HeuristicServer("127.0.0.1", 5003, logger)
+    router = RouterServer("192.168.1.2",5005, 5006, logger)
     manager = InfectivityServer("127.0.0.1",5004,logger)
     p1 = Thread(target=start_server, args=(router,))
     p2 = Thread(target=start_server, args=(manager,))
     p3 = Thread(target=start_server, args=(tester,))
+    p4 = Thread(target=start_server, args=(analyser,))
     p2.start()
+    p4.start()
     p3.start()
     p1.start()
 
     p1.join()
     p3.join()
+    p4.join()
     p2.join()

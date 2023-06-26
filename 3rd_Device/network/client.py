@@ -41,6 +41,14 @@ class Client:
             self.__logger.error("Failed to connect to the server! Error :" + str(sys.exc_info()[1]))
             return -1
 
+    def close_connection(self):
+        try:
+            self.__server_socket.close()
+            self.__logger.info("Connection closed!")
+        except:
+            self.__logger.error("Failed to close connection to the server! Error :" + str(sys.exc_info()[1]))
+
+
     def send_test_package(self):
         # Send data to remote server
         response = None
