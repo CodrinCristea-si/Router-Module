@@ -257,6 +257,10 @@ class DBSampleManager(DBManager):
         sample.Score= score
         self._session.commit()
 
+    def get_all_samples(self):
+        samples = self._session.query(Sample).all()
+        return samples
+
     def get_sample(self, platform_name:str,category_name:str,sample_name:str):
         plat = self.get_platform(platform_name)
         if plat is None:

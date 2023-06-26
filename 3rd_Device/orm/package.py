@@ -15,4 +15,5 @@ class Package(Base):
    TransportProtocol = Column(SMALLINT)
    ApplicationProtocol = Column(SMALLINT)
    ArriveTime = Column(DATETIME)
+   PayloadSize = Column(BIGINT)
    Payload = Column(BLOB(length=500))

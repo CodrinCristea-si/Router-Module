@@ -8,8 +8,8 @@ class DBPPackageManager(DBManager):
         # self._session = None
         super().__init__(session)
 
-    def add_packager(self,sourceIP:str,sourcePort:int,destIP:str,destPort:int,n_proto:int,t_proto:int,a_proto:int, payload:bytes):
-        pack = Package(SourceIP= sourceIP,SourcePort=sourcePort,DestinationIP=destIP,DestinationPort=destPort, NetworkProtocol=n_proto,TransportProtocol=t_proto,ApplicationProtocol=a_proto, ArriveTime=datetime.utcnow(),Payload=payload)
+    def add_packager(self,sourceIP:str,sourcePort:int,destIP:str,destPort:int,n_proto:int,t_proto:int,a_proto:int, payload_size:int, payload:bytes):
+        pack = Package(SourceIP= sourceIP,SourcePort=sourcePort,DestinationIP=destIP,DestinationPort=destPort, NetworkProtocol=n_proto,TransportProtocol=t_proto,ApplicationProtocol=a_proto, ArriveTime=datetime.utcnow(),PayloadSize=payload_size, Payload=payload)
         self._session.add(pack)
         self._session.commit()
 

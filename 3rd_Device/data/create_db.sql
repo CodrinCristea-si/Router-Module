@@ -54,6 +54,7 @@ create table Packages(
 	ApplicationProtocol smallint,
 	ArriveTime datetime,
 	Payload BLOB(500),
+	PayloadSize bigint,
 	PRIMARY KEY(PackageID)
 )ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
 

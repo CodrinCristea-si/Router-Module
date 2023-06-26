@@ -1,6 +1,7 @@
 from db.client_manager import DBClientManager
 from db.test_manager import DBTestManagement
 from db.sample_manager import DBSampleManager
+from db.packet_manager import DBPPackageManager
 
 from db.session import SessionMaker
 
@@ -11,6 +12,8 @@ from logger.logger import Logger
 from server.server import Server
 from logger.logger import Logger
 
+from domain.package import Package as PackDOM
+
 class InfectivityManager:
     def __init__(self,logger:Logger,session:SessionMaker = None):
         self.__session = session
@@ -19,6 +22,7 @@ class InfectivityManager:
         self.__client_manager = DBClientManager(self.__session)
         self.__test_manager = DBTestManagement(self.__session)
         self.__sample_manager = DBSampleManager(self.__session)
+        self.__package_manager = DBPPackageManager(self.__session)
         self.__logger = logger
 
     def new_client_connection(self,ip:str,mac:str):
@@ -39,6 +43,7 @@ class InfectivityManager:
         com.connect()
         com.send_request(InfectivityRequest(InfectivityRequestType.CHECK_CLIENT,[ip]))
         response = com.read_response()
+        com.close_connection()
         is_reachable = False
         if response.type == InfectivityResponseType.STATUS_AVAILABLE:
             is_reachable = True
@@ -54,7 +59,13 @@ class InfectivityManager:
         stat_plat = self.__sample_manager.get_samples_stats_by_platforms()
         stat_cat = self.__sample_manager.get_samples_stats_by_categories()
         return stat_plat, stat_cat
-    
+
+    def add_package(self, network_pack:PackDOM):
+        self.__package_manager.add_packager(network_pack.source_ip, network_pack.source_port,network_pack.destination_ip,network_pack.destination_port,network_pack.network_protocol, network_pack.transport_protocol, network_pack.application_protocol,network_pack.payload_size,network_pack.payload)
+
+    def get_all_samples(self):
+        return self.__sample_manager.get_all_samples()
+
     def __test_client(self,ip:str,mac:str):
         self.__test_manager.add_test(ip,mac)
         self.__test_manager.begin_test(ip,mac)

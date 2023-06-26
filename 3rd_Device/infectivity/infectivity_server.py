@@ -62,6 +62,16 @@ class InfectivityServer(Server):
                 clients = infectivity_manager.get_all_clients()
                 response = InfectivityResponse(InfectivityResponseType.ALL_CLIENTS, clients)
                 InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
+            if package.type == InfectivityRequestType.ADD_PACKAGE:
+                self._logger.info("add package")
+                network_pack = package.payload[0]
+                infectivity_manager.add_package(network_pack)
+            if package.type == InfectivityRequestType.GET_SAMPLES:
+                self._logger.info("get all samples")
+                samples = infectivity_manager.get_all_samples()
+                response = InfectivityResponse(InfectivityResponseType.SAMPLES,samples)
+                InfectivityTesterCommunicator.send_big_data(client_socket,response,self._logger)
+
         except Exception as e:
             self._logger.error("Error: %s" %(e))
         if session is not None:

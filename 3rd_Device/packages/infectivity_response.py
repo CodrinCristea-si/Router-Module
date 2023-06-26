@@ -10,6 +10,8 @@ class InfectivityResponseType(Enum):
     CATEGORIES = 5,
     SAMPLE_STATS = 6,
     ALL_CLIENTS = 7,
+    HEURISTIC_RESULTS = 8,
+    SAMPLES = 9
 
 
 class InfectivityResponse(AbstractPackage):
