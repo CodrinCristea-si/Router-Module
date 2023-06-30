@@ -1,0 +1,61 @@
+.title_modif_container {
+    display: flex;
+    flex-direction: row;
+    padding-left: 50px;
+    gap: 3px;
+}
+
+#package_list{
+    list-style: none;
+}
+.li_pack{
+    background-color: #d2d5d9;
+    cursor: pointer;
+}
+.li_pack:hover{
+    background-color: #11389C;
+    cursor: pointer;
+}
+
+.li_pack:nth-of-type(odd){
+    background-color: #8A8888;
+}
+.li_pack:nth-of-type(odd):hover{
+    background-color: #11389C;
+    cursor: pointer;
+}
+
+.input_times{
+    width:60px;
+}
+.pack_container{
+    overflow-y: scroll;
+    /*padding-top: 50px;*/
+    min-width: 700px;
+    height: 400px;
+
+}
+
+.payload_container{
+    display: flex;
+    flex-direction: row;
+    /*border: 1px solid #000;*/
+}
+
+.payload_hexa{
+    overflow-y: scroll;
+    width: 200px;
+    height: 350px;
+    border: 1px solid #000;
+    background-color: #fff;
+    color: #000;
+}
+
+.payload_str{
+    overflow-y: scroll;
+    width: 160px;
+    height: 350px;
+    border: 1px solid #000;
+    background-color: #fff;
+    color: #000;
+}
