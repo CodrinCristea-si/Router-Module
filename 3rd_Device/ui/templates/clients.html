@@ -1,3 +1,6 @@
+
+<h1 class="align-center">Connected Clients </h1>
+<br>
 <table class="table">
     <tr class="table-header">
         <th class="header__item">Client ID</th>
@@ -12,7 +15,7 @@
     </tr>
     {% if lista %}
     {% for el in lista%}
-    <tr class="table-row">
+    <tr class="table-row" id={{el.CurrentIP ~ "|" ~ el.MAC}}>
         <td class="table-data" >{{el.ClientID}}</td>
 <!--        <td class="table-data">{{el.CurrentIP}}</td>-->
 <!--        <td class="table-data">{{el.MAC}}</td>-->
@@ -22,15 +25,75 @@
                     <li class="client_list_item">
                         <strong>IP:</strong> <span>{{el.CurrentIP}}</span><br>
                         <strong>MAC:</strong> <span>{{el.MAC}}</span><br>
-                        <strong>Status:</strong><span>{{"Connected" if el.IsConnected == 1 else "Offline"}}</span><br>
+                        <strong>Status:</strong><span>{{"Connected" if el.IsConnected == 1 else "Offline"}}
+                    {% if el.IsConnected == 0 %}<i class="fa-solid fa-circle" style="color: #ff0000;"></i>{% else %}
+                    <i class="fa-solid fa-circle" style="color: #22f613;">{% endif %}</i></span><br>
                     </li>
             </ul>
         </td>
-        <td class="table-data">{{"No" if el.IsTesting == 0 else "Yes"}}</td>
-        <td class="table-data">{{el.Score}}</td>
-        <td class="table-data">{{el.InfectivityType}}</td>
-        <td class="table-data">Mai vedem</td>
+        <td class="table-data">
+            <select {% if el.IsTesting == 1 %} class = "selection-testing select-yes" {% else %} class ="selection-testing select-no" {% endif %} disabled>
+                <option class="select-yes"{% if el.IsTesting == 1 %} selected {% endif %}>YES</option>
+                <option class="select-no" {% if el.IsTesting == 0 %} selected {% endif %}>NO</option>
+            </select>
+        </td>
+        <td class="table-data" >
+            <label ><input id = {{"score|" ~ el.CurrentIP ~ "|" ~ el.MAC}} class ="input_score" type="number" value={{el.Score}}></label>
+        </td>
+        <td class="table-data">
+            <select id = {{"infec_type|" ~ el.CurrentIP ~ "|" ~ el.MAC}}
+                    {% if el.InfectivityType == 1 %} class = "selection-infectivity element infectivity uninfected" {% endif %}
+                    {% if el.InfectivityType == 2 %} class = "selection-infectivity element infectivity suspect" {% endif %}
+                    {% if el.InfectivityType == 3 %} class = "selection-infectivity element infectivity minor" {% endif %}
+                    {% if el.InfectivityType == 4 %} class = "selection-infectivity element infectivity major" {% endif %}
+                    {% if el.InfectivityType == 5 %} class = "selection-infectivity element infectivity sever" {% endif %}
+            >
+                <option value="1" class="element infectivity uninfected" {% if el.InfectivityType == 1 %} selected {% endif %}>Uninfected</option>
+                <option value="2" class="element infectivity suspect" {% if el.InfectivityType == 2 %} selected {% endif %}>Suspicious</option>
+                <option value="3" class="element infectivity minor" {% if el.InfectivityType == 3 %} selected {% endif %}>Infected Minor</option>
+                <option value="4" class="element infectivity major" {% if el.InfectivityType == 4 %} selected {% endif %}>Infected Major</option>
+                <option value="5" class="element infectivity sever" {% if el.InfectivityType == 5 %} selected {% endif %}>Infected Sever</option>
+            </select>
+        </td>
+        <td class="table-data">
+            {% if el.IsConnected == 1 %}
+            <div class="actions_container">
+                <div>
+                    <button class="button_connect reach">
+                        Reach
+                    </button>
+                    <button class="button_connect test_cl">
+                        Test
+                    </button>
+                    <button class="button_connect save">
+                        Save
+                    </button>
+                </div>
+                {% endif %}
+                <div>
+                    <button class="button_default see_tests">
+                        See Tests
+                    </button>
+                    <button class="button_default see_packages">
+                        See Packages
+                    </button>
+                </div>
+            </div>
+        </td>
     </tr>
     {% endfor %}
     {% endif %}
 </table>
+
+<script>
+     var scriptElement = document.createElement('script');
+    scriptElement.src = "{{ url_for('static', filename='js/clients.js') }}";
+
+    // Append the <script> element to the <head> or <body> element
+    document.head.appendChild(scriptElement);
+
+    var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+    // Dispatch the custom event on the document object
+    document.dispatchEvent(domContentLoadedEvent);
+</script>
