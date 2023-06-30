@@ -6,10 +6,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main-page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/malware.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/heuristics.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tests_clients.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/packages_client.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
     <script src="https://kit.fontawesome.com/12d6244bf1.js" crossorigin="anonymous"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-   <script src="{{ url_for('static', filename='js/main-page.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main-page.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
     <style>
         /*main page*/
 
@@ -39,10 +46,15 @@
 
     </script>
 </head>
-<body>
+<body class ="background_main_content">
     <div class="container">
         <div id="sidebar" class="sidebar">
             <div class="box-list">
+                <button onclick="fetch_home()" >
+                    <i class="fa-solid fa-house"></i>
+                    <a href="/"></a>
+                    Home
+                </button>
                 <button onclick="fetch_clients()" >
                     <i class="fa-solid fa-computer"></i>
                     <a href="/"></a>
@@ -53,7 +65,14 @@
                     <a href="/"></a>
                     Malware
                 </button>
-                <button>Button 3</button>
+                <button onclick="fetch_heuristics()">
+                    <i class="fa-solid fa-gear"></i>
+                    Heuristics
+                </button>
+                <button onclick="fetch_history()">
+                    <i class="fa-solid fa-scroll"></i>
+                    History
+                </button>
                 <!-- Add more buttons as needed -->
             </div>
         </div>
@@ -81,8 +100,6 @@
 <!--          &lt;!&ndash; Add more list items for other clients &ndash;&gt;-->
 <!--        </ul>-->
             <div id="content" class="content">
-                <h1>Infectivity Monitor Server App</h1>
-                <p>To see the current options press the <i class="fa-solid fa-bars but_show"></i> button</p>
 
 <!--                 <canvas id="myChart"></canvas>-->
 <!--    <script>-->
