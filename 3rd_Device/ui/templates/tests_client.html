@@ -1,0 +1,67 @@
+
+{% if ip %}
+{% if mac %}
+<h1 style="text-align: center">Test Stats for {{ip}}({{mac}})</h1>
+{% endif %}
+{% endif %}
+
+{% if ip %}
+{% if mac %}
+<div id={{ip~"|"~mac}} class="dropout"></div>
+{% endif %}
+{% endif %}
+
+
+
+<div>
+<canvas id="canvas_test_scans"></canvas>
+<canvas id="canvas_test_malware"></canvas>
+</div>
+
+<div>
+    <table class="table">
+    <tr class="table-header">
+        <th class="header__item">Test ID</th>
+        <th class="header__item">Started at</th>
+        <th class="header__item">Finished at</th>
+        <th class="header__item">Actions</th>
+    </tr>
+    {% if lista_tests %}
+    {% for el in lista_tests%}
+    <tr class="table-row" id={{el.id|string}}>
+        <td class="table-data" >{{el.id}}</td>
+        <td class="table-data" >{{el.time_started}}</td>
+        <td class="table-data" >{{el.time_finished}}</td>
+        <td class="table-data">
+            <button class="button_default see_details_but">
+                See Details
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+</div>
+
+<div id="test_details">
+    test details
+</div>
+
+<script >
+    var scriptElement = document.createElement('script');
+    scriptElement.src = "{{ url_for('static', filename='js/tests_clients.js') }}";
+
+    // Append the <script> element to the <head> or <body> element
+    document.head.appendChild(scriptElement);
+
+    var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+    // Dispatch the custom event on the document object
+    document.dispatchEvent(domContentLoadedEvent);
+</script>
+
+graph chart for nr scans/day and nr malwares/day
+
+all tests finished for that client
+
+test details
