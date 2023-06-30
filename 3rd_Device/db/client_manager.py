@@ -1,4 +1,4 @@
-from infectivity.infectivity_type import InfectivityTypes
+from orm.infectivity_type import InfectivityTypes
 from db.session import SessionMaker
 from db.db_manager import DBManager
 from orm.client import Client
@@ -86,10 +86,58 @@ class DBClientManager(DBManager):
             client = self._session.query(Client).filter(Client.CurrentIP == ip,Client.MAC == mac, Client.InfectivityType == type).first()
         return client
 
+    @staticmethod
+    def get_type_by_score(score):
+        if score == 0:
+            return 1 # uninfected
+        if 0 < score < 20:
+            return 3 # infected minor
+        if 20 < score < 100:
+            return 4 # infected major
+        if score > 100:
+            return 5 # infected sever
+
+    @staticmethod
+    def get_score_by_type(type):
+        if type == 1:
+            return 0  # uninfected
+        if type == 2:
+            return 0  # suspicious
+        if type == 3:
+            return 5  # infected minor
+        if type == 4:
+            return 20  # infected major
+        if type == 5:
+            return 100  # infected sever
+
+    def set_client_score(self,ip:str,mac:str,score:int):
+        client = self.get_client(ip, mac)
+        if client is None:
+            raise Exception("There is not such user with ip %s and mac %s" % (ip, mac))
+        elif client.IsConnected == 0:
+            raise Exception("User with ip %s and mac %s is not connected" % (ip, mac))
+        elif score < 0:
+            raise Exception("Negative score!")
+        client.Score = score
+        client.InfectivityType = DBClientManager.get_type_by_score(score)
+        self._session.commit()
+
     def get_client_by_mac(self,mac:str):
         client = self._session.query(Client).filter(Client.MAC == mac).first()
+        return client
+
+    def get_client_by_id(self,id:int):
+        client = self._session.query(Client).filter(Client.ClientID == int(id)).first()
+        return client
+
+    def get_connected_client_by_ip(self,ip:str):
+        client = self._session.query(Client).filter(Client.CurrentIP == ip, Client.IsConnected == 1).first()
         return client
 
     def get_all_clients(self):
         clients = self._session.query(Client).all()
         return clients
+
+    def get_all_connected_clients(self):
+        ls_cl = self._session.query(Client).filter(Client.IsConnected == 1).all()
+        return ls_cl

@@ -271,6 +271,18 @@ class DBSampleManager(DBManager):
         samp = self._session.query(Sample).filter(Sample.PlatformID == plat.PlatformID, Sample.CategoryID==cat.CategoryID,Sample.Name==sample_name).first()
         return samp
 
+    def get_sample_by_id(self, sample_id):
+        samp = self._session.query(Sample).filter(Sample.SampleID == sample_id).first()
+        return samp
+
+    def get_platform_by_id(self, plat_id):
+        plat = self._session.query(Platform).filter(Platform.PlatformID == plat_id).first()
+        return plat
+
+    def get_category_by_id(self, cat_id):
+        cat = self._session.query(Category).filter(Category.CategoryID == cat_id).first()
+        return cat
+
     def get_samples_stats_by_platforms(self):
         plats = self._session.query(Platform).all()
         samps = {}
@@ -286,3 +298,38 @@ class DBSampleManager(DBManager):
             nr_samps = self._session.query(Sample).filter(Sample.CategoryID==cat.CategoryID).count()
             samps[cat.Name] = nr_samps
         return samps
+
+
+    @staticmethod
+    def parse_malware_name(mal_name):
+        data = mal_name.split("-")[0]  # skip ip and revision code
+        details = data.split(".")
+        platform, category, name = ["","",""]
+        if details[0] == "BC":
+            details = details[1:]
+        if len(details) > 3:
+            platform, category, name, _ = details
+        elif len(details) == 3:
+            platform, category, name = details
+        if name is not None:
+            if not name.isnumeric():
+                details = name.split("_")
+                if len(details) == 1:
+                    name = name
+                else:
+                    acro, type = ["", ""]
+                    if len(details) == 2:
+                        acro, type = name.split("_")
+                    elif len(details) == 3:
+                        acro, type, _ = name.split("_")
+                    elif len(details) == 4:
+                        acro, type, _, _ = name.split("_")
+                    if acro.isnumeric():
+                        name = "~"
+                    elif type != "ID":
+                        name = acro + "_" + type
+                    else:
+                        name = acro
+            else:
+                name = "~"
+        return platform, category, name

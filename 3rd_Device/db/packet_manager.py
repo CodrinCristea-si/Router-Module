@@ -1,7 +1,7 @@
 from db.session import SessionMaker
 from db.db_manager import DBManager
 from orm.package import Package
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class DBPPackageManager(DBManager):
     def __init__(self, session: SessionMaker = None):
@@ -18,10 +18,40 @@ class DBPPackageManager(DBManager):
         return pack
 
     def get_package_from_last(self,time):
-        packs = self._session.query(Package).filter(datetime.utcnow() - Package.ArriveTime < time).all()
+        threshold_time = datetime.now() - timedelta(minutes=time)
+        packs = self._session.query(Package).filter(Package.ArriveTime > threshold_time).all()
+        if packs is None:
+            return []
         return packs
 
     def delete_package(self,id:int):
         pack = self._session.query(Package).filter(Package.PackageID == id ).first()
         self._session.delete(pack)
         self._session.commit()
+
+    def get_last_minutes_packages(self,ip:str,nr_min:int):
+        threshold_time = datetime.now() - timedelta(minutes=nr_min)
+        ls_packs_s = self._session.query(Package).filter(Package.SourceIP == ip, Package.ArriveTime > threshold_time).all()
+        ls_packs_d = self._session.query(Package).filter(Package.DestinationIP == ip,
+                                                         Package.ArriveTime > threshold_time).all()
+        if ls_packs_s is None and ls_packs_d is None:
+            return []
+        if ls_packs_s is None:
+            return ls_packs_d
+        if ls_packs_d is None:
+            return ls_packs_s
+
+        return ls_packs_s + ls_packs_d
+
+    def get_last_nr_packages(self,ip:str,nr_packs:int):
+        ls_packs_s = self._session.query(Package).filter(Package.SourceIP == ip).order_by(Package.PackageID.desc()).limit(nr_packs).all()
+        ls_packs_d = self._session.query(Package).filter(Package.DestinationIP == ip).order_by(Package.PackageID.desc()).limit(nr_packs).all()
+
+        if ls_packs_s is None and ls_packs_d is None:
+            return []
+        if ls_packs_s is None:
+            return ls_packs_d
+        if ls_packs_d is None:
+            return ls_packs_s
+
+        return ls_packs_s + ls_packs_d

@@ -11,7 +11,15 @@ class InfectivityResponseType(Enum):
     SAMPLE_STATS = 6,
     ALL_CLIENTS = 7,
     HEURISTIC_RESULTS = 8,
-    SAMPLES = 9
+    SAMPLES = 9,
+    RUNNING_TESTS = 10,
+    NETWORK_CONFIGS = 11,
+    CONNECTED_CLIENTS = 12,
+    REACH_RESPONSE = 13,
+    GENERIC_RESPONSE = 14,
+    CLIENT_TESTS = 15,
+    TEST_DETAILS = 16,
+    I_AM_AWAKE = 17,
 
 
 class InfectivityResponse(AbstractPackage):

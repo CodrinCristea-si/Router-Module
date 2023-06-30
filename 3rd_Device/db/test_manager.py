@@ -86,7 +86,7 @@ class DBTestManagement(DBManager):
                 self.__sample_manager.add_category(sample[1],10)
                 self.__sample_manager.add_sample(sample[0],sample[1],sample[2])
                 samp = self.__sample_manager.get_sample(sample[0], sample[1], sample[2])
-            test_res = self._session.query(TestResult).fiter(TestResult.TestID == test.TestID, TestResult.SampleID== samp.SampleID).first()
+            test_res = self._session.query(TestResult).filter(TestResult.TestID == test.TestID, TestResult.SampleID== samp.SampleID).first()
             if test_res is None:
                 test_res = TestResult(TestID= test.TestID, SampleID= samp.SampleID, NumberOfTimes = 1)
                 self._session.add(test_res)
@@ -94,8 +94,28 @@ class DBTestManagement(DBManager):
                 test_res.NumberOfTimes += 1
             self._session.commit()
 
+    def get_test_results_for_test(self,test_id:int):
+        test_res = self._session.query(TestResult).filter(TestResult.TestID == test_id).all()
+        return test_res
+
+    def get_test_by_id(self, test_id:int):
+        tests = self._session.query(Test).filter(Test.TestID == test_id).first()
+        return tests
+
     def get_last_test_results(self,ip:str,mac:str):
         test = self.get_last_test_for_client(ip,mac)
         lista = self._session.query(TestResult).filter(TestResult.TestID==test.TestID).all()
         ls_samp = [self._session.query(Sample).filter(Sample.SampleID == tr.SampleID).first() for tr in lista ]
         return ls_samp
+
+    def get_all_running_tests(self):
+        list_tests = self._session.query(Test).filter(Test.Status == TestStatus.RUNNING.value).all()
+        if list_tests is None:
+            return []
+        return list_tests
+
+    def get_tests_for_client_id(self,client_id:int):
+        list_tests = self._session.query(Test).filter(Test.ClientID == client_id).all()
+        if list_tests is None:
+            return []
+        return list_tests
