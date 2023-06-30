@@ -43,8 +43,9 @@ class Client:
 
     def close_connection(self):
         try:
-            self.__server_socket.close()
-            self.__logger.info("Connection closed!")
+            if self.__server_socket is not None:
+                self.__server_socket.close()
+                self.__logger.info("Connection closed!")
         except:
             self.__logger.error("Failed to close connection to the server! Error :" + str(sys.exc_info()[1]))
 
@@ -58,7 +59,7 @@ class Client:
         try:
             self.__server_socket.sendall(bytes_package)
             self.__logger.info("Package sent to the server! Awaiting response ... ")
-            self.__server_socket.settimeout(5)
+            self.__server_socket.settimeout(3)
             bytes_response = self.__server_socket.recv(Package.MAX_BYTES)
             response = pickle.loads(bytes_response)
             self.__logger.info("Server response: " + str(response))
@@ -79,9 +80,9 @@ class Client:
             self.__logger.info("Creating communicator ...")
             ClientServerCommunicator.send_data(self.__server_socket,package)
             self.__logger.info("communicator send data!")
-            self.__server_socket.settimeout(43200) # 12 hours
-            response = ClientServerCommunicator.read_data(self.__server_socket)
-            self.__logger.info("communicator read data!")
+            #self.__server_socket.settimeout(43200) # 12 hours
+            #response = ClientServerCommunicator.read_data(self.__server_socket)
+            #self.__logger.info("communicator read data!")
             self.__logger.info("Server response: " + str(response))
         except:
             self.__logger.error('Communication failed! Error: ' + str(sys.exc_info()[1]))

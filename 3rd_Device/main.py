@@ -6,6 +6,10 @@ from network.client_tester import ClientTester
 from heuristics.heuristic_server import HeuristicServer
 from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator as ITC
 from threading import Thread
+
+from packages.infectivity_request import InfectivityRequest, InfectivityRequestType
+from packages.infectivity_response import *
+
 samples = {}
 
 
@@ -178,6 +182,62 @@ def save_samples(filename_out:str):
         print ("Nr platforms:", len(samples), plat)
 
 
+def send_awake_signals(logger:Logger):
+    # Infectivity Server
+    logger.info("Send awake signals to Infectivity Server")
+    comm = ITC("127.0.0.1", 5004, logger)
+    pack = InfectivityRequest(InfectivityRequestType.ARE_YOU_AWAKE, [])
+    try:
+        comm.connect()
+        comm.send_request(pack)
+        resp = comm.read_response()
+        comm.close_connection()
+        if resp.type != InfectivityResponseType.I_AM_AWAKE:
+            raise Exception("Response type invalid")
+    except Exception as e:
+        logger.error("Error while sending to awake! Error %s" % (e))
+
+    # Heuristic Server
+    logger.info("Send awake signals to Heuristic Server")
+    comm = ITC("127.0.0.1", 5003, logger)
+    pack = InfectivityRequest(InfectivityRequestType.ARE_YOU_AWAKE, [])
+    try:
+        comm.connect()
+        comm.send_request(pack)
+        resp = comm.read_response()
+        comm.close_connection()
+        if resp.type != InfectivityResponseType.I_AM_AWAKE:
+            raise Exception("Response type invalid")
+    except Exception as e:
+        logger.error("Error while sending to awake! Error %s" % (e))
+
+    # Router Server
+    logger.info("Send awake signals to Router Server")
+    comm = ITC("192.168.1.2", 5005, logger)
+    pack = InfectivityRequest(InfectivityRequestType.ARE_YOU_AWAKE, [])
+    try:
+        comm.connect()
+        comm.send_request(pack)
+        resp = comm.read_response()
+        comm.close_connection()
+        if resp.type != InfectivityResponseType.I_AM_AWAKE:
+            raise Exception("Response type invalid")
+    except Exception as e:
+        logger.error("Error while sending to awake! Error %s" % (e))
+
+    # Client Tester Server
+    logger.info("Send awake signals to Client Tester Server")
+    comm = ITC("192.168.1.2", ITC._TESTER_PORT , logger)
+    pack = InfectivityRequest(InfectivityRequestType.ARE_YOU_AWAKE, [])
+    try:
+        comm.connect()
+        comm.send_request(pack)
+        resp = comm.read_response()
+        comm.close_connection()
+        if resp.type != InfectivityResponseType.I_AM_AWAKE:
+            raise Exception("Response type invalid")
+    except Exception as e:
+        logger.error("Error while sending to awake! Error %s" % (e))
 
 def start_server(serv):
     serv.run_server()
@@ -199,7 +259,7 @@ if __name__ == "__main__":
     p4.start()
     p3.start()
     p1.start()
-
+    send_awake_signals(logger)
     p1.join()
     p3.join()
     p4.join()

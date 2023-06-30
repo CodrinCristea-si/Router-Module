@@ -7,6 +7,7 @@ from threading import Thread
 from communicators.client_server_communicator import ClientServerCommunicator
 from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator
 from packages.client_package import Package as ClientPackage
+from packages.client_package import PackageType as ClientPackageType
 from packages.infectivity_request import *
 from packages.infectivity_response import *
 from network.client import Client
@@ -25,29 +26,59 @@ class ClientTester(Server):
         manager.send_response(response)
         manager.close_connection()
 
+
     def __process_request(self,client_socket:socket):
-        request = InfectivityTesterCommunicator.read_data(client_socket)
-        self._logger.info("Request received")
-        response = None
-        if request.type == InfectivityRequestType.CHECK_CLIENT:
-            host = request.payload[0]
-            self._logger.info("Request of type CHECK_CLIENT for %s"%(host))
-            client = Client(host, ClientTester.__DEFAULT_PORT_CLIENTS, self._logger)
-            res = client.connect()
-            if res == 0:
-                self._logger.info("Connection to %s estamblished" %(host))
-                resp = client.send_test_package()
-                if resp is not None and client.check_for_valid_test_package(resp):
-                    response = InfectivityResponse(InfectivityResponseType.STATUS_AVAILABLE,[host])
-                    self._logger.info("Host %s check status valid" % (host))
+        if client_socket is None:
+            return
+        host, _ = client_socket.getpeername()
+        if host == "127.0.0.1" or host == "192.168.1.2":
+            request = InfectivityTesterCommunicator.read_data(client_socket)
+            self._logger.info("Request received")
+            response = None
+            if request.type == InfectivityRequestType.CHECK_CLIENT:
+                host = request.payload[0]
+                self._logger.info("Request of type CHECK_CLIENT for %s"%(host))
+                client = Client(host, ClientTester.__DEFAULT_PORT_CLIENTS, self._logger)
+                res = client.connect()
+                if res == 0:
+                    self._logger.info("Connection to %s established" %(host))
+                    resp = client.send_test_package()
+                    if resp is not None and client.check_for_valid_test_package(resp):
+                        response = InfectivityResponse(InfectivityResponseType.STATUS_AVAILABLE,[host])
+                        self._logger.info("Host %s check status valid" % (host))
+                    else:
+                        response = InfectivityResponse(InfectivityResponseType.STATUS_UNAVAILABLE, [host])
+                        self._logger.info("Host %s check status invalid" % (host))
                 else:
                     response = InfectivityResponse(InfectivityResponseType.STATUS_UNAVAILABLE, [host])
-                    self._logger.info("Host %s check status invalid" % (host))
-            else:
-                response = InfectivityResponse(InfectivityResponseType.STATUS_UNAVAILABLE, [host])
-                self._logger.info("Host %s is unreachable" % (host))
-            InfectivityTesterCommunicator.send_data(client_socket,response)
-            client.close_connection()
+                    self._logger.info("Host %s is unreachable" % (host))
+                InfectivityTesterCommunicator.send_data(client_socket,response)
+                client.close_connection()
+
+            if request.type == InfectivityRequestType.SCAN_CLIENT:
+                host = request.payload[0]
+                self._logger.info("Request of type SCAN_CLIENT for %s" % (host))
+                client = Client(host, ClientTester.__DEFAULT_PORT_CLIENTS, self._logger)
+                res = client.connect()
+                if res == 0:
+                    self._logger.info("Connection to %s established" % (host))
+                    resp = client.send_scan_package()
+                client.close_connection()
+            if request.type == InfectivityRequestType.ARE_YOU_AWAKE:
+                pack = InfectivityResponse(InfectivityResponseType.I_AM_AWAKE, [])
+                InfectivityTesterCommunicator.send_data(client_socket, pack, self._logger)
+                client_socket.close()
+        else:
+            request = ClientServerCommunicator.read_data(client_socket)
+            self._logger.info("Request foreign received")
+            response = None
+            if request.type == ClientPackageType.RESULTS:
+                results = request.payload
+                response = InfectivityResponse(InfectivityResponseType.TEST_RESULTS, [host,results])
+                self.__send_infectivity_response(response)
+        client_socket.close()
+
+
 
         #case for SCAN_CLIENT
         #self.__send_infectivity_response(response)
