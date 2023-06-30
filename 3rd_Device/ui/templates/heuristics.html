@@ -1,0 +1,153 @@
+
+<!--<ul class="key-value-list">-->
+<!--  <li>-->
+<!--    <span class="key">Key 1:</span>-->
+<!--    <span class="value">Value 1</span>-->
+<!--  </li>-->
+<!--  <li>-->
+<!--    <span class="key">Key 2:</span>-->
+<!--    <span class="value">Value 2</span>-->
+<!--  </li>-->
+<!--  <li>-->
+<!--    <span class="key">Key 3:</span>-->
+<!--    <span class="value">Value 3</span>-->
+<!--  </li>-->
+<!--</ul>-->
+
+<div class="list_details_container">
+    <div>
+<h2>Heuristic Input Requirement Types</h2>
+<ul class="list">
+    {% if list_req_types %}
+    {% for el in list_req_types %}
+    <li class="clickeble_item">
+        <p class="clickeble_item">{{el["name"]}}</p>
+          <ul class="dropdown">
+              <li>
+                <span class ="list_extra_details">
+                  <p class="key">ID: </p>
+                  <p>{{el["id_number"]}}</p>
+                </span>
+              </li>
+              <li>
+                  <span class ="list_extra_details">
+                      <p class="key">Description: </p>
+                      <p>{{el["description"]}}</p>
+                  </span>
+              </li>
+                <li>
+                  <p class="key">Input Example: </p><br>
+                  <pre class="json-content">
+                    {{el["code_example"]}}
+                  </pre>
+              </li>
+          </ul>
+    </li>
+    {% endfor %}
+    {% endif %}
+</ul>
+    </div>
+
+    <div>
+<h2>Heuristic Types</h2>
+<ul class="list">
+    {% if list_heur_types %}
+    {% for el in list_heur_types %}
+    <li class="clickeble_item">
+        <p class="clickeble_item">{{el["name"]}}</p>
+          <div class="dropdown">
+            <span class ="list_extra_details">
+              <p class="key">ID: </p>
+              <p>{{el["id_number"]}}</p>
+            </span>
+            <span class ="list_extra_details">
+              <p class="key">Description: </p>
+              <p>{{el["description"]}}</p>
+            </span>
+          </div>
+    </li>
+    {% endfor %}
+    {% endif %}
+</ul>
+    </div>
+</div>
+<br><br>
+<div>
+    <h2>All Heuristic</h2>
+    <table class="table">
+    <tr class="table-header">
+        <th class="header__item">Heuristic ID</th>
+        <th class="header__item">Name</th>
+        <th class="header__item">Type</th>
+        <th class="header__item">Path</th>
+        <th class="header__item">Requirements</th>
+    </tr>
+    {% if lista_heur %}
+    {% for el in lista_heur%}
+    <tr id="{{el.HeuristicID}}" class="table-row" >
+        <td class="table-data">{{el.HeuristicID}}</td>
+        <td class="table-data">{{el.Name}}</td>
+        <td class="table-data">
+            <select disabled
+                    {% if el.Type == 1 %} class = "selection-testing select-static" {% endif %}
+                    {% if el.Type == 2 %} class = "selection-testing select-package" {% endif %}
+                    {% if el.Type == 3 %} class = "selection-testing select-general" {% endif %}
+            >
+                <option class="select-static"{% if el.Type == 1 %} selected {% endif %}>STATIC</option>
+                <option class="select-package" {% if el.Type == 2 %} selected {% endif %}>PACKAGE</option>
+                <option class="select-general"{% if el.Type == 3 %} selected {% endif %}>GENERAL</option>
+            </select>
+        </td>
+        <td class="table-data">{{el.Path}}</td>
+        <td class="table-data">{{el.Requirements}}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    </table>
+</div>
+<!--<br>-->
+<!--<br>-->
+<!--<br>-->
+<!--dropdown list for type and requeiremnts-->
+<!--  name-->
+<!--  id-->
+<!--  code examples-->
+
+<style>
+/*    .key-value-list li {*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  border: 1px solid #ccc;*/
+/*  padding: 10px;*/
+/*  margin-bottom: 10px;*/
+/*}*/
+
+/*.value {*/
+/*  margin-left: 10px;*/
+/*}*/
+</style>
+
+<script>
+  var scriptElement = document.createElement('script');
+    scriptElement.src = "{{ url_for('static', filename='js/heuristics.js') }}";
+
+    // Append the <script> element to the <head> or <body> element
+    document.head.appendChild(scriptElement);
+
+    var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+    // Dispatch the custom event on the document object
+    document.dispatchEvent(domContentLoadedEvent);
+
+//   document.addEventListener('DOMContentLoaded', function() {
+//
+// });
+
+</script>
+<!--heur type-->
+
+<!--req type-->
+
+<!--list heurs-->
+
+<!--add heur-->
