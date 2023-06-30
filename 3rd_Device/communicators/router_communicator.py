@@ -3,13 +3,27 @@ import socket
 import sys
 from typing import Union
 from communicators.abstract_communicator import AbstractCommunicator
+from communicators.infectivity_tester_communicator import InfectivityTesterCommunicator as ITC
 from packages.abstract_package import AbstractPackage
 from packages.client_package import *
+from logger.logger import Logger
 
 from domain.package import Package as PackageDOM
 
 class RouterCommunicator(AbstractCommunicator):
     _MAX_BYTES = 1024
+
+    def __init__(self, host: str, port: int, logger:Logger) -> None:
+        self.__host = host
+        self.__port = port
+        self.__router_socket = None
+        self.__logger = logger
+        self.__timeout = 5
+
+    @staticmethod
+    def __read_network_settings(types:int,data:bytes):
+        print(types)
+        return [types, None, None, None]
 
     @staticmethod
     def __read_client(types:int,data:bytes):
@@ -135,9 +149,11 @@ class RouterCommunicator(AbstractCommunicator):
             return RouterCommunicator.parse_header_package(data[1:])
 
     @staticmethod
-    def __read_from_ext(socket_c: Union[socket,bytes]):
-        if isinstance(socket_c,socket.SocketType):
-            data_size = int.from_bytes(socket_c.recv(RouterCommunicator._MAX_BYTES),"little")
+    def __read_from_ext(socket_c: Union[socket,bytes], is_package):
+        if not is_package:
+            data_bytes =  socket_c.recv(4) #the size of int
+            print(data_bytes)
+            data_size = int.from_bytes(data_bytes,"little")
             print(data_size)
             #pack = None
             if 0 < data_size:
@@ -152,22 +168,96 @@ class RouterCommunicator(AbstractCommunicator):
                 types = int(data[0])
                 if types < 4:
                     return RouterCommunicator.__read_client(types,data)
+                if types >= 5:
+                    return RouterCommunicator.__read_network_settings(types,data)
         else:
             return RouterCommunicator.__read_package(socket_c)
         return []
 
     @staticmethod
     def __read_from_local(socket_c: socket):
-        return []
+        req = ITC.read_data(socket_c)
+        print(req)
+        return [req,None,None,None]
 
     @staticmethod
     def read_data(socket_c: Union[socket,bytes]) -> Union[AbstractPackage, list]:
         #host, _ = socket_c.getpeername()
         #if host == "127.0.0.1":
         if isinstance(socket_c,socket.SocketType):
-            return RouterCommunicator.__read_from_local(socket_c)
+            host, _ = socket_c.getpeername()
+            print(host)
+            if host == "127.0.0.1" or host == "192.168.1.2":
+                print(host)
+                return RouterCommunicator.__read_from_local(socket_c)
+            else:
+                return RouterCommunicator.__read_from_ext(socket_c, False)
         else:
-            return RouterCommunicator.__read_from_ext(socket_c)
+            return RouterCommunicator.__read_from_ext(socket_c, True)
+
+    def connect(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(self.__timeout)
+            self.__logger.info("Client socket created!")
+        except socket.error:
+            self.__logger.error("Failed to create socket! Error :" + str(sys.exc_info()[1]))
+            return -1
+
+        try:
+            # Connect to remote server
+            self.__logger.info("Initiate connection to %s:%s ..." % (self.__host, str(self.__port)))
+            s.connect((self.__host, self.__port))
+            self.__logger.info("Connected to the router!")
+            self.__router_socket = s
+            return 0
+        except:
+            self.__logger.error("Failed to connect to the router! Error :" + str(sys.exc_info()[1]))
+            return -1
+
+    def close_connection(self):
+        if self.__router_socket is not None:
+            self.__router_socket.close()
+
+    def __send_to_router(self, data:bytes):
+        try:
+            data_size = len(data)
+            data_size_bytes = int(data_size).to_bytes(4,"little")
+            self.__router_socket.send(data_size_bytes)
+            self.__logger.info("Data len send to router")
+            self.__router_socket.send(data)
+            self.__logger.info("Data send to router")
+            return 0
+        except:
+            self.__logger.error("Failed to send to router! Error :" + str(sys.exc_info()[1]))
+            return -1
+
+    def send_request(self, data:list):
+        types_to_client = {
+            "5":10,
+            "6":9,
+            "7":7,
+            "8":8,
+            "3":3
+        }
+        type, payload = data[0], data[1]
+        if type == 3:
+            data_payload = b''
+            data_payload += int(types_to_client[str(type)]).to_bytes(1,"big",signed=False)
+            ip, mac, state = payload[0], payload[1], payload[2]
+            ip = ip.split(".")
+            for el in ip:
+                data_payload += int(el).to_bytes(1, "big", signed=False)
+            mac = mac.split(":")
+            for el in mac:
+                data_payload += int(el, 16).to_bytes(1, "big", signed=False)
+            data_payload += int(state).to_bytes(1, "big", signed=False)
+            print(data_payload)
+            return self.__send_to_router(data_payload)
+        if type == 5 or type == 6 or type == 7 or type == 8:
+            data_payload = b''
+            data_payload += int(types_to_client[str(type)]).to_bytes(1, "big", signed=False)
+            return self.__send_to_router(data_payload)
 
 
 

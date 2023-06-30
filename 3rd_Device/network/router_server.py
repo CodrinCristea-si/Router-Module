@@ -1,5 +1,7 @@
 import socket
 import pickle
+
+from packages.infectivity_response import InfectivityResponse, InfectivityResponseType
 from server.server import Server
 from communicators.router_communicator import RouterCommunicator
 from logger.logger import Logger
@@ -20,14 +22,54 @@ class RouterServer(Server):
         self.__workers_tcp = set()
         self.__workers_udp = set()
 
+    def __send_request_to_server(self,type,payload):
+        req = InfectivityRequest(type, payload)
+        manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
+        manager.connect()
+        manager.send_request(req)
+        manager.close_connection()
+
     def __process_request_tcp(self,client_socket:socket):
         type,ip,mac,infec = RouterCommunicator.read_data(client_socket)
         if type == 1: # client connection
-            req = InfectivityRequest(InfectivityRequestType.ADD_CLIENT,[ip,mac])
-            manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
-            manager.connect()
-            manager.send_request(req)
-            manager.close_connection()
+            self.__send_request_to_server(InfectivityRequestType.ADD_CLIENT,[ip,mac])
+        if type == 2: # client disconnect
+            self.__send_request_to_server(InfectivityRequestType.REMOVE_CLIENT,[ip,mac])
+        if type == 3:  # client transfer
+            self.__send_request_to_server(InfectivityRequestType.TRANSFER_CLIENT, [ip, mac, infec])
+        if type == 5:  # lockdown on
+            self.__send_request_to_server(InfectivityRequestType.LOCKDOWN_SETTINGS, [True])
+        if type == 6:  # lockdown off
+            self.__send_request_to_server(InfectivityRequestType.LOCKDOWN_SETTINGS, [False])
+        if type == 7:  # automatic on
+            self.__send_request_to_server(InfectivityRequestType.AUTOMATIC_SETTINGS, [True])
+        if type == 8:  # automatic off
+            self.__send_request_to_server(InfectivityRequestType.AUTOMATIC_SETTINGS, [False])
+
+        if isinstance(type, InfectivityRequest):  # requests coming from server
+            pack = type
+            if pack.type == InfectivityRequestType.ARE_YOU_AWAKE:
+                pack = InfectivityResponse(InfectivityResponseType.I_AM_AWAKE, [])
+                InfectivityTesterCommunicator.send_data(client_socket, pack, self._logger)
+                client_socket.close()
+                return
+            rc = RouterCommunicator("192.168.1.220", 7895, self._logger)
+            rc.connect()
+            if pack.type == InfectivityRequestType.TRANSFER_CLIENT:
+                rc.send_request([3,pack.payload])
+            if pack.type == InfectivityRequestType.LOCKDOWN_SETTINGS:
+                if pack.payload[0]:
+                    rc.send_request([5, None])
+                elif not pack.payload[0]:
+                    rc.send_request([6, None])
+            if pack.type == InfectivityRequestType.AUTOMATIC_SETTINGS:
+                if pack.payload[0]:
+                    rc.send_request([7, None])
+                elif not pack.payload[0]:
+                    rc.send_request([8, None])
+            rc.close_connection()
+
+        client_socket.close()
         # print("data",repr(data))
 
     def __process_request_udp(self, client_data: bytes):
