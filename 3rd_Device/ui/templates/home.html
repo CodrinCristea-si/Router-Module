@@ -1,0 +1,91 @@
+ <h1>Infectivity Monitor Server App</h1>
+ <p style="align-content: center; padding: 10px 50px;">To see the current options press the <i class="fa-solid fa-bars but_show"></i> button</p>
+
+ <br>
+ <br>
+ <br>
+ <h2> Connected Clients</h2>
+
+ <ul class="custom-list">
+     {% if lista_clients %}
+     {% for el in lista_clients%}
+  <li>
+    <div class="element">
+      <div class="ip-info" data-label="IP:">{{el.CurrentIP}}</div>
+    </div>
+    <div class="element">
+      <div class="mac-info" data-label="MAC:">{{el.MAC}}</div>
+    </div>
+       {% if el.InfectivityType == 1 %}
+    <div class="element infectivity uninfected">Uninfected</div>
+      {% endif %}
+      {% if el.InfectivityType == 2 %}
+    <div class="element infectivity suspect">Suspicious</div>
+      {% endif %}
+      {% if el.InfectivityType == 3 %}
+    <div class="element infectivity minor">Infected Minor</div>
+      {% endif %}
+      {% if el.InfectivityType == 4 %}
+    <div class="element infectivity major">Infected Major</div>
+      {% endif %}
+      {% if el.InfectivityType == 5 %}
+    <div class="element infectivity sever">Infected Sever</div>
+      {% endif %}
+  </li>
+     {% endfor %}
+    {% endif %}
+</ul>
+
+ <br>
+ <br>
+ <br>
+  <h2>Running tests</h2>
+<table class="table">
+    <tr class="table-header">
+        <th class="header__item">Test ID</th>
+        <th class="header__item">Client IP</th>
+        <th class="header__item">Started at</th>
+    </tr>
+    {% if lista_tests %}
+    {% for el in lista_tests%}
+    <tr class="table-row">
+        <td class="table-data" >{{el.id}}</td>
+        <td class="table-data" >{{el.client_ip}}</td>
+        <td class="table-data" >{{el.time_started}}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+
+ <br>
+ <br>
+ <br>
+  <h2>Lockdown</h2>
+
+ <div class="lockdown-toggle">
+  <div class="label" style="color: #a2a2a2">Automatic Lockdown:</div>
+  <div {% if automatic and automatic == true %} class="toggle on" {% else %} class="toggle" {% endif %} id="automaticToggle"></div>
+</div>
+
+ <div class="lockdown-toggle" id="lockdown_container">
+  <div class="label" style="color: #a2a2a2">Lockdown State:</div>
+
+  <div {% if lockdown and lockdown == true %} class="toggle on" {% else %} class="toggle" {% endif %} id="lockdownToggle"></div>
+
+</div>
+ <script>
+     var scriptElement = document.createElement('script');
+    scriptElement.src = "{{ url_for('static', filename='js/home.js') }}";
+
+    // Append the <script> element to the <head> or <body> element
+    document.head.appendChild(scriptElement);
+
+    var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+    // Dispatch the custom event on the document object
+    document.dispatchEvent(domContentLoadedEvent);
+ </script>
+
+ connected clients
+ lockdown
+ running tests

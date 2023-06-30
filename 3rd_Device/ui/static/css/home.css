@@ -1,0 +1,128 @@
+/* for connected clients */
+.custom-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.custom-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #c1bfe0;
+}
+
+.custom-list li .element {
+  flex: 1;
+  margin-right: 10px;
+
+}
+
+.custom-list li .element.ip {
+  color: #3366cc;
+  font-weight: bold;
+}
+
+.custom-list li .element.mac {
+  color: #ff6600;
+  font-weight: bold;
+}
+
+.element.infectivity {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.element.infectivity.uninfected {
+  background-color: #57c74c;
+}
+
+.element.infectivity.suspect {
+  background-color: #324ca8;
+}
+
+.element.infectivity.minor {
+  background-color: #e3c922;
+}
+
+.element.infectivity.major {
+  background-color: #d4851e;
+}
+
+.element.infectivity.sever {
+  background-color: #e74c3c;
+}
+
+.custom-list li .ip-info,
+.custom-list li .mac-info {
+  display: flex;
+  align-items: center;
+}
+
+.custom-list li .ip-info::before,
+.custom-list li .mac-info::before {
+  content: attr(data-label);
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.custom-list li:hover {
+  background-color: #a2a2a2;
+  /*cursor: pointer;*/
+}
+
+.custom-list li:hover .element:first-child {
+  text-decoration: underline;
+}
+
+
+/*for lockdown*/
+
+  .lockdown-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.lockdown-toggle .label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.lockdown-toggle .toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: #ccc;
+}
+
+.lockdown-toggle .toggle:before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.lockdown-toggle .toggle.on {
+  background-color: #57c74c;
+}
+
+.lockdown-toggle .toggle.on:before {
+  transform: translateX(20px);
+}
+
+.lockdown-toggle .toggle.off:before {
+  transform: translateX(0);
+}
+
