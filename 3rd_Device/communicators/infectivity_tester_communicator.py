@@ -10,14 +10,15 @@ from logger.logger import Logger
 
 class InfectivityTesterCommunicator(AbstractCommunicator):
     _MAX_BYTES = 16384
-    _TESTER_PORT = 5003
-    _INFECTIVITY_SERVER_PORT = 5000
+    _TESTER_PORT = 5002
+    _INFECTIVITY_SERVER_PORT = 5004
 
     def __init__(self, host: str, port: int, logger:Logger) -> None:
         self.__host = host
         self.__port = port
         self.__server_socket = None
         self.__logger = logger
+        self.__timeout = 3
 
 
     @staticmethod
@@ -113,7 +114,8 @@ class InfectivityTesterCommunicator(AbstractCommunicator):
             return -1
 
     def close_connection(self):
-        self.__server_socket.close()
+        if self.__server_socket is not None:
+            self.__server_socket.close()
 
     def send_response(self,response:InfectivityResponse):
         try:
@@ -207,3 +209,4 @@ class InfectivityTesterCommunicator(AbstractCommunicator):
         except:
             request = None
         return request
+
