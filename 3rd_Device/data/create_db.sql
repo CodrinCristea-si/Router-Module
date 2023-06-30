@@ -86,7 +86,7 @@ create table TestResults(
 )ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
 
 create table Heuristics(
-	HeuristicID bigint not null,
+	HeuristicID bigint not null auto_increment,
 	Name varchar(100),
 	Type smallint,
 	Requirements varchar(200),
@@ -95,7 +95,7 @@ create table Heuristics(
 )ENGINE=InnoDB COLLATE=utf8mb4_general_ci;
 
 create table History(
-	HistoryID bigint not null,
+	HistoryID bigint not null auto_increment,
 	Type varchar(100),
 	TimeRegistered datetime,
 	IDTarget bigint,
