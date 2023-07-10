@@ -69,7 +69,7 @@ function fetch_heuristics(){
 }
 
 function fetch_history(){
-     fetch(server_location +'history')
+     fetch(server_location +"history?type=0&nr=0")
          .then(response => response.text())
          .then(data => {
              console.log(data)

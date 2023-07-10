@@ -149,8 +149,26 @@ def history():
     #               TestDOM("192.168.1.7", "2023-06-25 21:45:12", TestStatus.RUNNING, "", 3)
     #          ]
     #url_for('static', filename='css/main-page.css')
-    return render_template('history.html')
-
+    type = request.args.get('type', None)
+    nr = request.args.get('nr', None)
+    if int(type) == 0:
+        return render_template('history.html')
+    if int(type) == 1: # sys logs
+        pack = InfectivityRequest(InfectivityRequestType.GET_LAST_LOGS, [nr])
+        resp = get_data_from_main_server(pack)
+        lista_logs = resp.payload
+        lista_logs.reverse()
+        return lista_logs
+    if int(type) == 2: # sys history
+        pack = InfectivityRequest(InfectivityRequestType.GET_LAST_HISTORY, [nr])
+        resp = get_data_from_main_server(pack)
+        lista_hist = resp.payload
+        ls_to_send = []
+        for el in lista_hist:
+            str_hist = f"%s -- %s -- %s  "%(el.TimeRegistered,el.Type,el.IDTarget)
+            ls_to_send.append(str_hist)
+        ls_to_send.reverse()
+        return ls_to_send
 
 @app.route('/heuristics')
 def heuristic():
