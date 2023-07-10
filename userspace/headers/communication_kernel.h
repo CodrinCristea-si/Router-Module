@@ -2,7 +2,7 @@
 #include <linux/netlink.h>
 
 #define MAX_ID 1e7
-#define SLEEP_TIME 4
+#define SLEEP_TIME 5
 
 struct kernel_response{
 	unsigned char type;

@@ -29,7 +29,7 @@ void* pop_from_list(List* list) {
 }
 
 void* get_from_list(List* list, size_t i) {
-    if (list->size == 0 || i > list->size) {
+    if (list->size == 0 || i >= list->size) {
         return NULL;
     }
     int poz = 0;
@@ -46,7 +46,7 @@ void clear_list(List* list) {
 		Node* current_node = list->head;
 		while (current_node != NULL) {
 			Node* next_node = current_node->next;
-			if(current_node->data)
+			if(current_node->data != NULL) 
 				free(current_node->data);
 			free(current_node);
 			current_node = next_node;

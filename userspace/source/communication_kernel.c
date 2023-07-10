@@ -221,7 +221,7 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 	//nh = (struct nlmsghdr*)data;
 	while (NLMSG_OK(nlh, data_len)) {
 		msg_infec = (struct infec_msg*)NLMSG_DATA(nlh);
-		print_infec_msg(msg_infec);
+		//print_infec_msg(msg_infec);
 		//printf("Response type %x\n",msg_infec->header.payload_type);
 		if(payload_id){
 			switch (msg_infec->header.payload_type)
@@ -279,7 +279,7 @@ struct kernel_response* extract_kernel_response(struct nlmsghdr* nlh,int data_le
 		}
 		nlh = NLMSG_NEXT(nlh, data_len);
 	}
-	printf("Am iesit\n");
+	//printf("Am iesit\n");
 	return response;
 }
 

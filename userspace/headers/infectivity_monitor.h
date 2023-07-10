@@ -57,7 +57,7 @@ enum{
 };
 
 enum{
-	ALL_DATA = 10,
+	ALL_DATA = 20,
 	UPDATES
 };
 

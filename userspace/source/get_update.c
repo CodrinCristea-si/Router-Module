@@ -103,7 +103,7 @@ void create_json_get_all(struct response *response, char* output){
 					if(is_lockdown_job(job->job_type))
 						fprintf(file,"{\"lockdown\":\"%d\"}", job->job_type == LOCKDOWN_UP ? 0 : 1);
 					else
-						fprintf(file,"{\"autmoatic\":\"%d\"}", job->job_type == AUTO_UP ? 1 : 0);
+						fprintf(file,"{\"automatic\":\"%d\"}", job->job_type == AUTO_UP ? 1 : 0);
 				}
 			}
 			else{
@@ -186,13 +186,10 @@ void create_json_get_updates(struct response *response, char* output){
 			void *data = get_from_list(response->data,i);
 			if(is_ui_job(get_job_type_from_data(data))){
 				struct ui_job *job = data;
-				if(job){
-					//printf("UI Action %d \n",job->job_type);
-					if(is_lockdown_job(job->job_type))
-					printf("Lockdown %d \n",job->job_type == LOCKDOWN_UP ? 0 : 1);
+				if(is_lockdown_job(job->job_type))
+					fprintf(file,"{\"lockdown\":\"%d\"}", job->job_type == LOCKDOWN_UP ? 0 : 1);
 				else
-					printf("Automatic %d \n",job->job_type == AUTO_UP ? 1 : 0);
-				}
+					fprintf(file,"{\"automatic\":\"%d\"}", job->job_type == AUTO_UP ? 1 : 0);
 			}
 			else{
 				struct client_job *job = data;

@@ -79,14 +79,14 @@ int deploy_thread_checker(char* filename){
 		printf("curr path %s and file %s\n",path_curr,file);
 
 		// Redirect standard input, output, and error to /dev/null
-		// int fd = open("/dev/null", O_RDWR);
-		// if (fd >= 0){
-		// 	printf("Child muted\n");
-		// 	dup2(fd, STDIN_FILENO);
-		// 	dup2(fd, STDOUT_FILENO);
-		// 	dup2(fd, STDERR_FILENO);
-		// 	close(fd);	
-		// }
+		int fd = open("/dev/null", O_RDWR);
+		if (fd >= 0){
+			printf("Child muted\n");
+			dup2(fd, STDIN_FILENO);
+			dup2(fd, STDOUT_FILENO);
+			dup2(fd, STDERR_FILENO);
+			close(fd);	
+		}
 
 		//Start working
 		connectivity_checker(file);

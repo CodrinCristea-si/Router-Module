@@ -52,7 +52,7 @@ int send_to_monitor(unsigned char*data, unsigned char type){
 
 	// assign IP, PORT
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	servaddr.sin_addr.s_addr = inet_addr("192.168.1.1");
 	servaddr.sin_port = htons(PORT_LISTEN);
 
 	// connect the client socket to server socket
@@ -68,6 +68,7 @@ int send_to_monitor(unsigned char*data, unsigned char type){
 	}
 	//printf("Message sent\n");
 	free(job);
+	close(sockfd);
 }
 
 
@@ -88,35 +89,19 @@ struct response receive_from_monitor(int *sockfd){
 	size_t i;
 	struct response response = create_invalid_response();
 	len = receive_data(*sockfd,(unsigned char*)&type);
-	//printf("type received %x\n",type);
 	if(len > 0){
 		// response = (struct response *)malloc(sizeof(struct response));
 		response.data = create_list();
 		len = receive_data(*sockfd,(unsigned char *)&nr_ent);
 		response.nr_ent=nr_ent;
-		//printf("nr ent received %x\n",nr_ent);
-		//printf("type received %x and %x\n",type,ALL_DATA);
-		if (type == ALL_DATA){
-			//printf("All_DATA\n");
+		if(type == ALL_DATA ||type == UPDATES){
 			for(i=0;i<nr_ent;i++){
-				//printf("for %d\n",i);
-				struct client_infectivity *buf= (struct client_infectivity *)malloc(sizeof(struct client_infectivity));
-				//if (!buf) printf("Ceva a mers prost\n");
+				void *buf = malloc(sizeof(struct client_job));
 				len = receive_data(*sockfd,(unsigned char*)buf);
-				//printf("len %d\n",len);
-				if(len<=0) break;
-				else{
-					push_to_list(response.data,buf);
-					//printf("received ");
-					//print_client_infectivity(buf);
+				if(len<=0) {
+					free(buf);
+					break;
 				}
-			}
-		}
-		else if(type == UPDATES){
-			for(i=0;i<nr_ent;i++){
-				struct job *buf= (struct job *)malloc(sizeof(struct client_job));
-				len = receive_data(*sockfd,(unsigned char*)buf);
-				if(len<=0) break;
 				else{
 					push_to_list(response.data,buf);
 				}
@@ -153,7 +138,7 @@ struct response send_and_receive_from_monitor(unsigned char*data, unsigned char 
 
 	// assign IP, PORT
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	servaddr.sin_addr.s_addr = inet_addr("192.168.1.1");
 	servaddr.sin_port = htons(PORT_LISTEN);
 
 	// connect the client socket to server socket
@@ -174,9 +159,15 @@ struct response send_and_receive_from_monitor(unsigned char*data, unsigned char 
 
 void clear_response(struct response* response, bool is_static){
 	if(response){
-		clear_list(response->data);
-		free(response->data);
-		if(!is_static)free(response);	
+		if(response->data){
+			clear_list(response->data);
+			if(response->data){
+				free(response->data);
+			}
+		}
+		if(!is_static){
+			free(response);
+		}	
 	}
 }
 
