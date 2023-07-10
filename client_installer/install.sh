@@ -33,12 +33,13 @@ then
   mkdir $python_build_dir && cd $python_build_dir
   #echo "Downloading $py_version..."
   py_download_file=Python-$py_version_number.tar.xz
-  #wget https://www.python.org/ftp/python/$py_version_number/Python-$py_version_number.tar.xz
-  #if [ ! -f "py_download_file" ] ;
-  #then
-  #  echo "Cannot download Python-$py_version_number"
-  #  exit 1
-  #fi
+  echo $py_download_file
+  wget https://www.python.org/ftp/python/$py_version_number/Python-$py_version_number.tar.xz
+  if [ ! -f "$py_download_file" ] ;
+  then
+    echo "Cannot download Python-$py_version_number"
+    exit 1
+  fi
   cp $py_download_file $python_build_dir
   echo "Downloading tools for building $py_version..."
   apt install build-essential libssl-dev make
@@ -82,17 +83,24 @@ done
 echo "Installing Clamav..."
 apt-get install clamav clamav-daemon -y
 echo "Updating signatures..."
-systemctl stop clamav-freshclam
-freshclam
-systemctl start clamav-freshclam
+sudo touch /run/clamav/clamd.sock
+sudo chown clamav:clamav /run/clamav/clamd.sock
+sed -ri 's/^(LocalSocket .*)/# \1/g' /etc/clamav/clamd.conf
+sudo systemctl restart clamav-daemon.service
+sudo systemctl stop clamav-freshclam
+sudo rm /var/log/clamav/freshclam.log
+sudo freshclam
+sudo systemctl start clamav-freshclam
 echo "Signatures updated"
 
-subnet=192.168.1.0/24
+
 #instalation folder size 700mb
 echo "Adding task to cron..."
-script_path=$(pwd)/main.py
-COMMAND="$python_bin $script_path -start $subnet"
+infectivity_folder=$(pwd)
+script_path=$(pwd)/start_infectivity.sh
+chmod +x $script_path
+COMMAND="$script_path $infectivity_folder > /log_cron.txt"
 (crontab -l ; echo "* * * * * $COMMAND") | crontab -
 
 echo "Starting the application"
-$python_bin $script_path -start $subnet
+$script_path $infectivity_folder
