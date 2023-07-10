@@ -88,6 +88,7 @@ from orm.category import Category
 from orm.sample import Sample
 from orm.client import Client
 from orm.package import Package
+from orm.history import History
 
 
 class HeuristicType(Enum):
@@ -99,12 +100,13 @@ class HeuristicType(Enum):
 class RequirementType(Enum):
     CONNECTED_CLIENTS = 1
     LAST_MINUTE_PACKAGES = 2
-    LAST_MINUTE_TESTS = 3
+    LAST_TESTS = 3
     CLIENT_RESULTS = 4
-    LAST_MINUTE_HISTORY = 5
+    HISTORY = 5
     PLATFORMS = 6
     CATEGORIES = 7
     SAMPLES = 8
+    HEURISTICS = 9
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -119,7 +121,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 class HeuristicServer(Server):
-    __EURISTICS_STORAGE="heuristics\storage"
+    __HEURISTICS_STORAGE="heuristics\storage"
 
     def __init__(self, host: str, port: int, logger: Logger):
         super().__init__(host, port, logger)
@@ -138,7 +140,7 @@ class HeuristicServer(Server):
         try:
             type = int(type_str)
             for heur_type in HeuristicType:
-                print(heur_type, heur_type.value, type)
+                #print(heur_type, heur_type.value, type)
                 if heur_type.value == type:
                     ret_type = heur_type
                     break
@@ -229,7 +231,7 @@ class HeuristicServer(Server):
 
     def __create_last_minute_tests_req(self, tests:list):
         req = {
-            "type":RequirementType.CONNECTED_CLIENTS.value,
+            "type":RequirementType.LAST_TESTS.value,
             "input":[]
         }
         for test_set in tests:
@@ -297,6 +299,37 @@ class HeuristicServer(Server):
             req.get("input").append(data_samp.copy())
         return req
 
+    def __create_history_req(self, histories:list):
+        req = {
+            "type":RequirementType.HISTORY.value,
+            "input":[]
+        }
+        for hist in histories:
+            data_hist = {
+                "id":hist.HistoryID,
+                "type": hist.Type,
+                "target_id": hist.IDTarget,
+                "date":json.dumps(hist.TimeRegistered, cls=DateTimeEncoder)
+            }
+            req.get("input").append(data_hist.copy())
+        return req
+
+    def __create_heuristics_req(self, heuristics:list):
+        req = {
+            "type":RequirementType.HEURISTICS.value,
+            "input":[]
+        }
+        for heur in heuristics:
+            data_heur = {
+                "id":heur.HeuristicID,
+                "name": heur.Name,
+                "type": heur.Type,
+                "requirements": heur.Requirements,
+                "path":heur.Path
+            }
+            req.get("input").append(data_heur.copy())
+        return req
+
     def __create_input_file(self,input_file:str,list_input_req:list):
         # input_file = self.__generate_file("input_static_")
         input_data ={"response": list_input_req}
@@ -317,13 +350,13 @@ class HeuristicServer(Server):
         if request == RequirementType.CLIENT_RESULTS.value:
             return self.__create_clients_result_req(data[0],data[1],data[2])
         if request == RequirementType.LAST_MINUTE_PACKAGES.value:
-            resp = self.__get_data_from_server(InfectivityRequestType.GET_LAST_MINUTE_PACKAGES,[])
+            resp = self.__get_data_from_server(InfectivityRequestType.GET_LAST_MINUTE_PACKAGES,[1])
             return self.__create_last_minute_packages_req(resp)
         if request == RequirementType.CONNECTED_CLIENTS.value:
             resp = self.__get_data_from_server(InfectivityRequestType.GET_CONNECTED_CLIENTS, [])
             return self.__create_connected_clients_req(resp)
-        if request == RequirementType.LAST_MINUTE_TESTS.value:
-            resp = self.__get_data_from_server(InfectivityRequestType.GET_LAST_MINUTE_TEST, [])
+        if request == RequirementType.LAST_TESTS.value:
+            resp = self.__get_data_from_server(InfectivityRequestType.GET_LAST_TEST, [-1])
             return self.__create_last_minute_tests_req(resp)
         if request == RequirementType.PLATFORMS.value:
             resp = self.__get_data_from_server(InfectivityRequestType.GET_PLATFORMS, [])
@@ -331,6 +364,12 @@ class HeuristicServer(Server):
         if request == RequirementType.CATEGORIES.value:
             resp = self.__get_data_from_server(InfectivityRequestType.GET_CATEGORIES, [])
             return self.__create_category_req(resp)
+        if request == RequirementType.HISTORY.value:
+            resp = self.__get_data_from_server(InfectivityRequestType.GET_LAST_HISTORY, [-1])
+            return self.__create_history_req(resp)
+        if request == RequirementType.HEURISTICS.value:
+            resp = self.__get_data_from_server(InfectivityRequestType.GET_ALL_HEURISTICS, [])
+            return self.__create_heuristics_req(resp)
         if request == RequirementType.SAMPLES.value:
             comm = ITC("127.0.0.1", 5004, self._logger)
             comm.connect()
@@ -406,6 +445,25 @@ class HeuristicServer(Server):
         for result in analysis_results:
             self.__send_result_to_server(result)
 
+    def __send_analysis_dynamic_results_to_server(self, analysis_results):
+        comm = ITC("127.0.0.1", 5004, self._logger)
+        to_send = []
+        for result in analysis_results:
+            if result.get("results") is None:
+                self._logger.error("Invalid results format type!")
+            for el in result.get("results"):
+                if el.get("error") is not None:
+                    self._logger.error("Error while analysing. Error: %s" % (el.get("error")))
+                elif el.get("ip") is not None:
+                    to_send.append(el)
+        pack = InfectivityRequest(InfectivityRequestType.DYNAMIC_HEURISTIC_RESULTS, [{"results":to_send}])
+        try:
+            comm.connect()
+            comm.send_request(pack)
+            comm.close_connection()
+        except Exception as e:
+            self._logger.error("Error while sending to server! Error %s" % (e))
+
     def __execute_heuristic(self, heur:Heuristic, input_file,output_file):
         process = self.__run_heuristic(heur.path, ['--load', input_file, '--execute', output_file],wait_for_it=False)
         #self._logger.info("heuristic loaded")
@@ -420,7 +478,7 @@ class HeuristicServer(Server):
 
     def __process_client_results(self, ip:str,mac:str, results:list, heur_list_copy:set):
         #load input
-        path_storage = os.getcwd() + "\\" + HeuristicServer.__EURISTICS_STORAGE
+        path_storage = os.getcwd() + "\\" + HeuristicServer.__HEURISTICS_STORAGE
         # input_file = self.__create_input_file_static(ip,mac,results)
         input_file = os.getcwd() + "\\" + self.__generate_file("input_static_")
         os.system(f"type nul> {input_file}")
@@ -481,7 +539,7 @@ class HeuristicServer(Server):
 
     def __load_heuristics_from_device(self):
         heur_list = set()
-        path_storage = os.getcwd()+"\\"+ HeuristicServer.__EURISTICS_STORAGE
+        path_storage = os.getcwd()+"\\"+ HeuristicServer.__HEURISTICS_STORAGE
         if not os.path.exists(path_storage):
             os.mkdir(path_storage,0o755)
         list_files = os.listdir(path_storage)
@@ -509,12 +567,14 @@ class HeuristicServer(Server):
     def __get_snap_data_based_on_req(self,request_type):
         if request_type == RequirementType.LAST_MINUTE_PACKAGES.value:
             return self.__data_snapshot.packages
-        if request_type == RequirementType.LAST_MINUTE_TESTS.value:
+        if request_type == RequirementType.LAST_TESTS.value:
             return self.__data_snapshot.tests
         if request_type == RequirementType.CONNECTED_CLIENTS.value:
             return self.__data_snapshot.connected_clients
-        if request_type == RequirementType.LAST_MINUTE_HISTORY.value:
+        if request_type == RequirementType.HISTORY.value:
             return self.__data_snapshot.history
+        if request_type == RequirementType.HEURISTICS.value:
+            return self.__data_snapshot.heuristics
         return {}
 
     def __execute_heuristics_package(self, list_heuristics):
@@ -537,8 +597,9 @@ class HeuristicServer(Server):
                 results = self.__execute_heuristic(heur,input_file,output_file)
                 #self._logger.info("heur executed, results %s"%(results))
                 analysis_results.append(results)
-        #self._logger.warning("analysis_results %s" % (str(analysis_results)))
+        self._logger.warning("Analysis_results %s" % (str(analysis_results)))
         #self.__send_analysis_results_to_server(analysis_results)
+        self.__send_analysis_dynamic_results_to_server(analysis_results)
         if os.path.exists(input_file):
             os.system(f"del {input_file}")
         if os.path.exists(output_file):
@@ -560,7 +621,8 @@ class HeuristicServer(Server):
                 self.__create_input_file(input_file,list_input_req)
                 results = self.__execute_heuristic(heur,input_file,output_file)
                 analysis_results.append(results)
-        self.__send_analysis_results_to_server(analysis_results)
+        #self.__send_analysis_results_to_server(analysis_results)
+        self.__send_analysis_dynamic_results_to_server(analysis_results)
         if os.path.exists(input_file):
             os.system(f"del {input_file}")
         if os.path.exists(output_file):
@@ -569,8 +631,10 @@ class HeuristicServer(Server):
     def __load_data_snapshots(self):
         self.__data_snapshot.connected_clients = self.__get_input_based_on_request(RequirementType.CONNECTED_CLIENTS.value)
         self.__data_snapshot.packages = self.__get_input_based_on_request(RequirementType.LAST_MINUTE_PACKAGES.value)
-        self.__data_snapshot.tests = self.__get_input_based_on_request(RequirementType.LAST_MINUTE_TESTS.value)
-        self.__data_snapshot.history = self.__get_input_based_on_request(RequirementType.LAST_MINUTE_HISTORY.value)
+        #print(self.__data_snapshot.packages)
+        self.__data_snapshot.tests = self.__get_input_based_on_request(RequirementType.LAST_TESTS.value)
+        self.__data_snapshot.history = self.__get_input_based_on_request(RequirementType.HISTORY.value)
+        self.__data_snapshot.heuristics = self.__get_input_based_on_request(RequirementType.HEURISTICS.value)
 
     # def __test_load_data_snapshots(self):
     #     self.__data_snapshot.connected_clients = self.__test_get_input_based_on_request(RequirementType.CONNECTED_CLIENTS.value)
@@ -579,41 +643,41 @@ class HeuristicServer(Server):
     #     #self._logger.info("last minute snapshot loaded")
 
     def __check_for_malicious_behaviour(self):
-        try:
             while True:
-                time.sleep(60)
-                self._logger.info("Network behaviour analyser started")
-                #check for new heuristics
-                copy_heur_list = self.__load_heuristics_from_device()
-                self.__lock.acquire()
-                old_heur = self._heur_list.copy()
-                self._heur_list = copy_heur_list.copy()
-                self.__lock.release()
-                differences = self.__check_for_new_heuristics(old_heur,copy_heur_list)
-                #self._logger.info("new heuritics %s" % (differences))
-                self.__load_heuristics_to_db(differences)
+                time.sleep(20)
+                try:
+                    self._logger.info("Network behaviour analyser started")
+                    #check for new heuristics
+                    copy_heur_list = self.__load_heuristics_from_device()
+                    self.__lock.acquire()
+                    old_heur = self._heur_list.copy()
+                    self._heur_list = copy_heur_list.copy()
+                    self.__lock.release()
+                    differences = self.__check_for_new_heuristics(old_heur,copy_heur_list)
+                    #self._logger.info("new heuritics %s" % (differences))
+                    self.__load_heuristics_to_db(differences)
 
-                #self._logger.info("load snapshots")
-                #create snapshots of data
-                #self.__load_data_snapshots()
-                self.__test_load_data_snapshots()
+                    #self._logger.info("load snapshots")
+                    #create snapshots of data
+                    self.__load_data_snapshots()
+                    #self.__test_load_data_snapshots()
 
 
-                #execute heuristics
-                self._logger.info("Execute package heuristics")
-                self.__execute_heuristics_package(copy_heur_list)
-                self._logger.info("Execute general heuristics")
-                self.__execute_heuristics_general(copy_heur_list)
-                self._logger.info("Done heuristic executing")
-        except Exception as e:
-            self._logger.error("Something went wrong while analysing. Error %s"%(e))
+                    #execute heuristics
+                    self._logger.info("Execute package heuristics")
+                    self.__execute_heuristics_package(copy_heur_list)
+                    self._logger.info("Execute general heuristics")
+                    self.__execute_heuristics_general(copy_heur_list)
+                    self._logger.info("Done heuristic executing")
+                except Exception as e:
+                    self._logger.error("Something went wrong while analysing. Error %s"%(e))
 
     def __process_request(self,client_socket:socket):
         try:
             package = ITC.read_request_socket(client_socket)
             if package is None:
                 return
-            self.__load_heuristics_to_db(self._heur_list)
+            #self.__load_heuristics_to_db(self._heur_list)
             if package.type == InfectivityRequestType.CHECK_RESULTS:
                 #self._logger.info("Check results client")
                 ip, mac, results = package.payload

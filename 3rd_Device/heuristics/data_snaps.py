@@ -8,3 +8,4 @@ class DataSnapshots:
         self.platforms = []
         self.categories = []
         self.samples = []
+        self.heuristics = []
