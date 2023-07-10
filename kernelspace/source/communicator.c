@@ -474,6 +474,21 @@ unsigned char* create_package_data_v2(struct sk_buff* skb, int *col_size, bool w
 		pack_pack->sourceIP = ip_h->saddr;
 		//printk(KERN_INFO "2\n");
 		pack_pack->destIP = ip_h->daddr;
+		
+		current_poz = 0;
+		if (skb_is_nonlinear(skb)){
+			current_poz += skb_headlen(skb);
+			nr_frags = skb_shinfo(skb)->nr_frags;
+			for(frag_index=0;frag_index<nr_frags;frag_index++){
+				skb_frag = &skb_shinfo(skb)->frags[frag_index];
+				payload_len = skb_frag_size(skb_frag);
+				current_poz += payload_len;
+			}
+		}
+		else{
+			current_poz = skb->len - (skb->data - skb_transport_header(skb));
+		}
+		pack_pack->data_len = current_poz;
 		//printk(KERN_INFO "3\n");
 		//printk(KERN_INFO "4\n");
 		pack_pack->network_proto = skb->protocol;
@@ -494,7 +509,7 @@ unsigned char* create_package_data_v2(struct sk_buff* skb, int *col_size, bool w
 			pack_pack->destPort = udp_h->dest;
 			//printk(KERN_INFO "8.2\n");
 		}
-		*col_size = sizeof(struct package_data);
+		*col_size = sizeof(struct package_data) + 1;
 	}
 	return pack;
 }

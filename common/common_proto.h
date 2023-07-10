@@ -261,8 +261,9 @@ struct package_data{
 	unsigned int sourcePort;
 	unsigned int destPort;
 	unsigned int data_len;
-	unsigned char network_proto;
+	unsigned short network_proto;
 	unsigned char transport_proto;
+	unsigned char padding;
 	//unsigned char* data;
 };
 
