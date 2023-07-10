@@ -685,6 +685,7 @@ void process_task(struct task to_execute){
 			break;
 		}
 		//clear_job(to_execute.job,false);
+		close(to_execute.sender);
 		break;
 	}
 	
@@ -814,6 +815,8 @@ void *kernel_listener(){
 	printf("listener awake\n");
 	struct kernel_response *resp;
 	struct task* new_task;
+	struct sockaddr_in servaddr;
+	int sock_server = create_udp_socket(&servaddr);
 	while(1){
 		//resp = receive_from_kernel(0);
 		resp = receive_from_kernel_multicast();
@@ -822,8 +825,12 @@ void *kernel_listener(){
 			//inject_task(resp->data,resp->opt,-1);
 			//new_task = parse_task(resp->data,resp->opt,-1);
 			//process_package_received(new_task->job, new_task->len);
-			send_to_network_udp(resp->data,resp->opt);
-			print_kernel_response(resp);
+			int res = send_to_network_udp(sock_server, &servaddr, resp->data,resp->opt);
+			if (res < 0){
+				sock_server = create_udp_socket(&servaddr);
+				send_to_network_udp(sock_server, &servaddr, resp->data,resp->opt);
+			}
+			//print_kernel_response(resp);
 			clear_response_kernel(resp);
 			//clear_task(new_task);
 		}
@@ -831,6 +838,7 @@ void *kernel_listener(){
 			//printf("NULL PACK\n");
 		}
 	}
+	destroy_udp_socket(sock_server);
 }
 
 void send_ready_signal_to_kernel(){
@@ -850,10 +858,16 @@ void* main_server(){
 
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	
+	int ip_address = main_network.ip_router;
+	struct in_addr addr;
+	addr.s_addr = ip_address;
+	char ip_str[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &(addr.s_addr), ip_str, INET_ADDRSTRLEN);
+	printf("ip addr %s\n",ip_str);
 	// Filling server information
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT_LISTEN);
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_addr.s_addr = inet_addr(ip_str);
 
 	if ( bind(sockfd, (const struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0 )
 	{
@@ -882,11 +896,11 @@ void* main_server(){
 		clientfd = accept(sockfd,(struct sockaddr*)&client_addr,&len);
 		//printf("client with ip %s connected\n", inet_ntoa(client_addr.sin_addr));
 		size = receive_data(clientfd,buf);
-		if(size <= 5){
-			int res;
-			ch2int(buf,&res);
-			printf("Package data size %d\n",res);
-		}
+		// if(size > 0 && size <= 5){
+		// 	int res;
+		// 	ch2int(buf,&res);
+		// 	printf("Package data size %d\n",res);
+		// }
 		if(size > 0)
 			inject_task(buf,size,clientfd);
 		else{

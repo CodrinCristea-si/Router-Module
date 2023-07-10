@@ -9,7 +9,11 @@ enum request_type{
 	CLIENT_CONNECT = 1,
 	CLIENT_DISCONNECT = 2,
 	CLIENT_TRANSFER = 3,
-	CLIENT_PACKAGE = 4
+	CLIENT_PACKAGE = 4,
+	LOCKDOWN_ENABLED = 5,
+	LOCKDOWN_DISABLED = 6,
+	AUTOMATIC_ENABLED = 7,
+	AUTOMATIC_DISABLED = 8
 }; 
 
 struct network_package{
@@ -37,4 +41,8 @@ void clear_package(struct network_package *pack);
 
 int send_to_network(unsigned char * data, unsigned char type);
 
-int send_to_network_udp(unsigned char* data,unsigned int size);
+int create_udp_socket(struct sockaddr_in* servaddr_col);
+
+int send_to_network_udp(int sockfd, struct sockaddr_in* servaddr, unsigned char* data,unsigned int size);
+
+void destroy_udp_socket(int sockfd);
