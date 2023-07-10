@@ -23,13 +23,16 @@ int banned_ports_major[] = {5,7, 9, 11, 17,18,19, 20,21, 22, 23, 25, 42, 43, 69,
 			     517, 530, 563, 593, 601, 666, 830, 831, 832,833, 873, 989, 990, 992, 1194, 1293};
 int size_banned_ports_major = 46; 
 
+int banned_ports_router[] ={21,22,80,443};
+int size_banned_ports_router = 4; 
+
 bool check_if_not_belonged_to_router(struct sk_buff *skb, struct network_details* lan){
 	struct iphdr* ip_h;
 	__be32 tmp = LOOPBACK_IP;
 	if (!skb) return true;
 	ip_h = ip_hdr(skb);
 	if(!ip_h) return true;
-	//printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan.ip_addr);
+	//printk(KERN_WARNING "CMP %pI4 %pI4 %pI4 \n",&ip_h->saddr, &tmp, &lan->ip_addr);
 	if (ip_h->saddr == tmp || ip_h->saddr == lan->ip_addr)
 		return true;
 	return false;
@@ -44,20 +47,33 @@ bool check_if_outside_network_source(struct sk_buff *skb, struct network_details
 	return true;
 }
 
+__be32 get_special_client(struct network_details* lan){
+	__be32 tmp = 0;
+#ifdef __LITTLE_ENDIAN_BITFIELD
+	tmp = (lan->ip_addr + (1<<24));	
+	//printk(KERN_INFO "little \n");
+
+#endif
+#ifdef __BIG_ENDIAN_BITFIELD
+	tmp = (lan->ip_addr + 1);
+	//printk(KERN_INFO "big \n");
+#endif
+	return tmp;
+}
+
 bool check_for_special_clients(struct sk_buff *skb, struct network_details* lan){
 	bool is_special = false;
 	struct iphdr* ip_h;
+	__be32 tmp = 0;
 	if (!skb || !lan) return false;
 	ip_h = ip_hdr(skb);
 	if(!ip_h) return false;
-#ifdef __LITTLE_ENDIAN_BITFIELD
-	if (ip_h->saddr == (lan->ip_addr + (1<<18)) || ip_h->daddr == (lan->ip_addr + (1<<18))) //3rd_device
+	tmp = get_special_client(lan);
+	//printk(KERN_INFO "special %pI4 with %pI4\n", &ip_h->saddr, &tmp);
+	if (ip_h->saddr == tmp || (ip_h->daddr == tmp && check_if_outside_network_source(skb,lan))) {//3rd_device
 		is_special = true;
-#endif
-#ifdef __BIG_ENDIAN_BITFIELD
-	if (ip_h->saddr == (lan->ip_addr + 1) || ip_h->daddr == (lan->ip_addr + 1)) //3rd_device
-		is_special = true;
-#endif
+		//printk(KERN_INFO "special %pI4\n", &ip_h->saddr);
+	}
 	return is_special;
 };
 
@@ -121,13 +137,27 @@ int get_inf_status_for_source_client(struct sk_buff *skb){
 	return infec;
 }
 
-bool check_if_broadcast_message(struct sk_buff *skb, struct network_details* lan){
+bool check_if_broadcast_destination_message(struct sk_buff *skb, struct network_details* lan){
 	struct iphdr* ip_h;
 	ip_h = ip_hdr(skb);
 	if(check_if_broadcast(lan,ip_h->daddr))
 		return true;
 	return false;
 }
+
+bool check_if_broadcast_message(struct sk_buff *skb, struct network_details* lan){
+	struct iphdr* ip_h;
+	ip_h = ip_hdr(skb);
+	if(check_if_broadcast(lan,ip_h->daddr) || check_if_broadcast(lan,ip_h->saddr))
+		return true;
+	return false;
+}
+
+// bool check_for_secial_network_ips(struct sk_buff *skb, struct network_details* lan){
+
+// }
+
+// bool check_for_multicast();
 
 bool is_ok_status_for_inf_minor(int inf_status){
 	return inf_status == UNINFECTED || inf_status == INFECTED_MINOR ||
@@ -176,9 +206,55 @@ bool check_for_icmp_protocol(struct sk_buff *skb){
 	return is_icmp;
 }
 
+bool check_if_router_is_accessed(struct sk_buff *skb,struct network_details* lan){
+	int dets_port;
+	struct iphdr* ip_h;
+	ip_h = ip_hdr(skb);
+	struct tcphdr* tcp_h;
+	if (ip_h->daddr == lan->ip_addr){
+		dets_port = get_destination_port(skb);
+		if (check_if_banned_port(dets_port,banned_ports_router,size_banned_ports_router))
+			return true;
+	}
+	return false;
+}
+
+bool check_if_message_is_sent_to_router(struct sk_buff *skb, struct network_details* lan){
+	int dets_port;
+	struct iphdr* ip_h;
+	ip_h = ip_hdr(skb);
+	if(ip_h->daddr == lan->ip_addr)
+		return true;
+	return false;
+}
+
+bool check_if_for_a_muticast_message(struct sk_buff *skb){
+	struct ethhdr *eth_header;
+	struct iphdr *ip_header;
+
+	// Get the Ethernet header
+	eth_header = eth_hdr(skb);
+	if (eth_header == NULL) return false;
+	// Check if the Ethernet frame is multicast
+	if (eth_header->h_dest[0] & 0x01) {
+	// Get the IP header
+		ip_header = ip_hdr(skb);
+
+		// Check if the IP packet is multicast
+		if (ip_header->daddr & htonl(0xF0000000)) {
+			return 1; // It is a multicast message
+		}
+	}
+
+	return 0; // It is not a multicast message
+}
+
 //for sending
 bool check_if_client_can_send_message(struct sk_buff *skb, struct network_details* lan, struct client_def *client){
 	int inf_dest_status, dest_port;
+	if (check_if_router_is_accessed(skb,lan)){
+		return false;
+	}
 	switch (client->infectivity)
 	{
 	case UNINFECTED:
@@ -186,24 +262,30 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 	case SUSPICIOUS:
 		if (check_if_outside_network_destination(skb,lan)) //from Internet
 			return true;
+		else if(check_if_broadcast_message(skb,lan)) 
+			return true;
+		else if (check_if_message_is_sent_to_router(skb,lan)){
+			return true;
+		}
 		else 
 			return false;
 	case INFECTED_MINOR:
-		//todo
-		//cannot broadcast
 		if (check_if_outside_network_destination(skb,lan)) //from Internet
 			return true;
+		else if (check_if_message_is_sent_to_router(skb,lan)){
+			return true;
+		}
 		else {
 			inf_dest_status = get_inf_status_for_destination_client(skb);
-			if(inf_dest_status == -1) //possible MitM
+			if(inf_dest_status == -1)
 				return true;
 			else {
-				if(check_if_broadcast_message(skb,lan)) //cannot broadcast
+				if(check_if_for_a_muticast_message(skb)) //cannot multicast
 					return false;
 				if(is_ok_status_for_inf_minor(inf_dest_status)) //can communicate with others
 				{
 					dest_port = get_destination_port(skb);
-					if(dest_port == -1) //maybe ICMP
+					if(dest_port == -1) //other than tcp and udp
 						return true;
 					else if (check_if_banned_port(dest_port, banned_ports_minor, size_banned_ports_minor)) //banned ports
 						return false;
@@ -217,13 +299,16 @@ bool check_if_client_can_send_message(struct sk_buff *skb, struct network_detail
 		break;
 	case INFECTED_MAJOR:
 		if (check_if_outside_network_destination(skb,lan)) //from Internet
+			return true;	
+		else if (check_if_message_is_sent_to_router(skb,lan)){
 			return true;
+		}
 		else {
 			inf_dest_status = get_inf_status_for_destination_client(skb);
-			if(inf_dest_status == -1) //possible MitM
+			if(inf_dest_status == -1) 
 				return true;
 			else {
-				if(check_if_broadcast_message(skb,lan)) //cannot broadcast
+				if(check_if_for_a_muticast_message(skb)) //cannot multicast
 					return false;
 				if (check_for_icmp_protocol(skb)){
 					return false; //no ICMP
@@ -263,6 +348,8 @@ bool check_if_client_can_receive_message(struct sk_buff *skb, struct network_det
 			//printk(KERN_WARNING "hapciu 2\n");
 			return true;
 		}
+		else if(check_if_broadcast_message(skb,lan)) 
+			return true;
 		else{
 			//printk(KERN_WARNING "hapciu 3\n");
 			return false;
@@ -326,6 +413,46 @@ bool check_if_client_can_receive_message(struct sk_buff *skb, struct network_det
 	}
 	//printk(KERN_WARNING "hapciu 15\n");
 	return false; //for any
+}
+
+bool check_if_a_test_message(struct sk_buff *skb, struct network_details* lan){
+	int dest_port = -1,source_port = -1;
+	__be32 tmp_special;
+	struct iphdr* ip_h;
+	ip_h = ip_hdr(skb);
+	if(!ip_h) return false;
+	struct tcphdr* tcp_h = NULL;
+	//printk(KERN_INFO "6\n");
+	if (ip_h->protocol == IPPROTO_TCP){
+		tcp_h = tcp_hdr(skb);
+		dest_port = tcp_h->dest;
+		source_port = tcp_h->source;
+	}
+	if(!tcp_h) return false;
+	tmp_special = get_special_client(lan);
+	// from special to clients
+	if ((ip_h->saddr == tmp_special && !check_if_outside_network_destination(skb,lan) && ip_h->daddr != lan->ip_addr) && (source_port == 5002 && dest_port == 5004))
+		return true;
+	if ((ip_h->daddr == tmp_special && !check_if_outside_network_source(skb,lan) && ip_h->saddr != lan->ip_addr) && (source_port == 5004 && dest_port == 5002))
+		return true;
+	return false;
+	
+}
+
+bool check_for_spcecial_client_test(struct sk_buff *skb, struct network_details* lan){
+	bool is_special = false;
+	struct iphdr* ip_h;
+	__be32 tmp = 0;
+	if (!skb || !lan) return false;
+	ip_h = ip_hdr(skb);
+	if(!ip_h) return false;
+	tmp = get_special_client(lan);
+	//printk(KERN_INFO "special %pI4 with %pI4\n", &ip_h->saddr, &tmp);
+	if (ip_h->saddr == tmp || ip_h->daddr == tmp) {//3rd_device
+		is_special = true;
+		//printk(KERN_INFO "special %pI4\n", &ip_h->saddr);
+	}
+	return is_special;
 }
 
 

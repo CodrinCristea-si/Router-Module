@@ -62,6 +62,17 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 		//printk(KERN_WARNING "Intercept 3\n");
 		return NF_ACCEPT;
 	}
+
+	if(check_for_spcecial_client_test(skb,&lan)){ //just for demo presentation
+		//printk(KERN_WARNING "Intercept 3\n");
+		return NF_ACCEPT;
+	}
+
+	if (check_if_a_test_message(skb,&lan)){
+		return NF_ACCEPT;
+	}
+
+
 	if(IS_LOCKDOWN_MODE_ENABLED()){
 		//printk(KERN_WARNING "Intercept 3.5\n");
 		return NF_DROP;
@@ -105,22 +116,22 @@ unsigned int interceptor_hook_handle(void *priv, struct sk_buff *skb, const stru
 		}
 		
 	}
-	else if (!check_if_outside_network_destination(skb,&lan)){
-		res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->daddr, mac_header->h_dest,client);
-		//no client details then drop, possible MitM
-		//or static in that case accept
-		if (!res_cl){
-			//printk(KERN_WARNING "Intercept 8\n");
-			kfree(client);
-			return NF_ACCEPT;
-		}
-		if(check_if_client_can_receive_message(skb,&lan,client))
-			can_communicate = true;
-		else{
-			//printk(KERN_WARNING "Intercept 8.5\n");
-			can_communicate = false;
-		}
-	}
+	// else if (!check_if_outside_network_destination(skb,&lan)){
+	// 	res_cl = GET_CLIENT_GENERIC_SAFE(ip_h->daddr, mac_header->h_dest,client);
+	// 	//no client details then drop, possible MitM
+	// 	//or static in that case accept
+	// 	if (!res_cl){
+	// 		//printk(KERN_WARNING "Intercept 8\n");
+	// 		kfree(client);
+	// 		return NF_ACCEPT;
+	// 	}
+	// 	if(check_if_client_can_receive_message(skb,&lan,client))
+	// 		can_communicate = true;
+	// 	else{
+	// 		//printk(KERN_WARNING "Intercept 8.5\n");
+	// 		can_communicate = false;
+	// 	}
+	// }
 
 	
 	pack = create_pack_based_on_infectivity(skb,client,&pack_size);
@@ -319,15 +330,15 @@ int initialise_interceptor(void){
 	// if(!DISABLE_LOCKDOWN_MODE())
 	// 	clear_interceptor();
 
-	collector = (struct network_details *) kcalloc(1,sizeof(struct network_details), GFP_KERNEL);
-	if(!collector || initialize_network_interfaces_list(collector)){
-		printk(KERN_INFO "Collector initialize failed\n");
-		clear_interceptor();
-		goto end;
+	// collector = (struct network_details *) kcalloc(1,sizeof(struct network_details), GFP_KERNEL);
+	// if(!collector || initialize_network_interfaces_list(collector)){
+	// 	printk(KERN_INFO "Collector initialize failed\n");
+	// 	clear_interceptor();
+	// 	goto end;
 	
-	}
-	get_network_interfaces_list(collector);
-	lan = get_lan_network_from_list(collector);
+	// }
+	// get_network_interfaces_list(collector);
+	// lan = get_lan_network_from_list(collector);
 	
 	nl_mutex = (struct mutex *)kcalloc(1,sizeof(struct mutex), GFP_KERNEL);
 	if (!nl_mutex) {
@@ -344,8 +355,8 @@ int initialise_interceptor(void){
 		clear_interceptor();
 		goto end;
 	}
-
 	printk(KERN_INFO "Socket initialized with success\n");
+	
 	return 0;
 	// local_hook_ops = (struct nf_hook_ops*)kcalloc(1,sizeof(struct nf_hook_ops), GFP_KERNEL);
 	// if(local_hook_ops){
