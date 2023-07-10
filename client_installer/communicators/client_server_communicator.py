@@ -1,11 +1,19 @@
 import socket
 import pickle
 
-from common.package import Package, PackageType
+from packages.client_package import Package, PackageType
+from communicators.abstract_communicator import AbstractCommunicator
 
 
-class ClientServerCommunicator:
+class ClientServerCommunicator(AbstractCommunicator):
     __MAX_BYTES = Package.MAX_BYTES
+
+    def __init__(self, host: str, port: int) -> None:
+        self.__host = host
+        self.__port = port
+        self.__server_socket = None
+        self.__timeout = 3
+
 
     @staticmethod
     def read_data(socket_c:socket) -> Package:
@@ -66,3 +74,29 @@ class ClientServerCommunicator:
         else:
             bytes_package = pickle.dumps(package)
             socket_c.sendall(bytes_package)
+
+    def connect(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #self.__logger.info("Client socket created!")
+        except socket.error:
+            #self.__logger.error("Failed to create socket! Error :" + str(sys.exc_info()[1]))
+            return -1
+
+        try:
+            # Connect to remote server
+            #self.__logger.info("Initiate connection to %s:%s ..." % (self.__host, str(self.__port)))
+            s.connect((self.__host, self.__port))
+            #self.__logger.info("Connected to the server!")
+            self.__server_socket = s
+            return 0
+        except:
+            #self.__logger.error("Failed to connect to the server! Error :" + str(sys.exc_info()[1]))
+            return -1
+
+    def close_connection(self):
+        if self.__server_socket is not None:
+            self.__server_socket.close()
+
+    def send_packs(self, package: Package):
+        ClientServerCommunicator.send_data(self.__server_socket, package)

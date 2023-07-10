@@ -1,8 +1,8 @@
 import socket
 
 from executor.clamav_executor import ClamAVExecutor
-from common.package import *
-from common.client_server_communicator import ClientServerCommunicator
+from packages.client_package import *
+from communicators.client_server_communicator import ClientServerCommunicator
 from executor.clamav_executor_linux import *
 from logger.logger import Logger
 
@@ -22,7 +22,12 @@ class Worker:
     def process_data(self,package:Package) -> Package:
         if package.type == PackageType.SCAN:
             executor = ClamAVExecutor(self._logger)
-            results = executor.execute()
+            results = ScanResults({},[])
+            try:
+                results = executor.execute()
+            except Exception as e:
+                results = ScanResults({},[])
+                self._logger.info("Error %s" %(e))
             package = self.__create_results_package(results)
             return package
         if package.type == PackageType.TEST:
@@ -32,8 +37,15 @@ class Worker:
     def process_request(self):
         self._logger.info("Begin process request")
         package = ClientServerCommunicator.read_data(self.__client_socket)
-        package_to_send = self.process_data(package)
-        ClientServerCommunicator.send_data(self.__client_socket,package_to_send)
+        if package.type == PackageType.TEST:
+            package_to_send = self.process_data(package)
+            ClientServerCommunicator.send_data(self.__client_socket,package_to_send)
+            self.__client_socket.close()
+        elif package.type == PackageType.SCAN:
+            package_to_send = self.process_data(package)
+            comm = ClientServerCommunicator("192.168.1.2",5002)
+            comm.connect()
+            comm.send_packs(package_to_send)
+            comm.close_connection()
         self._logger.info("End process request")
-        self.__client_socket.close()
         self._logger.info("Client socket closed")
