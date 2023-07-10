@@ -1,6 +1,8 @@
 module("luci.controller.infectivity_controller.infect", package.seeall)
 
-
+local updater_path= "/infectivity_router_module/user/"
+local udater_exec_file ="updater.infec"
+local updater_exec_path =  updater_path .. udater_exec_file
 
 function index()
     --load html file
@@ -16,6 +18,20 @@ function index()
 
     --get updates
     page = entry({"admin", "network", "infectivity", "updates"}, call("send_updates"), nill)
+    page.leaf=true
+
+    --transfer
+    page = entry({"admin", "network", "infectivity", "transfer"}, call("transfer_client"), nill)
+    --page.target = alias("admin", "network", "infectivity", "transfer")
+    page.leaf=true
+    --page.sysauth = "root"
+
+    --set automatic
+    page = entry({"admin", "network", "infectivity", "automatic"}, call("set_automatic"), nill)
+    page.leaf=true
+
+    --set lockdown
+    page = entry({"admin", "network", "infectivity", "lockdown"}, call("set_lockdown"), nill)
     page.leaf=true
     
     luci.http.header("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -51,10 +67,7 @@ function send_data()
     -- decoy["data"][5]["infect"]="5"
 
 
-    local updater_path= "/infectivity_router_module/user/"
-    local udater_exec_file ="updater.infec"
     local output_file_name = "all_client.json"
-    local updater_exec_path =  updater_path .. udater_exec_file
     local output_file_path = updater_path .. output_file_name
     local res = os.execute("(%s --get-all %s) &" %{
 		luci.util.shellquote(updater_exec_path),
@@ -66,9 +79,9 @@ function send_data()
         all_clients = file:read("*all");
         io.close(file)
     end
-    local res = os.execute("(rm %s) &" %{
-		luci.util.shellquote(output_file_path)
-	})
+    -- local res = os.execute("(rm %s) &" %{
+	-- 	luci.util.shellquote(output_file_path)
+	-- })
 
     local json_data = all_clients:match("%[.*%]")
     luci.http.prepare_content("application/json")
@@ -78,11 +91,7 @@ function send_data()
 end
 
 function send_updates()
-
-    local updater_path= "/infectivity_router_module/user/"
-    local udater_exec_file ="updater.infec"
     local output_file_name = "all_updates.json"
-    local updater_exec_path =  updater_path .. udater_exec_file
     local output_file_path = updater_path .. output_file_name
     local res = os.execute("(%s --get-updates %s) &" %{
 		luci.util.shellquote(updater_exec_path),
@@ -114,6 +123,52 @@ function send_scripts()
     luci.http.write(script_content)
 end
 
+function transfer_client()
+    local ip = luci.http.formvalue("ip")
+    local mac = luci.http.formvalue("mac")
+    local state = luci.http.formvalue("state")
+    local command = string.format("%s --transfer %s %s %s &",
+        luci.util.shellquote(updater_exec_path),
+        luci.util.shellquote(ip),
+        luci.util.shellquote(mac),
+        luci.util.shellquote(state)
+    )
+    local command_print = string.format("echo %s %s %s > b.txt &",
+        luci.util.shellquote(ip),
+        luci.util.shellquote(mac),
+        luci.util.shellquote(state)
+    )
+    local res = os.execute(command_print)
+    res = os.execute(command)
+end
+
+function set_automatic()
+    state = luci.http.formvalue("state")
+    auto = "";
+    if state == 1 or state == "1" then
+        auto = "true"
+    else
+        auto = "false"
+    end
+    local res = os.execute("(%s --set-automatic %s) &" %{
+		luci.util.shellquote(updater_exec_path),
+		luci.util.shellquote(auto)
+	});
+end
+
+function set_lockdown()
+    state = luci.http.formvalue("state")
+    lockdown = "";
+    if state == 1 or state == "1" then
+        lockdown = "true"
+    else
+        lockdown = "false"
+    end
+    local res = os.execute("(%s --set-lockdown %s) &" %{
+		luci.util.shellquote(updater_exec_path),
+		luci.util.shellquote(lockdown)
+	});
+end
 -- function load_page()
 --     template("infectivity_view/files-home-script")
 -- end
