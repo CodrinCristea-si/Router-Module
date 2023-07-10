@@ -19,6 +19,7 @@ static int __init initialize(void)
 	// __be32 ip2 = 0x0b40a8c0;
 	// __be32 ip3 = 0x0c40a8c0;
 	// int rez = 0;
+	printk(KERN_ERR "START\n");
 	if(__initialize_infectivity_lists()) goto cleanup;
 	// rez = ADD_CLIENT_UNINFECTED(ip1,mac1);
 	// printk(KERN_ALERT "Res %d\n", rez);
@@ -89,7 +90,10 @@ static int __init initialize(void)
 //     __clear_infectivity_lists();
     //init_thread();
 
-    if(initialise_interceptor()) clear_interceptor();
+    if(initialise_interceptor() != 0) {
+		clear_interceptor();
+		goto cleanup;
+	}
     return 0;
 cleanup:
     __clear_infectivity_lists();

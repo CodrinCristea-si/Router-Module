@@ -434,31 +434,31 @@ int __clear_infectivity_lists(void){
 		__clear_list(uninfected_list);
 		kfree(uninfected_list);
 		uninfected_list = NULL;
-		//printk(KERN_INFO "cleared uninfected_list\n");
+		printk(KERN_INFO "cleared uninfected_list\n");
 	} 
 	if(suspicious_list){
 		__clear_list(suspicious_list);
 		kfree(suspicious_list);
 		suspicious_list=NULL;
-		//printk(KERN_INFO "cleared suspicious_list\n");
+		printk(KERN_INFO "cleared suspicious_list\n");
 	}
 	if(infected_minor_list){
 		__clear_list(infected_minor_list);
 		kfree(infected_minor_list);
 		infected_minor_list=NULL;
-		//printk(KERN_INFO "cleared infected_minor_list\n");
+		printk(KERN_INFO "cleared infected_minor_list\n");
 	}
 	if(infected_major_list){
 		__clear_list(infected_major_list);
 		kfree(infected_major_list);
 		infected_major_list=NULL;
-		//printk(KERN_INFO "cleared infected_major_list\n");
+		printk(KERN_INFO "cleared infected_major_list\n");
 	}
 	if(infected_sever_list){
 		__clear_list(infected_sever_list);
 		kfree(infected_sever_list);
 		infected_sever_list=NULL;
-		//printk(KERN_INFO "cleared infected_sever_list\n");
+		printk(KERN_INFO "cleared infected_sever_list\n");
 	}
 	if(inf_mutex){
 		mutex_destroy(inf_mutex);
