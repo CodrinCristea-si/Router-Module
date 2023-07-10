@@ -53,7 +53,7 @@ class RouterServer(Server):
                 InfectivityTesterCommunicator.send_data(client_socket, pack, self._logger)
                 client_socket.close()
                 return
-            rc = RouterCommunicator("192.168.1.220", 7895, self._logger)
+            rc = RouterCommunicator("192.168.1.1", 7895, self._logger)
             rc.connect()
             if pack.type == InfectivityRequestType.TRANSFER_CLIENT:
                 rc.send_request([3,pack.payload])
@@ -73,14 +73,16 @@ class RouterServer(Server):
         # print("data",repr(data))
 
     def __process_request_udp(self, client_data: bytes):
-        network_package = RouterCommunicator.read_data(client_data)
-        print(network_package)
-        req = InfectivityRequest(InfectivityRequestType.ADD_PACKAGE,[network_package])
-        manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
-        manager.connect()
-        manager.send_request(req)
-        manager.close_connection()
-
+        try:
+            network_package = RouterCommunicator.read_data(client_data)
+            #print(network_package)
+            req = InfectivityRequest(InfectivityRequestType.ADD_PACKAGE,[network_package])
+            manager = InfectivityTesterCommunicator("127.0.0.1", 5004, self._logger)
+            manager.connect()
+            manager.send_request(req)
+            manager.close_connection()
+        except Exception as e:
+            self._logger.error("Error while parsing package! Error %s" %(e))
     def run_server(self):
         # print(self.__port_tcp, self.__port_udp)
         self.__th_tcp = Thread(target=self.run_tcp_server, args=(self.__port_tcp,))
@@ -93,28 +95,34 @@ class RouterServer(Server):
         for worker in workers:
             if not worker.is_alive():
                 worker.join()
-                self._logger.info("Thread killed")
+                #self._logger.info("Thread killed")
                 to_clear.append(worker)
         for elim in to_clear:
             workers.remove(elim)
 
     def _handle_request_udp(self, client_data: bytes):
         th = Thread(target=self.__process_request_udp, args=(client_data,))
-        self.__clear_finished_workers(self.__workers_tcp)
-        self._logger.info("Finished workers cleared")
+        try:
+            self.__clear_finished_workers(self.__workers_udp)
+        except Exception as e:
+            self._logger.info("Error while cleaning thread: %s" %(e))
+        #self._logger.info("Finished workers cleared")
         self.__workers_udp.add(th)
-        self._logger.info("Thread created")
+        #self._logger.info("Thread created")
         th.start()
-        self._logger.info("Thread %s started" % (th.native_id))
+        #self._logger.info("Thread %s started" % (th.native_id))
 
     def handle_request(self, client_socket: socket):
         th = Thread(target=self.__process_request_tcp, args=(client_socket,))
-        self.__clear_finished_workers(self.__workers_tcp)
-        self._logger.info("Finished workers cleared")
+        try:
+            self.__clear_finished_workers(self.__workers_tcp)
+        except Exception as e:
+            self._logger.info("Error while cleaning thread: %s" %(e))
+        #self._logger.info("Finished workers cleared")
         self.__workers_tcp.add(th)
-        self._logger.info("Thread created")
+        #self._logger.info("Thread created")
         th.start()
-        self._logger.info("Thread %s started" % (th.native_id))
+        #self._logger.info("Thread %s started" % (th.native_id))
 
     def stop_server(self):
         super().stop_server()

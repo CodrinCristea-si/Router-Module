@@ -95,7 +95,10 @@ class ClientTester(Server):
 
     def handle_request(self, client_socket: socket):
         th = Thread(target = self.__process_request,args=(client_socket,))
-        self.__clear_finished_workers()
+        try:
+            self.__clear_finished_workers()
+        except Exception as e:
+            self._logger.info("Error while cleaning thread: %s" %(e))
         self._logger.info("Finished workers cleared")
         self.__workers.add(th)
         self._logger.info("Thread created")
