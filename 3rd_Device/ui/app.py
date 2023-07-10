@@ -177,11 +177,21 @@ def heuristic():
     lista_heur = resp.payload
     #url_for('static', filename='css/main-page.css')
     list_hey_types = []
-    list_hey_types.append({"name":"ceva","id_number":1, "description":"panama1"})
-    list_hey_types.append({"name": "ceva2", "id_number": 2 ,"description":"panama2"})
+    list_hey_types.append({"name":"STATIC","id_number":1, "description":" Heuristics that analyses the clients scan results"})
+    list_hey_types.append(
+        {"name": "PACKAGE", "id_number": 2, "description": " Heuristics that analyses the intercepted packages"})
+    list_hey_types.append(
+        {"name": "GENERAL", "id_number": 3, "description": " Heuristics that analyses the history logs and system behaviour"})
     list_req_types=[]
-    list_req_types.append({"name":"ceva","id_number":1, "description":"panama1", "code_example":{"malware": {"Win.Trojan.EmbeddedDotNetBinary-9940868-0": 2}, "ratio": [2, 14213]}})
-    list_req_types.append({"name": "ceva2", "id_number": 2, "description": "panama2", "code_example": {"malware": {"Win.Trojan.EmbeddedDotNetBinary-9940868-0": 2},"ratio": [2, 14213]}})
+    list_req_types.append({"name":"CONNECTED_CLIENTS","id_number":1, "description":"Current Connected Clients", "code_example":{"id": 25,"ip": "192.168.1.220","mac": "aa:bb:cc:dd:ee:ff","testing": 0,"type": 5,"score": 23232}})
+    list_req_types.append({"name": "LAST_MINUTE_PACKAGES", "id_number": 2, "description": "Last Intercepted Packages within a minute", "code_example": {"id":1,"sip":"192.168.1.123","sport":56784,"dip":"192.168.1.1","dport":443,"nproto":4,"tproto":6,"aproto":0,"arrive_time":"2023-06-28 15:39:02","payload":"aafffe4365d567ff8cc"}})
+    list_req_types.append({"name":"LAST_TESTS","id_number":3, "description":" The Last 100 Tests From Database", "code_example":{"id": 1,"client_ip": 26,"start_time": "2023-06-28 15:39:02","end_time": "2023-06-28 16:25:46","status": "finished","results": [{"sample_id": 17166,"times": 2}]}})
+    list_req_types.append({"name": "CLIENT_RESULTS", "id_number": 4, "description": "Client Test Results","code_example": {"malware": {"Win.Trojan.EmbeddedDotNetBinary-9940868-0": 2},"ratio": [2, 14213]}})
+    list_req_types.append({"name":"HISTORY","id_number":5, "description":"The Entire History Logs", "code_example":{"id": 218,"type": "HEURISTIC_ADDED","target_id": 0,"date": "2023-07-04 11:19:10"}})
+    list_req_types.append({"name":"PLATFORMS","id_number":6, "description":"All Registered Platforms", "code_example":{"id":7,"name":"Win","score":50}})
+    list_req_types.append({"name":"CATEGORIES","id_number":7, "description":"All Registered Categories", "code_example":{"id":5,"name":"Trojan","score":100}})
+    list_req_types.append({"name":"SAMPLES","id_number":8, "description":"All Registered Samples", "code_example":{"id":10456,"id_platform": 7,"id_category": 5,"name":"Rat","score":150}})
+    list_req_types.append({"name":"HEURISTICS","id_number":9, "description":"All Registered Heuristics", "code_example":{"id": 21,"name": "Unknown Behaviour Detection Heuristic","type": 3,"requirements": "1 3 5 9 ","path": "C:\\Users\\codri\\unknown_behaviour.py"}})
     return render_template('heuristics.html', list_heur_types = list_hey_types, list_req_types = list_req_types, lista_heur = lista_heur)
 
 @app.route('/package_clients')
@@ -226,11 +236,17 @@ def packages_clients():
 @app.route('/packages')
 def packages():
     id = request.args.get('id', None)
-    max_len_payload = 1000
-    len_payload = random.randint(1, max_len_payload)
-    payload = bytearray(secrets.token_bytes(len_payload))
+    # max_len_payload = 1000
+    # len_payload = random.randint(1, max_len_payload)
+    # payload = bytearray(secrets.token_bytes(len_payload))
+
+
+    pack = InfectivityRequest(InfectivityRequestType.GET_PACKAGE_PAYLOAD, [id])
+    resp = get_data_from_main_server(pack)
+    payload = resp.payload[0]
+    print(payload)
     str_data = "".join([chr(bit) if 33 < bit < 126 else "." for bit in payload])
-    str_data = str_data.replace("\\","\\\\")
+    str_data = str_data.replace("\\", "\\\\")
     data_payload={
         "payload_hexa": "".join([str(hex(bit)).upper().replace("0X","") + " " for bit in payload]),
 

@@ -70,15 +70,20 @@ function get_package_payload(pack_id){
              //let div_content= document.getElementById('test_details');
              // div_content.innerHTML = data;
              let div_hexa = document.getElementById("payload_hexa")
-             div_hexa.innerHTML= data.payload_hexa;
              let div_str = document.getElementById("payload_str")
-             let ls_str_data = data.payload_str.match(/.{1,20}/g);
-             div_str.innerHTML = "";
-             for (let el of ls_str_data){
-                 console.log(el)
-                 div_str.innerHTML += el + "<br>";
+             if (data.payload_str !== "" && data.payload_hexa !== "") {
+                 div_hexa.innerHTML = data.payload_hexa;
+                 let ls_str_data = data.payload_str.match(/.{1,20}/g);
+                 div_str.innerHTML = "";
+                 for (let el of ls_str_data) {
+                     console.log(el)
+                     div_str.innerHTML += el + "<br>";
+                 }
              }
-
+             else{
+                 div_hexa.innerHTML = "No payload";
+                 div_str.innerHTML = "No payload";
+             }
         }).catch(err => {
             document.getElementById('payload_hexa').textContent = err;
      })

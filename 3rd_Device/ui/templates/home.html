@@ -66,8 +66,9 @@
   <div class="label" style="color: #a2a2a2">Automatic Lockdown:</div>
   <div {% if automatic and automatic == true %} class="toggle on" {% else %} class="toggle" {% endif %} id="automaticToggle"></div>
 </div>
-
- <div class="lockdown-toggle" id="lockdown_container">
+<!-- {% if automatic and automatic == true %} style="display: none" {% else %} style="display: flex" {% endif %}>-->
+ <div class="lockdown-toggle" id="lockdown_container"
+ {% if automatic and automatic == true %} disabled {% endif %}>
   <div class="label" style="color: #a2a2a2">Lockdown State:</div>
 
   <div {% if lockdown and lockdown == true %} class="toggle on" {% else %} class="toggle" {% endif %} id="lockdownToggle"></div>
@@ -85,7 +86,3 @@
     // Dispatch the custom event on the document object
     document.dispatchEvent(domContentLoadedEvent);
  </script>
-
- connected clients
- lockdown
- running tests

@@ -49,11 +49,13 @@ function init_home() {
         autotoggleButton.classList.toggle('on');
         if (this.checked) {
             let lock_div = document.getElementById("lockdown_container")
-            lock_div.style.display = 'none';
+            // lock_div.style.display = 'flex';
+            lock_div.disabled = true;
             send_automatic_to_server(this.checked);
         } else {
             let lock_div = document.getElementById("lockdown_container")
-            lock_div.style.display = 'flex';
+            //lock_div.style.display = 'none';
+            lock_div.disabled = false;
             send_automatic_to_server(this.checked);
         }
     });

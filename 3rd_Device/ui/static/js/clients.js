@@ -113,7 +113,7 @@ function transfer_client(ip, mac, score, infec_type){
                  alert("Transfer for "+ ip + " finished with success")
              }
              else{
-                 alert("Transfer for "+ ip + " finished with failure")
+                 alert("Transfer for "+ ip + " finished!")
              }
              refresh_clients();
         }).catch(err => {
@@ -202,7 +202,7 @@ function begin(){
            ip_addr = det.split("|")[0]
            mac_addr = det.split("|")[1]
             score = document.getElementById("score|"+det).value;
-           if (score <= 0){
+           if (score < 0){
                alert("Score should not be negative");
                refresh_clients();
                return;
