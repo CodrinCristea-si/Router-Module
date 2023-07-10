@@ -103,10 +103,34 @@ void clear_client(struct client_def *client){
 
 bool check_if_client_is_reachable(unsigned char * ip){
 	char command[100];
-	snprintf(command,100, "ping -c 1 -W 1 %d.%d.%d.%d", (unsigned int)ip[0],(unsigned int)ip[1],(unsigned int)ip[2],(unsigned int)ip[3]);
+	snprintf(command,100, "ping -c 3 -W 2 %d.%d.%d.%d", (unsigned int)ip[0],(unsigned int)ip[1],(unsigned int)ip[2],(unsigned int)ip[3]);
 	printf("command %s\n",command);
 	int result = system(command);
+	FILE* pingOutput = popen(command, "r");
 
+	int packetsSent = 0, packetsReceived = 0;
+
+	if (pingOutput != NULL) {
+		char outputLine[128];
+
+		while (fgets(outputLine, sizeof(outputLine), pingOutput) != NULL) {
+			// Check if the line contains the "packets transmitted" information
+			if (sscanf(outputLine, "%d packets transmitted, %d packets received", &packetsSent, &packetsReceived) == 2) {
+				break;
+			}
+		}
+
+		pclose(pingOutput);
+	}
+	printf("%d and %d\n", packetsSent, packetsReceived);
+
+	if (packetsReceived > 0) {
+		printf("At least one packet was sent.\n");
+		return true;
+	} else {
+		printf("No packets were sent.\n");
+		return false;
+	}
 	// Check the return value of the `system` function
 	// A return value of 0 indicates success, i.e., the client is reachable
 	if (result == 0) {
@@ -123,12 +147,15 @@ bool insert_or_update_client(struct client_node* list, struct client_node* node)
     //printf("%p & %p & %d & %d\n",list,node,cmp_uchar_values(node->hash, empty_hash, MD5_HASH_SIZE),node->state);
     if(!list || !node || cmp_uchar_values(node->hash, empty_hash, MD5_HASH_SIZE) == 0 || node->state != magic_number){
         perror("Insert or update validation failed \n");
-        return -1;
+        return false;
     }
     if (!check_if_client_is_reachable(node->ipv4))
     {
+	printf("nu e gasit la adaugare\n");
 	perror("Client is unreachable\n");
-        return -1;
+        return false;
+    }else{
+	printf("clientul e reachable\n");
     }
     while (first != NULL){
         if(cmp_uchar_values(first->hash, node->hash, MD5_HASH_SIZE) == 0){
@@ -162,7 +189,7 @@ void delete_unreachable_clients(struct client_node* list){
 		bool delete = false;
 		bool is_reachable=check_if_client_is_reachable(current->ipv4);
 		if(!is_reachable){
-			printf("Is reachable %d\n",is_reachable);
+			//printf("Is reachable %d\n",is_reachable);
 			prev->next = (void*)current->next;
 			delete = true;
 		}
@@ -295,7 +322,7 @@ void process_dhcp_file(char* filename){
 	}
 	if(modification)
 		delete_old_magic(&start_client);
-	delete_unreachable_clients(&start_client);
+	//delete_unreachable_clients(&start_client);
 }
 
 time_t check_if_file_was_modified(char* filename, time_t last_modified){
