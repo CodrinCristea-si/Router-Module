@@ -1,9 +1,8 @@
 import socket
 import pickle
 
-from common.package import Package, PackageType
-from common.client_server_communicator import ClientServerCommunicator
-from network.worker import Worker
+from packages.client_package import Package, PackageType
+from communicators.client_server_communicator import ClientServerCommunicator
 from logger.logger import *
 
 
