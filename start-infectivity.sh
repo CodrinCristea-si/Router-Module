@@ -1,17 +1,17 @@
 #!/bin/sh
-# echo "Installing kernel module ..."
-# insmod ./kernel/infectivity_kernel.ko
-# if [ ! $? -eq 0 ]; then
-#     echo "Failed to insert kernel module"
-#     exit 1
-# fi
+echo "Installing kernel module ..."
+insmod ./kernel/infectivity_kernel.ko
+if [ ! $? -eq 0 ]; then
+    echo "Failed to insert kernel module"
+    exit 1
+fi
 dhcp_file=/tmp/dhcp.leases
 
 echo > .infect_file
 cd user
 chmod 755 infectivity_monitor.infec
 
-./infectivity_monitor.infec -start 
+./infectivity_monitor.infec -start ../.infect_file 192.168.1.0 255.255.255.0 192.168.1.1
 if [ ! $? -eq 0 ]; then
     echo "Infectivity Monitor offline"
     ./infectivity_monitor.infec -stop 

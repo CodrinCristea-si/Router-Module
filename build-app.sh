@@ -26,11 +26,12 @@ echo "Module $module_kernel_file moved to $install_dir/kernel"
 connect_name=connectivity_check.infec
 monitor_name=infectivity_monitor.infec
 updater_name=updater.infec
+tester_name=tester_monitor.infec
 userspace_dir=./userspace
 
 cd $userspace_dir
 echo "Cross compilling userspace apps  ..."
-./cross-compile.sh $connect_name $monitor_name $updater_name
+./cross-compile.sh $connect_name $monitor_name $updater_name $tester_name
 if [ ! $? -eq 0 ]; 
 then 
     exit 1  
@@ -45,6 +46,8 @@ cp $userspace_dir/$monitor_name $install_dir/user
 echo "Module $monitor_name moved to $install_dir/user"
 cp $userspace_dir/$updater_name $install_dir/user
 echo "Module $updater_name moved to $install_dir/user"
+cp $userspace_dir/$tester_name $install_dir/user
+echo "Module $tester_name moved to $install_dir/user"
 
 luci_dir=./luci_interface
 [ ! -d "$install_dir/luci" ] && mkdir $install_dir/luci

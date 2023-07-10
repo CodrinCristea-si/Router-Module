@@ -16,8 +16,8 @@ echo "Infectivity Monitor offline"
 
 cd ..
 
-# rmmod infectivity_kernel
-# echo "Kernel Module removed"
+rmmod infectivity_kernel
+echo "Kernel Module removed"
 
 # echo "Initiating reboot ..."
 # reboot
