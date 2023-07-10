@@ -141,6 +141,8 @@ class ScanResultsInterpreter:
         ration_infected_per_total = 1000
         infected_files = ratios[0]
         total_files = ratios[1]
+        if total_files == 0:
+            return 0
         bonus_score = infected_files *  each_infected // total_files //ration_infected_per_total
         return bonus_score
 

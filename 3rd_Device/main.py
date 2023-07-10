@@ -10,6 +10,8 @@ from threading import Thread
 from packages.infectivity_request import InfectivityRequest, InfectivityRequestType
 from packages.infectivity_response import *
 
+from ui.app import *
+
 samples = {}
 
 
@@ -194,6 +196,7 @@ def send_awake_signals(logger:Logger):
         comm.close_connection()
         if resp.type != InfectivityResponseType.I_AM_AWAKE:
             raise Exception("Response type invalid")
+        logger.info("Awake signal received")
     except Exception as e:
         logger.error("Error while sending to awake! Error %s" % (e))
 
@@ -208,6 +211,7 @@ def send_awake_signals(logger:Logger):
         comm.close_connection()
         if resp.type != InfectivityResponseType.I_AM_AWAKE:
             raise Exception("Response type invalid")
+        logger.info("Awake signal received")
     except Exception as e:
         logger.error("Error while sending to awake! Error %s" % (e))
 
@@ -222,6 +226,7 @@ def send_awake_signals(logger:Logger):
         comm.close_connection()
         if resp.type != InfectivityResponseType.I_AM_AWAKE:
             raise Exception("Response type invalid")
+        logger.info("Awake signal received")
     except Exception as e:
         logger.error("Error while sending to awake! Error %s" % (e))
 
@@ -236,11 +241,16 @@ def send_awake_signals(logger:Logger):
         comm.close_connection()
         if resp.type != InfectivityResponseType.I_AM_AWAKE:
             raise Exception("Response type invalid")
+        logger.info("Awake signal received")
     except Exception as e:
         logger.error("Error while sending to awake! Error %s" % (e))
 
 def start_server(serv):
     serv.run_server()
+
+def start_ui():
+    app.config['MIME_TYPES'] = {'text/css': ['css']}
+    app.run()
 
 if __name__ == "__main__":
     #parse_signiture_file("data/signature.db")
@@ -255,11 +265,15 @@ if __name__ == "__main__":
     p2 = Thread(target=start_server, args=(manager,))
     p3 = Thread(target=start_server, args=(tester,))
     p4 = Thread(target=start_server, args=(analyser,))
+    #p5 = Thread(target=start_ui)
     p2.start()
     p4.start()
     p3.start()
     p1.start()
+    #p5.start()
     send_awake_signals(logger)
+
+    #p5.join()
     p1.join()
     p3.join()
     p4.join()

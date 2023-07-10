@@ -23,6 +23,7 @@ class InfectivityResponseType(Enum):
 
 
 class InfectivityResponse(AbstractPackage):
-    def __init__(self,type:InfectivityResponseType,payload:list):
+    def __init__(self, type: InfectivityResponseType, payload: list):
+        super().__init__(type, payload)
         self._type = type
         self._payload = payload

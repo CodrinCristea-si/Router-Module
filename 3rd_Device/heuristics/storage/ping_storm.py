@@ -1,7 +1,4 @@
 
-"""
-{type:PackageType.RESULTS, payload:{'malware': {'Win.Trojan.EmbeddedDotNetBinary-9940868-0': 2}, 'ratio': [2, 14213]}}
-"""
 
 import sys
 import optparse
@@ -105,8 +102,8 @@ class ICMPStormDetector:
     def __check_for_single_ping_storm(self,list_packages:list):
         is_icmp_storm = False
         if list_packages is not None and len(list_packages) > 0:
-            max_per_second = 2
-            threshold_sec= 5
+            max_per_second = 1
+            threshold_sec = 5
             max_for_threshold_seconds = max_per_second * threshold_sec
             #print(list_packages[0])
             current_second = self.__convert_date_to_unix(list_packages[0].get("arrive_time"))
@@ -122,13 +119,13 @@ class ICMPStormDetector:
                 if pack.get("tproto") == 1:
                     current_packs_storm += 1
             icmp_per_sec.append(current_packs_storm)
-            #print("icmp_per_sec",icmp_per_sec)
+            print("icmp_per_sec",icmp_per_sec)
 
             #get icmps per max max_for_threshold_seconds seconds
             max_per_threshold_sec_icmp = []
             for i in range(0,len(icmp_per_sec) - threshold_sec):
                 max_per_threshold_sec_icmp.append(sum(icmp_per_sec[i:i+threshold_sec]))
-            #print("max_per_threshold_sec_icmp",max_per_threshold_sec_icmp)
+            print("max_per_threshold_sec_icmp",max_per_threshold_sec_icmp)
 
             #check if there are more icmps than usual
             for el in max_per_threshold_sec_icmp:
@@ -138,6 +135,14 @@ class ICMPStormDetector:
         # else:
         #     print("nasol")
         return is_icmp_storm
+
+    def __get_client_by_ip(self,ip:str):
+        connected_clients = self.__get_list_according_to_req(1)
+        client = None
+        for cl in connected_clients:
+            if cl.get("ip") == ip:
+                client = cl
+        return client
 
     def __analyse_input(self):
         score_for_found_guilty = 10
@@ -166,14 +171,16 @@ class ICMPStormDetector:
             packages = client_dict[client_ip]
             #print(len(packages))
             is_icmp_storm = self.__check_for_single_ping_storm(packages)
-            if is_icmp_storm:
+            client = self.__get_client_by_ip(client_ip)
+            print(is_icmp_storm,client)
+            if is_icmp_storm and client.get("testing") == 0:
                 result = {
                     "name": ICMPStormDetector.NAME,
                     "ip":client_ip,
                     "mac": self.__get_mac_by_ip(client_ip),
                     "type": type_for_guilty
                 }
-                #print("hope",client_ip)
+                print("hope",client_ip)
                 analysis_results.append(result)
         return analysis_results
 
@@ -185,7 +192,7 @@ class ICMPStormDetector:
         if self.__can_operate:
             results = self.__analyse_input()
             results_list += results
-            #print("results_list",results_list)
+            print("results_list",results_list)
             self.__save_results_file(output_file, results_list)
         else:
             err = {"results": [{"error":self.__errors}]}

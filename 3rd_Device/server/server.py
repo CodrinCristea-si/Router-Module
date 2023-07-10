@@ -43,9 +43,9 @@ class Server:
 
             # Waiting for clients to connect
             while True:
-                self._logger.info("Server waiting for connection on %s:%s ..." % (self._host, str(port)))
+                #self._logger.info("Server waiting for connection on %s:%s ..." % (self._host, str(port)))
                 client_socket, client_address = self._server_socket_tcp.accept()
-                self._logger.info(f"Client with IP %s has connected" % str(client_address))
+                #self._logger.info(f"Client with IP %s has connected" % str(client_address))
                 self.handle_request(client_socket)
         except Exception as ex:
             traceback.print_exc()
@@ -63,13 +63,14 @@ class Server:
 
             # Waiting for clients to connect
             while True:
-                self._logger.info("Server waiting for messages on %s:%s ..." % (self._host, str(port)))
+                #self._logger.info("Server waiting for messages on %s:%s ..." % (self._host, str(port)))
                 client_data, client_address = self._server_socket_udp.recvfrom(Server._MAX_BYTES_UDP)
-                self._logger.info(f"Client with IP %s has sent a message" % str(client_address))
+                #self._logger.info(f"Client with IP %s has sent a message" % str(client_address))
                 self._handle_request_udp(client_data)
         except Exception as ex:
             traceback.print_exc()
             self._logger.error("Error: " + str(sys.exc_info()[1]))
+
     def stop_server(self):
         if self._server_socket_udp is not None:
             self._server_socket_udp.shutdown(socket.SHUT_RDWR)

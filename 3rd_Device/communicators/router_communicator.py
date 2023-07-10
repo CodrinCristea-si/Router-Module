@@ -22,7 +22,7 @@ class RouterCommunicator(AbstractCommunicator):
 
     @staticmethod
     def __read_network_settings(types:int,data:bytes):
-        print(types)
+        #print(types)
         return [types, None, None, None]
 
     @staticmethod
@@ -102,7 +102,7 @@ class RouterCommunicator(AbstractCommunicator):
 
     @staticmethod
     def parse_header_package(data: bytes):
-        print(data)
+        #print(data)
         # c0 a8 01 7b c7 e8 12 f8 d7 d3 00 00 01 bb 00 00 00 00 00 00 08
         network_package = PackageDOM("", 0, "", 0, 0, 0, 0, 0, 0, b'')
         ip_s = ""
@@ -152,19 +152,19 @@ class RouterCommunicator(AbstractCommunicator):
     def __read_from_ext(socket_c: Union[socket,bytes], is_package):
         if not is_package:
             data_bytes =  socket_c.recv(4) #the size of int
-            print(data_bytes)
+            #print(data_bytes)
             data_size = int.from_bytes(data_bytes,"little")
-            print(data_size)
+            #print(data_size)
             #pack = None
             if 0 < data_size:
                 curr_poz = 0
                 data = b""
                 while curr_poz < data_size:
                     payload = socket_c.recv(data_size-curr_poz)
-                    print(payload)
+                    #print(payload)
                     curr_poz += len(payload)
                     data += payload
-                print(len(data))
+                #print(len(data))
                 types = int(data[0])
                 if types < 4:
                     return RouterCommunicator.__read_client(types,data)
@@ -177,7 +177,7 @@ class RouterCommunicator(AbstractCommunicator):
     @staticmethod
     def __read_from_local(socket_c: socket):
         req = ITC.read_data(socket_c)
-        print(req)
+        # print(req)
         return [req,None,None,None]
 
     @staticmethod
@@ -186,9 +186,9 @@ class RouterCommunicator(AbstractCommunicator):
         #if host == "127.0.0.1":
         if isinstance(socket_c,socket.SocketType):
             host, _ = socket_c.getpeername()
-            print(host)
+            # print(host)
             if host == "127.0.0.1" or host == "192.168.1.2":
-                print(host)
+                #print(host)
                 return RouterCommunicator.__read_from_local(socket_c)
             else:
                 return RouterCommunicator.__read_from_ext(socket_c, False)
@@ -198,7 +198,7 @@ class RouterCommunicator(AbstractCommunicator):
     def connect(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(self.__timeout)
+            #s.settimeout(self.__timeout)
             self.__logger.info("Client socket created!")
         except socket.error:
             self.__logger.error("Failed to create socket! Error :" + str(sys.exc_info()[1]))
@@ -252,7 +252,7 @@ class RouterCommunicator(AbstractCommunicator):
             for el in mac:
                 data_payload += int(el, 16).to_bytes(1, "big", signed=False)
             data_payload += int(state).to_bytes(1, "big", signed=False)
-            print(data_payload)
+            # print(data_payload)
             return self.__send_to_router(data_payload)
         if type == 5 or type == 6 or type == 7 or type == 8:
             data_payload = b''

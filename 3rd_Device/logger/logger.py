@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import os
 import sys
 import multiprocessing
 from multiprocessing.queues import SimpleQueue
@@ -18,6 +19,9 @@ class Logger:
         self.__formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(thread)d : %(name)s -- %(funcName)s : %(message)s')
 
         self.initialize()
+
+    def get_log_file_path(self):
+        return os.getcwd() + "\\" + self.__file
 
     def initialize(self) -> None:
         self.__queue = multiprocessing.Queue(-1)

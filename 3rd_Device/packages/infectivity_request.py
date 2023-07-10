@@ -36,6 +36,7 @@ class InfectivityRequestType(Enum):
     ARE_YOU_AWAKE = 32,
 
 class InfectivityRequest(AbstractPackage):
-    def __init__(self,type:InfectivityRequestType,payload:list):
+    def __init__(self, type: InfectivityRequestType, payload: list):
+        super().__init__(type, payload)
         self._type = type
         self._payload = payload
