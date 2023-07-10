@@ -1,6 +1,9 @@
 import sys
 import pickle
+import traceback
 import socket
+import threading
+from datetime import datetime, timedelta
 
 from logger.logger import Logger
 from server.server import Server
@@ -19,22 +22,63 @@ class InfectivityServer(Server):
         self.__thread_pool = ThreadPoolExecutor(max_workers=self.__max_workers)
         self.__is_automatic_lockdown = True
         self.__is_lockdown = False
+        self.__how_often_refresh_min = 720
+        self.__lock = threading.Lock()
+        self.__next_update = datetime.now() + timedelta(minutes=self.__how_often_refresh_min)
+        self.__prepare_for_serving()
         #super().run_server()
 
+    def __refresh_data(self):
+        try:
+            session = SessionMaker.create_scoped_session()
+            # self._logger.info("Session created %s" %(session))
+            infectivity_manager = InfectivityManager(self._logger,session)
+            infectivity_manager.add_history("REFRESH_STARTED",0)
+            # self._logger.info("manager created")
+            infectivity_manager.reset_running_tests(self.__how_often_refresh_min)
+            #infectivity_manager.check_if_clients_can_be_reached()
+            infectivity_manager.check_if_scans_needed(self.__how_often_refresh_min)
+            if session is not None:
+                session.close()
+        except Exception as e:
+            self._logger.error("Error while refresh: %s" %(e))
+
+    def __prepare_for_serving(self):
+        self._logger.info("Refresh data")
+        try:
+            session = SessionMaker.create_scoped_session()
+            infectivity_manager = InfectivityManager(self._logger,session)
+            infectivity_manager.delete_all_history()
+            infectivity_manager.delete_all_heuristics()
+            infectivity_manager.disconnect_all_clients()
+            infectivity_manager.reset_running_tests(1e9)
+            if session is not None:
+                session.close()
+        except Exception as e:
+            self._logger.error("Error while initializing: %s" %(e))
+
+    def __check_for_periodic_db_refreshes(self):
+        self.__lock.acquire()
+        if datetime.now() >= self.__next_update:
+            self.__refresh_data()
+            self.__next_update = datetime.now() + timedelta(minutes=self.__how_often_refresh_min)
+        self.__lock.release()
+
     def __add_task_executor(self,client_socket:socket):
-        self._logger.info("__add_task_executor")
+        #self._logger.info("__add_task_executor")
         session = None
         try:
             session = SessionMaker.create_scoped_session()
-            self._logger.info("Session created %s" %(session))
+            #self._logger.info("Session created %s" %(session))
             infectivity_manager = InfectivityManager(self._logger,session)
-            self._logger.info("manager created")
+            #self._logger.info("manager created")
             package = InfectivityTesterCommunicator.read_request_socket(client_socket)
             if package is None:
                 return
             # prevent infinite loops for transfer, lockdown automatic between router and server
             if isinstance(package,InfectivityRequest):
-                self._logger.info("Payload of type %s" % (package.type))
+                if package.type != InfectivityRequestType.ADD_PACKAGE:
+                    self._logger.info("Payload of type %s" % (package.type))
                 if package.type == InfectivityRequestType.ADD_CLIENT:
                     self._logger.info("add client")
                     ip, mac = package.payload
@@ -67,7 +111,7 @@ class InfectivityServer(Server):
                     response = InfectivityResponse(InfectivityResponseType.ALL_CLIENTS, clients)
                     InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
                 if package.type == InfectivityRequestType.ADD_PACKAGE:
-                    self._logger.info("add package")
+                    #self._logger.info("add package")
                     network_pack = package.payload[0]
                     infectivity_manager.add_package(network_pack)
                 if package.type == InfectivityRequestType.GET_SAMPLES:
@@ -91,14 +135,18 @@ class InfectivityServer(Server):
                     InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
                 if package.type == InfectivityRequestType.LOCKDOWN_SETTINGS:
                     self._logger.info("set lockdown")
+                    self.__lock.acquire()
                     self.__is_lockdown = True if package.payload[0] == True else False
+                    self.__lock.release()
                     host, _ = client_socket.getpeername()
                     if host == "127.0.0.1": # ui
                         req = InfectivityRequest(InfectivityRequestType.LOCKDOWN_SETTINGS,[self.__is_lockdown])
                         infectivity_manager.update_router(req)
                 if package.type == InfectivityRequestType.AUTOMATIC_SETTINGS:
                     self._logger.info("set automatic")
+                    self.__lock.acquire()
                     self.__is_automatic_lockdown = True if package.payload[0] == True else False
+                    self.__lock.release()
                     host, _ = client_socket.getpeername()
                     if host == "127.0.0.1": # ui
                         req = InfectivityRequest(InfectivityRequestType.AUTOMATIC_SETTINGS,[self.__is_automatic_lockdown])
@@ -182,7 +230,7 @@ class InfectivityServer(Server):
                 if package.type == InfectivityRequestType.GET_PACKAGE_PAYLOAD:
                     self._logger.info("get package payload")
                     id_pack = int(package.payload[0])
-                    pack = infectivity_manager.get_pack_by_id(id_pack)
+                    pack = infectivity_manager.get_pack_payload_by_id(id_pack)
                     response = InfectivityResponse(InfectivityResponseType.GENERIC_RESPONSE, [pack])
                     InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
                 if package.type == InfectivityRequestType.GET_ALL_HEURISTICS:
@@ -198,16 +246,61 @@ class InfectivityServer(Server):
                     pack = InfectivityResponse(InfectivityResponseType.I_AM_AWAKE, [])
                     InfectivityTesterCommunicator.send_data(client_socket, pack, self._logger)
                     client_socket.close()
+                if package.type == InfectivityRequestType.GET_LAST_HISTORY:
+                    self._logger.info("get last history")
+                    nr_hist = int(package.payload[0])
+                    ls_hist = infectivity_manager.get_last_nr_history(nr_hist)
+                    response = InfectivityResponse(InfectivityResponseType.GENERIC_RESPONSE, ls_hist)
+                    InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
+                if package.type == InfectivityRequestType.GET_LAST_LOGS:
+                    self._logger.info("get last logs")
+                    nr_logs = int(package.payload[0])
+                    ls_logs = infectivity_manager.get_last_logs(nr_logs,self._logger)
+                    response = InfectivityResponse(InfectivityResponseType.GENERIC_RESPONSE, ls_logs)
+                    InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
+                if package.type == InfectivityRequestType.GET_LAST_MINUTE_PACKAGES:
+                    self._logger.info("get last minute packages")
+                    nr_min = int(package.payload[0])
+                    ls_packs = infectivity_manager.get_last_minute_packages(nr_min)
+                    #print(nr_min,ls_packs)
+                    response = InfectivityResponse(InfectivityResponseType.GENERIC_RESPONSE, ls_packs)
+                    InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
+                if package.type == InfectivityRequestType.GET_LAST_TEST:
+                    self._logger.info("get last nr tests")
+                    nr_tests = int(package.payload[0])
+                    ls_tests = infectivity_manager.get_last_nr_test(nr_tests)
+                    response = InfectivityResponse(InfectivityResponseType.GENERIC_RESPONSE, ls_tests)
+                    InfectivityTesterCommunicator.send_data(client_socket, response, self._logger)
+                if package.type == InfectivityRequestType.ADD_HISTORY:
+                    self._logger.info("get add history")
+                    type, id = package.payload[0], int(package.payload[1])
+                    infectivity_manager.add_history(type,id)
+                if package.type == InfectivityRequestType.DYNAMIC_HEURISTIC_RESULTS:
+                    self._logger.info("get add history")
+                    results = package.payload[0]
+                    infectivity_manager.check_heuristic_results_interpretation(results)
+
             elif isinstance(package,InfectivityResponse):
                 if package.type == InfectivityResponseType.TEST_RESULTS:
                     self._logger.info("test results")
                     infectivity_manager.add_test_results(package.payload)
+                # if package.type == InfectivityResponseType.HEURISTIC_RESULTS:
+                #     self._logger.info("heuristic results")
+                #     res = package.payload[0]
+                #     infectivity_manager.check_heuristic_results_interpretation({"results":[res]})
+
             client_socket.close()
         #check after 12 hours that all clients tests are finished and clients are still reachable
         except Exception as e:
             self._logger.error("Error: %s" %(e))
-        if session is not None:
-            session.remove()
+            traceback.print_exc()
+        finally:
+            try:
+                if session is not None:
+                    session.close()
+                self.__check_for_periodic_db_refreshes()
+            except Exception as e:
+                self._logger.error("Error: %s" % (e))
 
     def handle_request(self,client_socket:socket):
         self.__thread_pool.submit(self.__add_task_executor,client_socket)

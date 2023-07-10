@@ -2,6 +2,7 @@ from db.session import SessionMaker
 from db.db_manager import DBManager
 from domain.heuristic import Heuristic as HeuristicDOM
 from orm.heuristic import Heuristic
+from sqlalchemy import delete
 
 class DBHeuristicManagement(DBManager):
 
@@ -12,7 +13,7 @@ class DBHeuristicManagement(DBManager):
     def add_heuristics_dom(self,heur:HeuristicDOM):
         heur_db = self.get_heuristic(heur.name)
         if heur_db is not None:
-            raise Exception("Hueristics with name %s already exists" %(heur.name))
+            raise Exception("Heuristics with name %s already exists" %(heur.name))
         heur_db = Heuristic(Name=heur.name, Type=heur.type, Path=heur.path, Requirements="".join([str(el)+" " for el in heur.requirements]))
         self._session.add(heur_db)
         self._session.commit()
@@ -31,3 +32,8 @@ class DBHeuristicManagement(DBManager):
     def get_all_heuristics(self):
         ls_heur = self._session.query(Heuristic).all()
         return ls_heur
+
+    def delete_all_heuristics(self):
+        delete_statement = delete(Heuristic)
+        self._session.execute(delete_statement)
+        self._session.commit()

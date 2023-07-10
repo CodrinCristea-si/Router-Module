@@ -18,7 +18,7 @@ class DBPPackageManager(DBManager):
         return pack
 
     def get_package_from_last(self,time):
-        threshold_time = datetime.now() - timedelta(minutes=time)
+        threshold_time = datetime.utcnow() - timedelta(minutes=time)
         packs = self._session.query(Package).filter(Package.ArriveTime > threshold_time).all()
         if packs is None:
             return []
@@ -30,7 +30,10 @@ class DBPPackageManager(DBManager):
         self._session.commit()
 
     def get_last_minutes_packages(self,ip:str,nr_min:int):
-        threshold_time = datetime.now() - timedelta(minutes=nr_min)
+        last_pack = self._session.query(Package).filter(Package.SourceIP == ip).order_by(Package.PackageID.desc()).first()
+        if last_pack is None:
+            return []
+        threshold_time = last_pack.ArriveTime - timedelta(minutes=nr_min)
         ls_packs_s = self._session.query(Package).filter(Package.SourceIP == ip, Package.ArriveTime > threshold_time).all()
         ls_packs_d = self._session.query(Package).filter(Package.DestinationIP == ip,
                                                          Package.ArriveTime > threshold_time).all()

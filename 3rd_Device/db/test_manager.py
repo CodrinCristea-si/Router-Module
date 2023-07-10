@@ -23,7 +23,7 @@ class DBTestManagement(DBManager):
         test = self.get_last_started_test_for_client(ip,mac)
         if test is not None:
             raise Exception("There is a test started for the %s->%s"%(mac,ip))
-        test = Test(ClientID = cl.ClientID,TimeTaken = datetime.utcnow(),Status= TestStatus.STARTED.value)
+        test = Test(ClientID = cl.ClientID,Status= TestStatus.STARTED.value)
         self._session.add(test)
         self._session.commit()
 
@@ -35,6 +35,7 @@ class DBTestManagement(DBManager):
         if test is None:
             raise Exception("There are no running tests for %s->%s"%(mac,ip))
         test.Status = TestStatus.RUNNING.value
+        test.TimeTaken = datetime.utcnow()
         self._session.commit()
 
     def finish_test(self,ip:str,mac:str):
@@ -44,6 +45,14 @@ class DBTestManagement(DBManager):
         test = self._session.query(Test).filter(Test.ClientID == cl.ClientID,Test.Status== TestStatus.RUNNING.value).order_by(Test.TestID.desc()).first()
         if test is None:
             raise Exception("There are no running tests for %s->%s"%(mac,ip))
+        test.Status = TestStatus.FINISHED.value
+        test.TimeFinished = datetime.utcnow()
+        self._session.commit()
+
+    def finish_test_by_id(self,test_id:int):
+        test = self._session.query(Test).filter(Test.TestID == test_id).first()
+        if test is None:
+            raise Exception("There is no test with id" %(str(test_id)))
         test.Status = TestStatus.FINISHED.value
         self._session.commit()
 
@@ -119,3 +128,13 @@ class DBTestManagement(DBManager):
         if list_tests is None:
             return []
         return list_tests
+
+    def get_last_nr_test(self, nr_tests: int):
+        ls_test = []
+        if nr_tests > 0:
+            ls_test = self._session.query(Test).order_by(Test.TestID.desc()).limit(nr_tests).all()
+        else:
+            ls_test = self._session.query(Test).order_by(Test.TestID.desc()).all()
+        if ls_test is None:
+            return []
+        return ls_test

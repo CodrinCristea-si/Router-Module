@@ -16,7 +16,7 @@ class InfectivityRequestType(Enum):
     ADD_HEURISTIC = 12,
     GET_LAST_MINUTE_PACKAGES = 13,
     GET_CONNECTED_CLIENTS = 14,
-    GET_LAST_MINUTE_TEST = 15,
+    GET_LAST_TEST = 15,
     ADD_PACKAGE = 16,
     GET_SAMPLES = 17,
     LOCKDOWN_SETTINGS = 18,
@@ -34,6 +34,10 @@ class InfectivityRequestType(Enum):
     GET_PACKAGE_PAYLOAD = 30,
     GET_ALL_HEURISTICS = 31,
     ARE_YOU_AWAKE = 32,
+    GET_LAST_HISTORY = 33,
+    GET_LAST_LOGS = 34,
+    ADD_HISTORY = 35,
+    DYNAMIC_HEURISTIC_RESULTS = 36
 
 class InfectivityRequest(AbstractPackage):
     def __init__(self, type: InfectivityRequestType, payload: list):

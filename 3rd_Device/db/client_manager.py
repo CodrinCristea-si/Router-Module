@@ -1,7 +1,11 @@
+import datetime
+
 from orm.infectivity_type import InfectivityTypes
 from db.session import SessionMaker
 from db.db_manager import DBManager
 from orm.client import Client
+from sqlalchemy import update
+
 
 class DBClientManager(DBManager):
     def __init__(self, session:SessionMaker= None):
@@ -21,7 +25,7 @@ class DBClientManager(DBManager):
             client.IsTesting=0
             client.CurrentIP = ip
             client.IsConnected = 1
-            client.InfectivityType=InfectivityTypes.DEFAULT.value
+            #client.InfectivityType=InfectivityTypes.DEFAULT.value
         self._session.commit()
         # self._session.close()
         return 0
@@ -62,6 +66,7 @@ class DBClientManager(DBManager):
         else:
             client.IsConnected = 0
             client.IsTesting = 0
+            client.LastConnected = datetime.datetime.utcnow()
         self._session.commit()
         return 0
 
@@ -141,3 +146,8 @@ class DBClientManager(DBManager):
     def get_all_connected_clients(self):
         ls_cl = self._session.query(Client).filter(Client.IsConnected == 1).all()
         return ls_cl
+
+    def disconnect_all_clients(self):
+        stm =update(Client).where(Client.IsConnected == 1).values(IsConnected = 0, IsTesting = 0, LastConnected = datetime.datetime.utcnow())
+        self._session.execute(stm)
+        self._session.commit()
