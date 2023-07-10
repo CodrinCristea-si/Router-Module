@@ -1,15 +1,193 @@
 <%+header%>
+<style>
+    /* The switch - the box around the slider */
+/* .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
 
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+} */
+
+
+
+.slider-container {
+  display: flex;
+  flex-direction: row;
+
+  /* align-items: row; */
+}
+
+.disableble{
+
+}
+
+.disableble.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+/*settings */
+.option_title{
+    display:flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.table_settings{
+    display: table;
+    gap: 75px;
+}
+
+.checkbox_item {
+    padding: 10px;
+    align-items: center;
+
+}
+
+
+</style>
 <h1>Clients</h1>
 <div>
-    <table class="table" id="list_clients">
+    <table class="table">
         <tr class="tr table-titles">
             <th class="th nowrap" data-sortable-row="true">IP Address</th>
             <th class="th hide-xs" data-sortable-row="true">MAC Address</th>
             <th class="th" data-sortable-row="true">Infectivity</th>
             <th class="th cbi-section-actions">Actions</th>
         </tr>
+        <tbody id="list_clients">
+
+        </tbody>
     </table>
+    <br>
+    <div class ="cbi-section fade-in">
+        <h1>Settings</h1>
+        <div>  
+            <div class = "table_settings">
+                <span class="option_title">
+                    <h3>Automatic Lockdown:</h3>
+                    <div class="checkbox_item">
+                        <label>
+                            <input type="checkbox" id="automaticCheckBox">
+                        </label>
+                    </div>
+                </span>
+                <span class="option_title  disableble" id="slider_container">
+                    <h3>Lockdown mode:</h3>
+                    <div class = "slider-container">
+                        <label class="switch">
+                            <input type="checkbox" id="toggleButton">
+                            <span class="slider round"></span>
+                            <!-- <p id="sliderText">OFF</p> -->
+                        </label>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
 </div>
 <%+footer%>
 <script src='<%=luci.dispatcher.build_url("admin", "network","infectivity")%>/script'></script>
