@@ -1,0 +1,64 @@
+
+{% if ip %}
+{% if mac %}
+<h1 style="text-align: center">Packages Stats for {{ip}}({{mac}})</h1>
+{% endif %}
+{% endif %}
+
+{% if ip %}
+{% if mac %}
+<div id={{ip~"|"~mac}} class="dropout"></div>
+{% endif %}
+{% endif %}
+
+<div class="title_modif_container">
+    <p>Last <label ><input id="input_minute" class ="input_times" type="number" value="1"></label> minutes packages per transport protocol  <button id="but_refresh_pack_proto">
+        <i class="fa-solid fa-rotate"></i>
+    </button></p>
+</div>
+<div>
+<canvas id="canvas_packs"></canvas>
+</div>
+
+<div class="title_modif_container">
+    <p>Last <label><input id="input_list" class ="input_times" type="number" value="20"></label> packages
+    <button id="but_refresh_pack">
+        <i class="fa-solid fa-rotate"></i>
+    </button></p>
+</div>
+<div style="display: flex;flex-direction: row;gap:20px;">
+    <div >
+        <ul id = "package_list" class="pack_container">
+
+        </ul>
+    </div>
+    <div class="payload_container">
+        <div>
+            <p>Hexa</p>
+            <div id="payload_hexa" class="payload_hexa">
+            </div>
+        </div>
+        <div>
+            <p>Char</p>
+            <div id="payload_str" class="payload_str">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script >
+    var scriptElement = document.createElement('script');
+    scriptElement.src = "{{ url_for('static', filename='js/packages_client.js') }}";
+
+    // Append the <script> element to the <head> or <body> element
+    document.head.appendChild(scriptElement);
+
+    var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+    // Dispatch the custom event on the document object
+    document.dispatchEvent(domContentLoadedEvent);
+</script>
+
+
+

@@ -1,0 +1,1069 @@
+2023-05-20 22:54:26,748 - INFO - 10256 : multiprocessing -- info : process shutting down
+2023-05-20 22:54:38,666 - INFO - 12132 : multiprocessing -- info : process shutting down
+2023-05-20 22:55:16,221 - INFO - 9816 : multiprocessing -- info : process shutting down
+2023-05-20 23:11:28,925 - INFO - 9372 : multiprocessing -- info : process shutting down
+2023-05-20 23:11:50,406 - INFO - 23424 : multiprocessing -- info : process shutting down
+2023-05-20 23:17:39,969 - INFO - 13724 : multiprocessing -- info : process shutting down
+2023-05-20 23:17:43,752 - INFO - 14228 : multiprocessing -- info : process shutting down
+2023-05-20 23:18:49,959 - INFO - 14112 : multiprocessing -- info : process shutting down
+2023-05-20 23:19:09,892 - INFO - 22476 : multiprocessing -- info : process shutting down
+2023-05-20 23:20:13,172 - INFO - 6100 : multiprocessing -- info : process shutting down
+2023-05-20 23:20:33,433 - INFO - 2680 : multiprocessing -- info : process shutting down
+2023-05-20 23:21:26,780 - INFO - 23292 : multiprocessing -- info : process shutting down
+2023-05-20 23:22:57,961 - INFO - 22212 : multiprocessing -- info : process shutting down
+2023-05-20 23:45:26,819 - INFO - 23188 : multiprocessing -- info : process shutting down
+2023-05-20 23:46:00,713 - INFO - 14524 : multiprocessing -- info : process shutting down
+2023-05-20 23:49:24,149 - INFO - 23116 : multiprocessing -- info : process shutting down
+2023-05-20 23:52:17,137 - INFO - 6148 : multiprocessing -- info : Initializing Server socket ...
+2023-05-20 23:52:17,145 - INFO - 6148 : multiprocessing -- info : Server socket created
+2023-05-20 23:52:17,146 - INFO - 6148 : multiprocessing -- info : Server socket bind complete
+2023-05-20 23:52:17,146 - INFO - 6148 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:52:17,743 - INFO - 10604 : multiprocessing -- info : child process calling self.run()
+2023-05-20 23:52:17,743 - INFO - 10604 : multiprocessing -- info : created
+2023-05-20 23:52:17,743 - INFO - 10604 : multiprocessing -- info : process shutting down
+2023-05-20 23:52:17,755 - INFO - 10604 : multiprocessing -- info : process exiting with exitcode 1
+2023-05-20 23:52:40,463 - INFO - 9828 : multiprocessing -- info : Initializing Server socket ...
+2023-05-20 23:52:40,464 - INFO - 9828 : multiprocessing -- info : Server socket created
+2023-05-20 23:52:40,465 - INFO - 9828 : multiprocessing -- info : Server socket bind complete
+2023-05-20 23:52:40,465 - INFO - 9828 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:52:40,470 - INFO - 9828 : multiprocessing -- info : Client with IP ('127.0.0.1', 62760) has connected
+2023-05-20 23:52:40,472 - INFO - 9828 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:52:41,124 - INFO - 15788 : multiprocessing -- info : child process calling self.run()
+2023-05-20 23:52:41,125 - INFO - 15788 : multiprocessing -- info : created
+2023-05-20 23:52:41,125 - INFO - 15788 : multiprocessing -- info : connected
+2023-05-20 23:52:41,125 - INFO - 15788 : multiprocessing -- info : pack
+2023-05-20 23:52:41,125 - INFO - 9828 : multiprocessing -- info : Client with IP ('127.0.0.1', 62761) has connected
+2023-05-20 23:52:41,125 - INFO - 15788 : multiprocessing -- info : dump
+2023-05-20 23:52:41,125 - ERROR - 9828 : multiprocessing -- error : Error: cannot schedule new futures after shutdown
+2023-05-20 23:52:41,125 - INFO - 15788 : multiprocessing -- info : sent
+2023-05-20 23:52:41,127 - INFO - 15788 : multiprocessing -- info : close
+2023-05-20 23:52:41,127 - INFO - 15788 : multiprocessing -- info : process shutting down
+2023-05-20 23:52:41,130 - INFO - 15788 : multiprocessing -- info : process exiting with exitcode 1
+2023-05-20 23:52:41,134 - INFO - 15680 : multiprocessing -- info : process shutting down
+2023-05-20 23:52:41,134 - INFO - 15680 : multiprocessing -- info : calling join() for process Process-1
+2023-05-20 23:54:52,989 - INFO - 22448 : multiprocessing -- info : Initializing Server socket ...
+2023-05-20 23:54:52,997 - INFO - 22448 : multiprocessing -- info : Server socket created
+2023-05-20 23:54:52,998 - INFO - 22448 : multiprocessing -- info : Server socket bind complete
+2023-05-20 23:54:52,999 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,496 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62774) has connected
+2023-05-20 23:54:53,497 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,498 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62775) has connected
+2023-05-20 23:54:53,498 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,499 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62776) has connected
+2023-05-20 23:54:53,499 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,500 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62777) has connected
+2023-05-20 23:54:53,500 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,500 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62778) has connected
+2023-05-20 23:54:53,501 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,629 - INFO - 16812 : multiprocessing -- info : child process calling self.run()
+2023-05-20 23:54:53,630 - INFO - 16812 : multiprocessing -- info : created
+2023-05-20 23:54:53,630 - INFO - 16812 : multiprocessing -- info : connected
+2023-05-20 23:54:53,630 - INFO - 16812 : multiprocessing -- info : pack
+2023-05-20 23:54:53,630 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62779) has connected
+2023-05-20 23:54:53,631 - INFO - 16812 : multiprocessing -- info : dump
+2023-05-20 23:54:53,631 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,631 - INFO - 16812 : multiprocessing -- info : sent
+2023-05-20 23:54:53,631 - INFO - 16812 : multiprocessing -- info : close
+2023-05-20 23:54:53,631 - INFO - 16812 : multiprocessing -- info : created
+2023-05-20 23:54:53,632 - INFO - 16812 : multiprocessing -- info : connected
+2023-05-20 23:54:53,632 - INFO - 16812 : multiprocessing -- info : pack
+2023-05-20 23:54:53,632 - INFO - 16812 : multiprocessing -- info : dump
+2023-05-20 23:54:53,632 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62780) has connected
+2023-05-20 23:54:53,632 - INFO - 16812 : multiprocessing -- info : sent
+2023-05-20 23:54:53,632 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,633 - INFO - 16812 : multiprocessing -- info : close
+2023-05-20 23:54:53,633 - INFO - 16812 : multiprocessing -- info : created
+2023-05-20 23:54:53,633 - INFO - 16812 : multiprocessing -- info : connected
+2023-05-20 23:54:53,633 - INFO - 16812 : multiprocessing -- info : pack
+ with IP ('127.0.0.1', 62781) has connected
+2023-05-20 23:54:53,633 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,633 - INFO - 16812 : multiprocessing -- info : dump
+2023-05-20 23:54:53,634 - INFO - 16812 : multiprocessing -- info : sent
+2023-05-20 23:54:53,634 - INFO - 16812 : multiprocessing -- info : close
+2023-05-20 23:54:53,634 - INFO - 16812 : multiprocessing -- info : created
+2023-05-20 23:54:53,634 - INFO - 16812 : multiprocessing -- info : connected
+ IP ('127.0.0.1', 62782) has connected
+2023-05-20 23:54:53,635 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,635 - INFO - 16812 : multiprocessing -- info : pack
+2023-05-20 23:54:53,635 - INFO - 16812 : multiprocessing -- info : dump
+2023-05-20 23:54:53,635 - INFO - 16812 : multiprocessing -- info : sent
+2023-05-20 23:54:53,636 - INFO - 16812 : multiprocessing -- info : close
+2023-05-20 23:54:53,636 - INFO - 16812 : multiprocessing -- info : created
+2023-05-20 23:54:53,636 - INFO - 16812 : multiprocessing -- info : connected
+2023-05-20 23:54:53,636 - INFO - 16812 : multiprocessing -- info : pack
+2023-05-20 23:54:53,636 - INFO - 22448 : multiprocessing -- info : Client with IP ('127.0.0.1', 62783) has connected
+2023-05-20 23:54:53,636 - INFO - 16812 : multiprocessing -- info : dump
+2023-05-20 23:54:53,636 - INFO - 22448 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-20 23:54:53,637 - INFO - 16812 : multiprocessing -- info : sent
+2023-05-20 23:54:53,637 - INFO - 16812 : multiprocessing -- info : close
+2023-05-20 23:54:53,637 - INFO - 16812 : multiprocessing -- info : process shutting down
+2023-05-20 23:54:53,638 - INFO - 16812 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:00:26,459 - INFO - 11356 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:00:26,460 - INFO - 11356 : multiprocessing -- info : Server socket created
+2023-05-21 00:00:26,461 - INFO - 11356 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:00:26,461 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:26,472 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62849) has connected
+2023-05-21 00:00:26,474 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:26,474 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62850) has connected
+2023-05-21 00:00:26,475 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:26,475 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62851) has connected
+2023-05-21 00:00:26,476 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:26,478 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62852) has connected
+2023-05-21 00:00:26,478 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:26,479 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62853) has connected
+2023-05-21 00:00:26,479 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,271 - INFO - 14772 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:00:27,272 - INFO - 14772 : multiprocessing -- info : created
+2023-05-21 00:00:27,273 - INFO - 14772 : multiprocessing -- info : connected
+2023-05-21 00:00:27,273 - INFO - 14772 : multiprocessing -- info : pack
+2023-05-21 00:00:27,273 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62854) has connected
+2023-05-21 00:00:27,273 - INFO - 14772 : multiprocessing -- info : dump
+2023-05-21 00:00:27,273 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,273 - INFO - 14772 : multiprocessing -- info : sent
+2023-05-21 00:00:27,274 - INFO - 14772 : multiprocessing -- info : close
+2023-05-21 00:00:27,274 - INFO - 14772 : multiprocessing -- info : created
+2023-05-21 00:00:27,275 - INFO - 14772 : multiprocessing -- info : connected
+2023-05-21 00:00:27,275 - INFO - 14772 : multiprocessing -- info : pack
+ with IP ('127.0.0.1', 62855) has connected
+2023-05-21 00:00:27,275 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,276 - INFO - 14772 : multiprocessing -- info : dump
+2023-05-21 00:00:27,276 - INFO - 14772 : multiprocessing -- info : sent
+2023-05-21 00:00:27,276 - INFO - 14772 : multiprocessing -- info : close
+2023-05-21 00:00:27,277 - INFO - 14772 : multiprocessing -- info : created
+2023-05-21 00:00:27,277 - INFO - 14772 : multiprocessing -- info : connected
+2023-05-21 00:00:27,277 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62856) has connected
+2023-05-21 00:00:27,278 - INFO - 14772 : multiprocessing -- info : pack
+2023-05-21 00:00:27,278 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,278 - INFO - 14772 : multiprocessing -- info : dump
+2023-05-21 00:00:27,278 - INFO - 14772 : multiprocessing -- info : sent
+2023-05-21 00:00:27,279 - INFO - 14772 : multiprocessing -- info : close
+2023-05-21 00:00:27,279 - INFO - 14772 : multiprocessing -- info : created
+2023-05-21 00:00:27,279 - INFO - 14772 : multiprocessing -- info : connected
+2023-05-21 00:00:27,280 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62857) has connected
+2023-05-21 00:00:27,280 - INFO - 14772 : multiprocessing -- info : pack
+2023-05-21 00:00:27,280 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,280 - INFO - 14772 : multiprocessing -- info : dump
+2023-05-21 00:00:27,280 - INFO - 14772 : multiprocessing -- info : sent
+2023-05-21 00:00:27,281 - INFO - 14772 : multiprocessing -- info : close
+2023-05-21 00:00:27,281 - INFO - 14772 : multiprocessing -- info : created
+2023-05-21 00:00:27,282 - INFO - 14772 : multiprocessing -- info : connected
+2023-05-21 00:00:27,282 - INFO - 11356 : multiprocessing -- info : Client with IP ('127.0.0.1', 62858) has connected
+2023-05-21 00:00:27,282 - INFO - 14772 : multiprocessing -- info : pack
+2023-05-21 00:00:27,282 - INFO - 11356 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:00:27,282 - INFO - 14772 : multiprocessing -- info : dump
+2023-05-21 00:00:27,283 - INFO - 14772 : multiprocessing -- info : sent
+2023-05-21 00:00:27,283 - INFO - 14772 : multiprocessing -- info : close
+2023-05-21 00:00:27,283 - INFO - 14772 : multiprocessing -- info : process shutting down
+2023-05-21 00:00:27,284 - INFO - 14772 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:04:41,476 - INFO - 9388 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:04:41,477 - INFO - 9388 : multiprocessing -- info : Server socket created
+2023-05-21 00:04:41,478 - INFO - 9388 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:04:41,478 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:41,484 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62879) has connected
+2023-05-21 00:04:41,485 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:41,485 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62880) has connected
+2023-05-21 00:04:41,486 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:41,486 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62881) has connected
+2023-05-21 00:04:41,487 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:41,487 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62882) has connected
+2023-05-21 00:04:41,488 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:41,488 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62883) has connected
+2023-05-21 00:04:41,489 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,098 - INFO - 2976 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:04:42,099 - INFO - 2976 : multiprocessing -- info : created
+2023-05-21 00:04:42,100 - INFO - 2976 : multiprocessing -- info : connected
+2023-05-21 00:04:42,100 - INFO - 2976 : multiprocessing -- info : pack
+2023-05-21 00:04:42,100 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62884) has connected
+2023-05-21 00:04:42,101 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,101 - INFO - 2976 : multiprocessing -- info : sent
+2023-05-21 00:04:42,101 - INFO - 2976 : multiprocessing -- info : close
+2023-05-21 00:04:42,103 - INFO - 2976 : multiprocessing -- info : created
+2023-05-21 00:04:42,103 - INFO - 2976 : multiprocessing -- info : connected
+2023-05-21 00:04:42,104 - INFO - 2976 : multiprocessing -- info : pack
+2023-05-21 00:04:42,104 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62885) has connected
+2023-05-21 00:04:42,104 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,104 - INFO - 2976 : multiprocessing -- info : dump
+2023-05-21 00:04:42,105 - INFO - 2976 : multiprocessing -- info : sent
+2023-05-21 00:04:42,105 - INFO - 2976 : multiprocessing -- info : close
+2023-05-21 00:04:42,106 - INFO - 2976 : multiprocessing -- info : created
+2023-05-21 00:04:42,106 - INFO - 2976 : multiprocessing -- info : connected
+2023-05-21 00:04:42,107 - INFO - 2976 : multiprocessing -- info : pack
+2023-05-21 00:04:42,106 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62886) has connected
+2023-05-21 00:04:42,107 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,107 - INFO - 2976 : multiprocessing -- info : dump
+2023-05-21 00:04:42,107 - INFO - 2976 : multiprocessing -- info : sent
+2023-05-21 00:04:42,108 - INFO - 2976 : multiprocessing -- info : close
+2023-05-21 00:04:42,108 - INFO - 2976 : multiprocessing -- info : created
+2023-05-21 00:04:42,108 - INFO - 2976 : multiprocessing -- info : connected
+2023-05-21 00:04:42,108 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62887) has connected
+2023-05-21 00:04:42,109 - INFO - 2976 : multiprocessing -- info : pack
+2023-05-21 00:04:42,109 - INFO - 2976 : multiprocessing -- info : dump
+2023-05-21 00:04:42,109 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,109 - INFO - 2976 : multiprocessing -- info : sent
+2023-05-21 00:04:42,109 - INFO - 2976 : multiprocessing -- info : close
+2023-05-21 00:04:42,110 - INFO - 2976 : multiprocessing -- info : created
+2023-05-21 00:04:42,110 - INFO - 2976 : multiprocessing -- info : connected
+2023-05-21 00:04:42,111 - INFO - 2976 : multiprocessing -- info : pack
+2023-05-21 00:04:42,111 - INFO - 9388 : multiprocessing -- info : Client with IP ('127.0.0.1', 62888) has connected
+2023-05-21 00:04:42,111 - INFO - 2976 : multiprocessing -- info : dump
+2023-05-21 00:04:42,111 - INFO - 9388 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:04:42,111 - INFO - 2976 : multiprocessing -- info : sent
+2023-05-21 00:04:42,112 - INFO - 2976 : multiprocessing -- info : close
+2023-05-21 00:04:42,112 - INFO - 2976 : multiprocessing -- info : process shutting down
+2023-05-21 00:04:42,113 - INFO - 2976 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:05:40,850 - INFO - 6840 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:05:40,850 - INFO - 6840 : multiprocessing -- info : Server socket created
+2023-05-21 00:05:40,851 - INFO - 6840 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:05:40,851 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:40,857 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62904) has connected
+2023-05-21 00:05:40,858 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:40,859 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62905) has connected
+2023-05-21 00:05:40,859 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:40,860 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62906) has connected
+2023-05-21 00:05:40,860 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:40,861 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62907) has connected
+2023-05-21 00:05:40,861 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:40,862 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62908) has connected
+2023-05-21 00:05:40,863 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,508 - INFO - 3060 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:05:41,510 - INFO - 3060 : multiprocessing -- info : created
+2023-05-21 00:05:41,510 - INFO - 3060 : multiprocessing -- info : connected
+2023-05-21 00:05:41,511 - INFO - 3060 : multiprocessing -- info : pack
+2023-05-21 00:05:41,511 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62909) has connected
+2023-05-21 00:05:41,511 - INFO - 3060 : multiprocessing -- info : dump
+2023-05-21 00:05:41,511 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,513 - INFO - 3060 : multiprocessing -- info : sent
+2023-05-21 00:05:41,514 - INFO - 3060 : multiprocessing -- info : close
+2023-05-21 00:05:41,514 - INFO - 3060 : multiprocessing -- info : created
+2023-05-21 00:05:41,515 - INFO - 3060 : multiprocessing -- info : connected
+2023-05-21 00:05:41,515 - INFO - 3060 : multiprocessing -- info : pack
+2023-05-21 00:05:41,515 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62910) has connected
+2023-05-21 00:05:41,515 - INFO - 3060 : multiprocessing -- info : dump
+2023-05-21 00:05:41,515 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,516 - INFO - 3060 : multiprocessing -- info : sent
+2023-05-21 00:05:41,516 - INFO - 3060 : multiprocessing -- info : close
+2023-05-21 00:05:41,516 - INFO - 3060 : multiprocessing -- info : created
+2023-05-21 00:05:41,516 - INFO - 3060 : multiprocessing -- info : connected
+2023-05-21 00:05:41,517 - INFO - 3060 : multiprocessing -- info : pack
+ with IP ('127.0.0.1', 62911) has connected
+2023-05-21 00:05:41,517 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,517 - INFO - 3060 : multiprocessing -- info : dump
+2023-05-21 00:05:41,518 - INFO - 3060 : multiprocessing -- info : sent
+2023-05-21 00:05:41,518 - INFO - 3060 : multiprocessing -- info : close
+2023-05-21 00:05:41,518 - INFO - 3060 : multiprocessing -- info : created
+2023-05-21 00:05:41,519 - INFO - 3060 : multiprocessing -- info : connected
+2023-05-21 00:05:41,519 - INFO - 3060 : multiprocessing -- info : pack
+2023-05-21 00:05:41,519 - INFO - 3060 : multiprocessing -- info : dump
+2023-05-21 00:05:41,519 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62912) has connected
+2023-05-21 00:05:41,519 - INFO - 3060 : multiprocessing -- info : sent
+2023-05-21 00:05:41,519 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,519 - INFO - 3060 : multiprocessing -- info : close
+2023-05-21 00:05:41,520 - INFO - 3060 : multiprocessing -- info : created
+2023-05-21 00:05:41,520 - INFO - 3060 : multiprocessing -- info : connected
+2023-05-21 00:05:41,520 - INFO - 3060 : multiprocessing -- info : pack
+2023-05-21 00:05:41,520 - INFO - 6840 : multiprocessing -- info : Client with IP ('127.0.0.1', 62913) has connected
+2023-05-21 00:05:41,520 - INFO - 3060 : multiprocessing -- info : dump
+2023-05-21 00:05:41,520 - INFO - 6840 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:05:41,521 - INFO - 3060 : multiprocessing -- info : sent
+2023-05-21 00:05:41,521 - INFO - 3060 : multiprocessing -- info : close
+2023-05-21 00:05:41,521 - INFO - 3060 : multiprocessing -- info : process shutting down
+2023-05-21 00:05:41,522 - INFO - 3060 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:06:12,964 - INFO - 22176 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:06:12,965 - INFO - 22176 : multiprocessing -- info : Server socket created
+2023-05-21 00:06:12,966 - INFO - 22176 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:06:12,966 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:12,972 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62915) has connected
+2023-05-21 00:06:12,973 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:12,974 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62916) has connected
+2023-05-21 00:06:12,974 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:12,975 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62917) has connected
+2023-05-21 00:06:12,975 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:12,976 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62918) has connected
+2023-05-21 00:06:12,976 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:12,977 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62919) has connected
+2023-05-21 00:06:12,977 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:13,768 - INFO - 5616 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:06:13,769 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62920) has connected
+2023-05-21 00:06:13,769 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:13,770 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62921) has connected
+2023-05-21 00:06:13,770 - INFO - 5616 : multiprocessing -- info : process shutting down
+2023-05-21 00:06:13,770 - INFO - 5616 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:06:13,771 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:13,771 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62922) has connected
+2023-05-21 00:06:13,771 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:13,772 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62923) has connected
+2023-05-21 00:06:13,772 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:06:13,773 - INFO - 22176 : multiprocessing -- info : Client with IP ('127.0.0.1', 62924) has connected
+2023-05-21 00:06:13,773 - INFO - 22176 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,423 - INFO - 16076 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:11:19,424 - INFO - 16076 : multiprocessing -- info : Server socket created
+2023-05-21 00:11:19,425 - INFO - 16076 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:11:19,426 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,431 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62959) has connected
+2023-05-21 00:11:19,432 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:19,432 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,433 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62960) has connected
+2023-05-21 00:11:19,433 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,434 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:19,434 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62961) has connected
+2023-05-21 00:11:19,435 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:19,435 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,436 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62962) has connected
+2023-05-21 00:11:19,436 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,436 - INFO - 17624 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:19,437 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62963) has connected
+2023-05-21 00:11:19,437 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:19,437 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:20,119 - INFO - 11448 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:11:20,121 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62964) has connected
+2023-05-21 00:11:20,122 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:20,122 - INFO - 17624 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:20,122 - INFO - 11448 : multiprocessing -- info : process shutting down
+2023-05-21 00:11:20,123 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62965) has connected
+2023-05-21 00:11:20,123 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:20,123 - INFO - 11448 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:11:20,123 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:20,124 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62966) has connected
+2023-05-21 00:11:20,124 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:20,125 - INFO - 17624 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:20,125 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62967) has connected
+2023-05-21 00:11:20,126 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:20,127 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:20,127 - INFO - 16076 : multiprocessing -- info : Client with IP ('127.0.0.1', 62968) has connected
+2023-05-21 00:11:20,128 - INFO - 16076 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:20,128 - INFO - 12896 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,123 - INFO - 16852 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:11:41,124 - INFO - 16852 : multiprocessing -- info : Server socket created
+2023-05-21 00:11:41,124 - INFO - 16852 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:11:41,125 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,130 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62971) has connected
+2023-05-21 00:11:41,131 - INFO - 5092 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,132 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,132 - ERROR - 5092 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,133 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62972) has connected
+2023-05-21 00:11:41,134 - INFO - 18728 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,135 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,135 - ERROR - 18728 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,136 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62973) has connected
+2023-05-21 00:11:41,136 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,136 - INFO - 5092 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,137 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62974) has connected
+2023-05-21 00:11:41,137 - ERROR - 5092 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,137 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,138 - INFO - 18728 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,138 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62975) has connected
+2023-05-21 00:11:41,138 - ERROR - 18728 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,138 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,139 - INFO - 5092 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,139 - ERROR - 5092 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,764 - INFO - 23524 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:11:41,766 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62976) has connected
+2023-05-21 00:11:41,766 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,766 - INFO - 18728 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,767 - ERROR - 18728 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,767 - INFO - 23524 : multiprocessing -- info : process shutting down
+2023-05-21 00:11:41,767 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62977) has connected
+2023-05-21 00:11:41,767 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,768 - INFO - 23524 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:11:41,768 - INFO - 5092 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,768 - ERROR - 5092 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,768 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62978) has connected
+2023-05-21 00:11:41,769 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,769 - INFO - 18728 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,770 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62979) has connected
+2023-05-21 00:11:41,770 - ERROR - 18728 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,770 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,771 - INFO - 5092 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,771 - INFO - 16852 : multiprocessing -- info : Client with IP ('127.0.0.1', 62980) has connected
+2023-05-21 00:11:41,772 - ERROR - 5092 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:11:41,772 - INFO - 16852 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:11:41,773 - INFO - 18728 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:11:41,773 - ERROR - 18728 : multiprocessing -- error : name 'SessionMaker' is not defined
+2023-05-21 00:12:11,256 - INFO - 6564 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:12:11,257 - INFO - 6564 : multiprocessing -- info : Server socket created
+2023-05-21 00:12:11,258 - INFO - 6564 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:12:11,258 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,264 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62983) has connected
+2023-05-21 00:12:11,265 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:11,265 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,266 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:11,267 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62984) has connected
+2023-05-21 00:12:11,267 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:11,268 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:11,268 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,269 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62985) has connected
+2023-05-21 00:12:11,269 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,269 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:11,269 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:11,270 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62986) has connected
+2023-05-21 00:12:11,270 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,270 - INFO - 23304 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:11,271 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62987) has connected
+2023-05-21 00:12:11,271 - ERROR - 23304 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:11,271 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:11,272 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:11,272 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:12,006 - INFO - 4860 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:12:12,008 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62988) has connected
+2023-05-21 00:12:12,008 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:12,008 - INFO - 23304 : multiprocessing -- info : __add_task_executor
+
+2023-05-21 00:12:12,009 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62989) has connected
+2023-05-21 00:12:12,010 - INFO - 4860 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:12:12,010 - ERROR - 23304 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:12,010 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:12,010 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:12,012 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62990) has connected
+2023-05-21 00:12:12,012 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:12,013 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:12,013 - INFO - 23304 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:12,014 - ERROR - 23304 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:12,015 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62991) has connected
+2023-05-21 00:12:12,016 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:12,016 - INFO - 21540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:12,016 - INFO - 6564 : multiprocessing -- info : Client with IP ('127.0.0.1', 62992) has connected
+2023-05-21 00:12:12,017 - ERROR - 21540 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:12,017 - INFO - 6564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:12,017 - INFO - 23304 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:12,018 - ERROR - 23304 : multiprocessing -- error : name 'scoped_session' is not defined
+2023-05-21 00:12:29,312 - INFO - 18492 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:12:29,313 - INFO - 18492 : multiprocessing -- info : Server socket created
+2023-05-21 00:12:29,314 - INFO - 18492 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:12:29,314 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,320 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 62995) has connected
+2023-05-21 00:12:29,321 - INFO - 19352 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:29,321 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,322 - INFO - 19352 : multiprocessing -- info : Session created
+2023-05-21 00:12:29,323 - INFO - 19352 : multiprocessing -- info : manager created
+2023-05-21 00:12:29,323 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 62996) has connected
+2023-05-21 00:12:29,324 - ERROR - 19352 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:29,332 - INFO - 3812 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:29,332 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,333 - INFO - 3812 : multiprocessing -- info : Session created
+2023-05-21 00:12:29,334 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 62997) has connected
+2023-05-21 00:12:29,334 - INFO - 3812 : multiprocessing -- info : manager created
+2023-05-21 00:12:29,334 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,335 - INFO - 19352 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:29,335 - ERROR - 3812 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:29,335 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 62998) has connected
+2023-05-21 00:12:29,336 - INFO - 19352 : multiprocessing -- info : Session created
+2023-05-21 00:12:29,336 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,336 - INFO - 3812 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:29,337 - INFO - 19352 : multiprocessing -- info : manager created
+2023-05-21 00:12:29,337 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 62999) has connected
+2023-05-21 00:12:29,337 - INFO - 3812 : multiprocessing -- info : Session created
+2023-05-21 00:12:29,338 - ERROR - 19352 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:29,339 - INFO - 3812 : multiprocessing -- info : manager created
+2023-05-21 00:12:29,339 - INFO - 23276 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:29,339 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:29,340 - ERROR - 3812 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:29,340 - INFO - 23276 : multiprocessing -- info : Session created
+2023-05-21 00:12:29,340 - INFO - 23276 : multiprocessing -- info : manager created
+2023-05-21 00:12:29,341 - ERROR - 23276 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:30,142 - INFO - 21896 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:12:30,145 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 63000) has connected
+2023-05-21 00:12:30,145 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:30,146 - INFO - 21896 : multiprocessing -- info : process shutting down
+2023-05-21 00:12:30,145 - INFO - 19352 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:30,146 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 63001) has connected
+2023-05-21 00:12:30,147 - INFO - 21896 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:12:30,147 - INFO - 19352 : multiprocessing -- info : Session created
+2023-05-21 00:12:30,147 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:30,147 - INFO - 23276 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:30,148 - INFO - 19352 : multiprocessing -- info : manager created
+2023-05-21 00:12:30,149 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 63002) has connected
+2023-05-21 00:12:30,150 - INFO - 23276 : multiprocessing -- info : Session created
+2023-05-21 00:12:30,151 - ERROR - 19352 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:30,151 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:30,151 - INFO - 23276 : multiprocessing -- info : manager created
+2023-05-21 00:12:30,152 - INFO - 3812 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:30,153 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 63003) has connected
+2023-05-21 00:12:30,154 - ERROR - 23276 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:30,155 - INFO - 3812 : multiprocessing -- info : Session created
+2023-05-21 00:12:30,156 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:30,156 - INFO - 19352 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:30,157 - INFO - 3812 : multiprocessing -- info : manager created
+2023-05-21 00:12:30,158 - INFO - 18492 : multiprocessing -- info : Client with IP ('127.0.0.1', 63004) has connected
+2023-05-21 00:12:30,159 - INFO - 19352 : multiprocessing -- info : Session created
+2023-05-21 00:12:30,160 - ERROR - 3812 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:30,161 - INFO - 18492 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:12:30,162 - INFO - 23276 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:12:30,162 - INFO - 19352 : multiprocessing -- info : manager created
+2023-05-21 00:12:30,164 - INFO - 23276 : multiprocessing -- info : Session created
+2023-05-21 00:12:30,164 - ERROR - 19352 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:12:30,165 - INFO - 23276 : multiprocessing -- info : manager created
+2023-05-21 00:12:30,166 - ERROR - 23276 : multiprocessing -- error : Logger.info() takes 2 positional arguments but 3 were given
+2023-05-21 00:13:10,126 - INFO - 7544 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:13:10,127 - INFO - 7544 : multiprocessing -- info : Server socket created
+2023-05-21 00:13:10,128 - INFO - 7544 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:13:10,128 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,135 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63007) has connected
+2023-05-21 00:13:10,136 - INFO - 456 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,136 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,137 - INFO - 456 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,138 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63008) has connected
+2023-05-21 00:13:10,138 - INFO - 456 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,139 - INFO - 13944 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,139 - INFO - 13944 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,139 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,140 - INFO - 456 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:13:10,140 - INFO - 13944 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,140 - INFO - 456 : multiprocessing -- info : remove client
+2023-05-21 00:13:10,141 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63009) has connected
+2023-05-21 00:13:10,141 - ERROR - 456 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,141 - INFO - 13944 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:13:10,142 - INFO - 18348 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,142 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,142 - INFO - 13944 : multiprocessing -- info : remove client
+2023-05-21 00:13:10,143 - INFO - 18348 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,143 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63010) has connected
+2023-05-21 00:13:10,143 - ERROR - 13944 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,143 - INFO - 18348 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,144 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,144 - INFO - 456 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,144 - INFO - 18348 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:13:10,144 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63011) has connected
+2023-05-21 00:13:10,145 - INFO - 456 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,145 - INFO - 18348 : multiprocessing -- info : remove client
+2023-05-21 00:13:10,145 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,145 - INFO - 13944 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,145 - INFO - 456 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,146 - ERROR - 18348 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,146 - INFO - 13944 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,147 - INFO - 456 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:13:10,147 - INFO - 13944 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,147 - INFO - 456 : multiprocessing -- info : remove client
+2023-05-21 00:13:10,147 - INFO - 13944 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:13:10,148 - ERROR - 456 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,148 - INFO - 13944 : multiprocessing -- info : remove client
+2023-05-21 00:13:10,148 - ERROR - 13944 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,932 - INFO - 23308 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:13:10,934 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63012) has connected
+2023-05-21 00:13:10,934 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,934 - INFO - 18348 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,935 - INFO - 23308 : multiprocessing -- info : process shutting down
+2023-05-21 00:13:10,935 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63013) has connected
+2023-05-21 00:13:10,936 - INFO - 23308 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:13:10,935 - INFO - 18348 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,936 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,936 - INFO - 13944 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,936 - INFO - 18348 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,937 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63014) has connected
+2023-05-21 00:13:10,937 - INFO - 13944 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,938 - INFO - 18348 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:13:10,938 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,939 - INFO - 456 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,940 - INFO - 13944 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,940 - INFO - 18348 : multiprocessing -- info : add client
+2023-05-21 00:13:10,940 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63015) has connected
+2023-05-21 00:13:10,941 - INFO - 456 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,941 - INFO - 13944 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:13:10,942 - ERROR - 18348 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,943 - INFO - 456 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,943 - INFO - 20876 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,943 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,944 - INFO - 13944 : multiprocessing -- info : add client
+2023-05-21 00:13:10,945 - INFO - 456 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:13:10,946 - INFO - 20876 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,947 - INFO - 7544 : multiprocessing -- info : Client with IP ('127.0.0.1', 63016) has connected
+2023-05-21 00:13:10,947 - ERROR - 13944 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,948 - INFO - 456 : multiprocessing -- info : add client
+2023-05-21 00:13:10,948 - INFO - 20876 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,949 - INFO - 7544 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:13:10,949 - INFO - 18348 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:13:10,950 - ERROR - 456 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,951 - INFO - 18348 : multiprocessing -- info : Session created
+2023-05-21 00:13:10,951 - INFO - 20876 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:13:10,951 - INFO - 18348 : multiprocessing -- info : manager created
+2023-05-21 00:13:10,952 - INFO - 20876 : multiprocessing -- info : add client
+2023-05-21 00:13:10,953 - ERROR - 20876 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:13:10,953 - INFO - 18348 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:13:10,954 - INFO - 18348 : multiprocessing -- info : add client
+2023-05-21 00:13:10,955 - ERROR - 18348 : multiprocessing -- error : 'InfectivityManager' object has no attribute '_InfectivityManager__client_manager'
+2023-05-21 00:14:16,954 - INFO - 16664 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:14:16,955 - INFO - 16664 : multiprocessing -- info : Server socket created
+2023-05-21 00:14:16,955 - INFO - 16664 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:14:16,955 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,961 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63023) has connected
+2023-05-21 00:14:16,962 - INFO - 3556 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:16,962 - INFO - 3556 : multiprocessing -- info : Session created
+2023-05-21 00:14:16,962 - ERROR - 3556 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:16,963 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,964 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63024) has connected
+2023-05-21 00:14:16,964 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,964 - INFO - 3556 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:16,965 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63025) has connected
+2023-05-21 00:14:16,965 - INFO - 3556 : multiprocessing -- info : Session created
+2023-05-21 00:14:16,966 - ERROR - 3556 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:16,966 - INFO - 18924 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:16,966 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,966 - INFO - 18924 : multiprocessing -- info : Session created
+2023-05-21 00:14:16,967 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63026) has connected
+2023-05-21 00:14:16,967 - ERROR - 18924 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:16,967 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,968 - INFO - 3556 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:16,968 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63027) has connected
+2023-05-21 00:14:16,968 - INFO - 3556 : multiprocessing -- info : Session created
+2023-05-21 00:14:16,969 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:16,969 - INFO - 18924 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:16,969 - ERROR - 3556 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:16,969 - INFO - 18924 : multiprocessing -- info : Session created
+2023-05-21 00:14:16,970 - ERROR - 18924 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:17,583 - INFO - 7896 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:14:17,584 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63028) has connected
+2023-05-21 00:14:17,584 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:17,585 - INFO - 7896 : multiprocessing -- info : process shutting down
+2023-05-21 00:14:17,585 - INFO - 3556 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:17,585 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63029) has connected
+2023-05-21 00:14:17,585 - INFO - 7896 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:14:17,585 - INFO - 3556 : multiprocessing -- info : Session created
+2023-05-21 00:14:17,586 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:17,586 - INFO - 18924 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:17,586 - ERROR - 3556 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:17,587 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63030) has connected
+2023-05-21 00:14:17,587 - INFO - 18924 : multiprocessing -- info : Session created
+2023-05-21 00:14:17,588 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:17,588 - INFO - 3556 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:17,588 - ERROR - 18924 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:17,589 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63031) has connected
+2023-05-21 00:14:17,589 - INFO - 3556 : multiprocessing -- info : Session created
+2023-05-21 00:14:17,590 - INFO - 18924 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:17,590 - ERROR - 3556 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:17,590 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:17,591 - INFO - 18924 : multiprocessing -- info : Session created
+2023-05-21 00:14:17,591 - ERROR - 18924 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:14:17,591 - INFO - 16664 : multiprocessing -- info : Client with IP ('127.0.0.1', 63032) has connected
+2023-05-21 00:14:17,592 - INFO - 16664 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:14:17,592 - INFO - 10064 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:14:17,593 - INFO - 10064 : multiprocessing -- info : Session created
+2023-05-21 00:14:17,593 - ERROR - 10064 : multiprocessing -- error : name '_InfectivityManager__session' is not defined
+2023-05-21 00:15:36,081 - INFO - 19712 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:15:36,082 - INFO - 19712 : multiprocessing -- info : Server socket created
+2023-05-21 00:15:36,083 - INFO - 19712 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:15:36,083 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,088 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63044) has connected
+2023-05-21 00:15:36,089 - INFO - 18512 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,089 - INFO - 18512 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,090 - INFO - 18512 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,090 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,091 - INFO - 18512 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:15:36,091 - INFO - 18512 : multiprocessing -- info : remove client
+2023-05-21 00:15:36,108 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63045) has connected
+2023-05-21 00:15:36,109 - INFO - 12592 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,109 - INFO - 12592 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,109 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,110 - INFO - 12592 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,110 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63046) has connected
+2023-05-21 00:15:36,111 - INFO - 12592 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:15:36,111 - INFO - 17540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,111 - INFO - 12592 : multiprocessing -- info : remove client
+2023-05-21 00:15:36,112 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,112 - INFO - 17540 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,113 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63048) has connected
+2023-05-21 00:15:36,114 - INFO - 17540 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,114 - INFO - 10640 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,114 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,115 - INFO - 17540 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:15:36,115 - INFO - 10640 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,116 - INFO - 17540 : multiprocessing -- info : remove client
+2023-05-21 00:15:36,116 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63049) has connected
+2023-05-21 00:15:36,116 - INFO - 10640 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,118 - INFO - 22452 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,118 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,118 - INFO - 10640 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:15:36,118 - INFO - 22452 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,119 - INFO - 10640 : multiprocessing -- info : remove client
+2023-05-21 00:15:36,119 - INFO - 22452 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,121 - INFO - 22452 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:15:36,121 - INFO - 22452 : multiprocessing -- info : remove client
+2023-05-21 00:15:36,145 - ERROR - 17540 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:15:36,146 - ERROR - 22452 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:15:36,147 - ERROR - 18512 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:15:36,147 - ERROR - 10640 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:15:36,147 - ERROR - 12592 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:15:36,917 - INFO - 11116 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:15:36,918 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63054) has connected
+2023-05-21 00:15:36,919 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,919 - INFO - 11116 : multiprocessing -- info : process shutting down
+2023-05-21 00:15:36,919 - INFO - 17540 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,919 - INFO - 11116 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:15:36,919 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63055) has connected
+2023-05-21 00:15:36,919 - INFO - 17540 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,920 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,920 - INFO - 18512 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,920 - INFO - 17540 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,921 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63056) has connected
+2023-05-21 00:15:36,921 - INFO - 18512 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,922 - INFO - 17540 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:15:36,922 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,922 - INFO - 12592 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,922 - INFO - 18512 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,922 - INFO - 17540 : multiprocessing -- info : add client
+2023-05-21 00:15:36,923 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63057) has connected
+2023-05-21 00:15:36,923 - INFO - 12592 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,923 - INFO - 18512 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:15:36,925 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,925 - INFO - 10640 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,925 - INFO - 12592 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,929 - INFO - 18512 : multiprocessing -- info : add client
+2023-05-21 00:15:36,929 - INFO - 10640 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,930 - INFO - 19712 : multiprocessing -- info : Client with IP ('127.0.0.1', 63058) has connected
+2023-05-21 00:15:36,930 - INFO - 12592 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:15:36,931 - INFO - 10640 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,932 - INFO - 19712 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:15:36,932 - INFO - 22452 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:15:36,932 - INFO - 12592 : multiprocessing -- info : add client
+2023-05-21 00:15:36,932 - INFO - 10640 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:15:36,933 - INFO - 22452 : multiprocessing -- info : Session created
+2023-05-21 00:15:36,934 - INFO - 10640 : multiprocessing -- info : add client
+2023-05-21 00:15:36,934 - INFO - 22452 : multiprocessing -- info : manager created
+2023-05-21 00:15:36,936 - INFO - 22452 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:15:36,936 - INFO - 22452 : multiprocessing -- info : add client
+2023-05-21 00:18:12,882 - INFO - 15564 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:18:12,883 - INFO - 15564 : multiprocessing -- info : Server socket created
+2023-05-21 00:18:12,884 - INFO - 15564 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:18:12,885 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,890 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63072) has connected
+2023-05-21 00:18:12,891 - INFO - 18072 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:12,891 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,892 - INFO - 18072 : multiprocessing -- info : Session created
+2023-05-21 00:18:12,892 - INFO - 18072 : multiprocessing -- info : manager created
+2023-05-21 00:18:12,893 - INFO - 18072 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:18:12,893 - INFO - 18072 : multiprocessing -- info : remove client
+2023-05-21 00:18:12,901 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63073) has connected
+2023-05-21 00:18:12,902 - INFO - 22852 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:12,902 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,902 - INFO - 22852 : multiprocessing -- info : Session created
+2023-05-21 00:18:12,903 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63074) has connected
+2023-05-21 00:18:12,904 - INFO - 22852 : multiprocessing -- info : manager created
+2023-05-21 00:18:12,905 - INFO - 17708 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:12,905 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,905 - INFO - 22852 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:18:12,906 - INFO - 17708 : multiprocessing -- info : Session created
+2023-05-21 00:18:12,910 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63075) has connected
+2023-05-21 00:18:12,910 - INFO - 22852 : multiprocessing -- info : remove client
+2023-05-21 00:18:12,910 - ERROR - 18072 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:18:12,911 - INFO - 17708 : multiprocessing -- info : manager created
+2023-05-21 00:18:12,911 - INFO - 19348 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:12,912 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,914 - INFO - 17708 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:18:12,914 - ERROR - 22852 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:18:12,914 - INFO - 19348 : multiprocessing -- info : Session created
+2023-05-21 00:18:12,915 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63077) has connected
+2023-05-21 00:18:12,915 - INFO - 17708 : multiprocessing -- info : remove client
+2023-05-21 00:18:12,915 - INFO - 19348 : multiprocessing -- info : manager created
+2023-05-21 00:18:12,916 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:12,916 - INFO - 18072 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:12,917 - INFO - 19348 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:18:12,918 - INFO - 18072 : multiprocessing -- info : Session created
+2023-05-21 00:18:12,918 - INFO - 19348 : multiprocessing -- info : remove client
+2023-05-21 00:18:12,919 - ERROR - 17708 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:18:12,919 - INFO - 18072 : multiprocessing -- info : manager created
+2023-05-21 00:18:12,920 - INFO - 18072 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:18:12,921 - INFO - 18072 : multiprocessing -- info : remove client
+2023-05-21 00:18:12,923 - ERROR - 19348 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:18:12,923 - ERROR - 18072 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:18:13,506 - INFO - 22168 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:18:13,507 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63082) has connected
+2023-05-21 00:18:13,508 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:13,508 - INFO - 22852 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:13,508 - INFO - 22168 : multiprocessing -- info : process shutting down
+2023-05-21 00:18:13,508 - INFO - 22852 : multiprocessing -- info : Session created
+2023-05-21 00:18:13,508 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63083) has connected
+2023-05-21 00:18:13,509 - INFO - 22168 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:18:13,509 - INFO - 22852 : multiprocessing -- info : manager created
+2023-05-21 00:18:13,509 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:13,509 - INFO - 19348 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:13,510 - INFO - 22852 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:18:13,510 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63084) has connected
+2023-05-21 00:18:13,510 - INFO - 19348 : multiprocessing -- info : Session created
+2023-05-21 00:18:13,510 - INFO - 22852 : multiprocessing -- info : add client
+2023-05-21 00:18:13,511 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:13,511 - INFO - 17708 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:13,511 - INFO - 19348 : multiprocessing -- info : manager created
+2023-05-21 00:18:13,513 - INFO - 17708 : multiprocessing -- info : Session created
+2023-05-21 00:18:13,513 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63085) has connected
+2023-05-21 00:18:13,514 - INFO - 19348 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:18:13,515 - INFO - 17708 : multiprocessing -- info : manager created
+2023-05-21 00:18:13,515 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:13,516 - INFO - 18072 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:13,516 - INFO - 19348 : multiprocessing -- info : add client
+2023-05-21 00:18:13,518 - INFO - 17708 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:18:13,520 - INFO - 15564 : multiprocessing -- info : Client with IP ('127.0.0.1', 63086) has connected
+2023-05-21 00:18:13,521 - INFO - 18072 : multiprocessing -- info : Session created
+2023-05-21 00:18:13,522 - INFO - 17708 : multiprocessing -- info : add client
+2023-05-21 00:18:13,523 - INFO - 3144 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:18:13,524 - INFO - 18072 : multiprocessing -- info : manager created
+2023-05-21 00:18:13,524 - INFO - 15564 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:18:13,526 - INFO - 3144 : multiprocessing -- info : Session created
+2023-05-21 00:18:13,526 - INFO - 18072 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:18:13,527 - INFO - 3144 : multiprocessing -- info : manager created
+2023-05-21 00:18:13,527 - INFO - 18072 : multiprocessing -- info : add client
+2023-05-21 00:18:13,529 - INFO - 3144 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:18:13,530 - INFO - 3144 : multiprocessing -- info : add client
+2023-05-21 00:19:03,159 - INFO - 22084 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:19:03,161 - INFO - 22084 : multiprocessing -- info : Server socket created
+2023-05-21 00:19:03,161 - INFO - 22084 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:19:03,162 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,168 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63093) has connected
+2023-05-21 00:19:03,169 - INFO - 12868 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,169 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,170 - INFO - 12868 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000017407384AD0>
+2023-05-21 00:19:03,171 - INFO - 12868 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,171 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63094) has connected
+2023-05-21 00:19:03,172 - INFO - 12868 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:19:03,172 - INFO - 16048 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,173 - INFO - 12868 : multiprocessing -- info : remove client
+2023-05-21 00:19:03,173 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,173 - INFO - 16048 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000017407385390>
+2023-05-21 00:19:03,183 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63095) has connected
+2023-05-21 00:19:03,184 - INFO - 16048 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,184 - INFO - 12932 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,185 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,185 - INFO - 16048 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:19:03,186 - INFO - 12932 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000017407398B90>
+2023-05-21 00:19:03,187 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63096) has connected
+2023-05-21 00:19:03,187 - INFO - 16048 : multiprocessing -- info : remove client
+2023-05-21 00:19:03,188 - INFO - 12932 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,193 - INFO - 4980 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,194 - ERROR - 12868 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:19:03,194 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,195 - INFO - 12932 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:19:03,195 - INFO - 4980 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073AF610>
+2023-05-21 00:19:03,196 - ERROR - 16048 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:19:03,197 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63098) has connected
+2023-05-21 00:19:03,197 - INFO - 12932 : multiprocessing -- info : remove client
+2023-05-21 00:19:03,197 - INFO - 4980 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,198 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,198 - INFO - 12868 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,199 - INFO - 4980 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:19:03,200 - INFO - 12868 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000017407384690>
+2023-05-21 00:19:03,200 - INFO - 4980 : multiprocessing -- info : remove client
+2023-05-21 00:19:03,201 - INFO - 12868 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,202 - ERROR - 12932 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:19:03,202 - INFO - 12868 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:19:03,203 - INFO - 12868 : multiprocessing -- info : remove client
+2023-05-21 00:19:03,204 - ERROR - 4980 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:19:03,206 - ERROR - 12868 : multiprocessing -- error : There is not such user with ip 192.168.0.1 and mac aa:bb:cc:dd:ee:ff
+2023-05-21 00:19:03,865 - INFO - 18200 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:19:03,866 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63103) has connected
+2023-05-21 00:19:03,867 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,867 - INFO - 16048 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,867 - INFO - 18200 : multiprocessing -- info : process shutting down
+2023-05-21 00:19:03,867 - INFO - 16048 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073BAD50>
+2023-05-21 00:19:03,867 - INFO - 16048 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,867 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63104) has connected
+2023-05-21 00:19:03,868 - INFO - 18200 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:19:03,868 - INFO - 16048 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:19:03,868 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,868 - INFO - 4980 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,869 - INFO - 16048 : multiprocessing -- info : add client
+2023-05-21 00:19:03,869 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63105) has connected
+2023-05-21 00:19:03,869 - INFO - 4980 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073BB810>
+2023-05-21 00:19:03,871 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,871 - INFO - 12932 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,876 - INFO - 4980 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,877 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63106) has connected
+2023-05-21 00:19:03,878 - INFO - 12932 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073B8C50>
+2023-05-21 00:19:03,878 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,879 - INFO - 12932 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,879 - INFO - 12868 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,879 - INFO - 4980 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:19:03,879 - INFO - 22084 : multiprocessing -- info : Client with IP ('127.0.0.1', 63107) has connected
+2023-05-21 00:19:03,880 - INFO - 12868 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073CF850>
+2023-05-21 00:19:03,880 - INFO - 12932 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:19:03,881 - INFO - 4980 : multiprocessing -- info : add client
+2023-05-21 00:19:03,881 - INFO - 22084 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:19:03,881 - INFO - 16048 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:19:03,881 - INFO - 12868 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,882 - INFO - 12932 : multiprocessing -- info : add client
+2023-05-21 00:19:03,883 - INFO - 16048 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x00000174073CF190>
+2023-05-21 00:19:03,884 - INFO - 12868 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:19:03,886 - INFO - 16048 : multiprocessing -- info : manager created
+2023-05-21 00:19:03,887 - INFO - 12868 : multiprocessing -- info : add client
+2023-05-21 00:19:03,888 - INFO - 16048 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:19:03,889 - INFO - 16048 : multiprocessing -- info : add client
+2023-05-21 00:20:41,264 - INFO - 14984 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:20:41,265 - INFO - 14984 : multiprocessing -- info : Server socket created
+2023-05-21 00:20:41,266 - INFO - 14984 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:20:41,266 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,272 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63122) has connected
+2023-05-21 00:20:41,273 - INFO - 21184 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,273 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,273 - INFO - 21184 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE2340490>
+2023-05-21 00:20:41,274 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63123) has connected
+2023-05-21 00:20:41,274 - INFO - 21184 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,275 - INFO - 1528 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,275 - INFO - 1528 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE2340FD0>
+2023-05-21 00:20:41,276 - INFO - 21184 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:20:41,276 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,276 - INFO - 1528 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,276 - INFO - 21184 : multiprocessing -- info : remove client
+2023-05-21 00:20:41,277 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63124) has connected
+2023-05-21 00:20:41,277 - INFO - 1528 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:20:41,286 - INFO - 1528 : multiprocessing -- info : remove client
+2023-05-21 00:20:41,287 - INFO - 17800 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,287 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,288 - INFO - 17800 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE2340210>
+2023-05-21 00:20:41,290 - INFO - 17800 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,290 - INFO - 17800 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:20:41,290 - INFO - 17800 : multiprocessing -- info : remove client
+2023-05-21 00:20:41,291 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63125) has connected
+2023-05-21 00:20:41,292 - INFO - 22236 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,293 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,293 - INFO - 22236 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE2357E50>
+2023-05-21 00:20:41,299 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63127) has connected
+2023-05-21 00:20:41,300 - INFO - 22236 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,304 - INFO - 14592 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,305 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,306 - INFO - 14592 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE237DB10>
+2023-05-21 00:20:41,306 - INFO - 22236 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:20:41,307 - INFO - 14592 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,308 - INFO - 22236 : multiprocessing -- info : remove client
+2023-05-21 00:20:41,308 - INFO - 14592 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:20:41,310 - INFO - 14592 : multiprocessing -- info : remove client
+2023-05-21 00:20:41,910 - INFO - 22004 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:20:41,912 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63130) has connected
+2023-05-21 00:20:41,913 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,913 - INFO - 1528 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,913 - INFO - 22004 : multiprocessing -- info : process shutting down
+2023-05-21 00:20:41,913 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63131) has connected
+2023-05-21 00:20:41,914 - INFO - 22004 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:20:41,913 - INFO - 1528 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE237E610>
+2023-05-21 00:20:41,914 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,914 - INFO - 17800 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,915 - INFO - 1528 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,916 - INFO - 17800 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE237F710>
+2023-05-21 00:20:41,916 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63132) has connected
+2023-05-21 00:20:41,918 - INFO - 17800 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,918 - INFO - 1528 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:20:41,919 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,919 - INFO - 14592 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,920 - INFO - 17800 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:20:41,920 - INFO - 1528 : multiprocessing -- info : add client
+2023-05-21 00:20:41,921 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63133) has connected
+2023-05-21 00:20:41,921 - INFO - 14592 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE2355DD0>
+2023-05-21 00:20:41,921 - INFO - 17800 : multiprocessing -- info : add client
+2023-05-21 00:20:41,925 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,925 - INFO - 14592 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,928 - INFO - 22236 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,928 - INFO - 14984 : multiprocessing -- info : Client with IP ('127.0.0.1', 63134) has connected
+2023-05-21 00:20:41,930 - INFO - 14592 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:20:41,930 - INFO - 22236 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE238BFD0>
+2023-05-21 00:20:41,930 - INFO - 14984 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:20:41,930 - INFO - 21184 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:20:41,931 - INFO - 14592 : multiprocessing -- info : add client
+2023-05-21 00:20:41,931 - INFO - 22236 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,932 - INFO - 21184 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000025BE238B710>
+2023-05-21 00:20:41,933 - INFO - 22236 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:20:41,933 - INFO - 21184 : multiprocessing -- info : manager created
+2023-05-21 00:20:41,934 - INFO - 22236 : multiprocessing -- info : add client
+2023-05-21 00:20:41,934 - INFO - 21184 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:20:41,936 - INFO - 21184 : multiprocessing -- info : add client
+2023-05-21 00:21:52,689 - INFO - 17568 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:21:52,690 - INFO - 17568 : multiprocessing -- info : Server socket created
+2023-05-21 00:21:52,691 - INFO - 17568 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:21:52,691 - INFO - 17568 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:21:53,332 - INFO - 3112 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:21:53,334 - INFO - 17568 : multiprocessing -- info : Client with IP ('127.0.0.1', 63141) has connected
+2023-05-21 00:21:53,334 - ERROR - 17568 : multiprocessing -- error : Error: cannot schedule new futures after interpreter shutdown
+2023-05-21 00:21:53,334 - INFO - 3112 : multiprocessing -- info : process shutting down
+2023-05-21 00:21:53,334 - INFO - 3408 : multiprocessing -- info : process shutting down
+2023-05-21 00:21:53,335 - INFO - 3408 : multiprocessing -- info : calling join() for process Process-1
+2023-05-21 00:21:53,335 - INFO - 3112 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:22:48,584 - INFO - 3604 : multiprocessing -- info : Initializing Server socket ...
+2023-05-21 00:22:48,585 - INFO - 3604 : multiprocessing -- info : Server socket created
+2023-05-21 00:22:48,586 - INFO - 3604 : multiprocessing -- info : Server socket bind complete
+2023-05-21 00:22:48,586 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,241 - INFO - 19144 : multiprocessing -- info : child process calling self.run()
+2023-05-21 00:22:49,243 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63156) has connected
+2023-05-21 00:22:49,243 - INFO - 19144 : multiprocessing -- info : process shutting down
+2023-05-21 00:22:49,244 - INFO - 15980 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,245 - INFO - 19144 : multiprocessing -- info : process exiting with exitcode 0
+2023-05-21 00:22:49,245 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,246 - INFO - 15980 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB4644710>
+2023-05-21 00:22:49,248 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63157) has connected
+2023-05-21 00:22:49,249 - INFO - 15980 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,250 - INFO - 2692 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,251 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,252 - INFO - 15980 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:22:49,252 - INFO - 2692 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB4644D90>
+2023-05-21 00:22:49,253 - INFO - 15980 : multiprocessing -- info : add client
+2023-05-21 00:22:49,254 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63158) has connected
+2023-05-21 00:22:49,254 - INFO - 2692 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,270 - INFO - 22764 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,270 - INFO - 2692 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:22:49,270 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,271 - INFO - 22764 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB465C5D0>
+2023-05-21 00:22:49,272 - INFO - 2692 : multiprocessing -- info : add client
+2023-05-21 00:22:49,275 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63159) has connected
+2023-05-21 00:22:49,275 - INFO - 22764 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,287 - INFO - 15840 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,287 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,288 - INFO - 22764 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:22:49,289 - INFO - 15840 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB465D990>
+2023-05-21 00:22:49,291 - INFO - 22764 : multiprocessing -- info : add client
+2023-05-21 00:22:49,291 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63160) has connected
+2023-05-21 00:22:49,291 - INFO - 15840 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,294 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,295 - INFO - 2692 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,297 - INFO - 15840 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:22:49,300 - INFO - 2692 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB4645590>
+2023-05-21 00:22:49,300 - INFO - 15840 : multiprocessing -- info : add client
+2023-05-21 00:22:49,300 - INFO - 2692 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,303 - INFO - 2692 : multiprocessing -- info : Payload of type InfectivityPackageType.ADD_CLIENT
+2023-05-21 00:22:49,303 - INFO - 2692 : multiprocessing -- info : add client
+2023-05-21 00:22:49,593 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63163) has connected
+2023-05-21 00:22:49,593 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,594 - INFO - 15980 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,594 - INFO - 15980 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB465D550>
+2023-05-21 00:22:49,594 - INFO - 15980 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,595 - INFO - 15980 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:22:49,595 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63164) has connected
+2023-05-21 00:22:49,596 - INFO - 15980 : multiprocessing -- info : remove client
+2023-05-21 00:22:49,596 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,596 - INFO - 15840 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,600 - INFO - 15840 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB4644F50>
+2023-05-21 00:22:49,601 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63165) has connected
+2023-05-21 00:22:49,603 - INFO - 15840 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,603 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,603 - INFO - 15840 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:22:49,603 - INFO - 22764 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,605 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63166) has connected
+2023-05-21 00:22:49,605 - INFO - 15840 : multiprocessing -- info : remove client
+2023-05-21 00:22:49,605 - INFO - 22764 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB468A150>
+2023-05-21 00:22:49,605 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,605 - INFO - 2692 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,607 - INFO - 22764 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,607 - INFO - 3604 : multiprocessing -- info : Client with IP ('127.0.0.1', 63167) has connected
+2023-05-21 00:22:49,607 - INFO - 2692 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB468B050>
+2023-05-21 00:22:49,608 - INFO - 22764 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:22:49,608 - INFO - 16708 : multiprocessing -- info : __add_task_executor
+2023-05-21 00:22:49,608 - INFO - 2692 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,608 - INFO - 3604 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-21 00:22:49,608 - INFO - 22764 : multiprocessing -- info : remove client
+2023-05-21 00:22:49,608 - INFO - 16708 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x000002DFB468B210>
+2023-05-21 00:22:49,609 - INFO - 2692 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:22:49,612 - INFO - 16708 : multiprocessing -- info : manager created
+2023-05-21 00:22:49,612 - INFO - 2692 : multiprocessing -- info : remove client
+2023-05-21 00:22:49,614 - INFO - 16708 : multiprocessing -- info : Payload of type InfectivityPackageType.REMOVE_CLIENT
+2023-05-21 00:22:49,616 - INFO - 16708 : multiprocessing -- info : remove client
+2023-05-25 00:16:39,391 - INFO - 5576 : multiprocessing -- info : Initializing Server socket ...
+2023-05-25 00:16:39,393 - INFO - 5576 : multiprocessing -- info : Server socket created
+2023-05-25 00:16:39,394 - INFO - 5576 : multiprocessing -- info : Server socket bind complete
+2023-05-25 00:16:39,395 - INFO - 5576 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-25 00:16:40,146 - INFO - 7280 : multiprocessing -- info : child process calling self.run()
+2023-05-25 00:16:40,147 - INFO - 7280 : multiprocessing -- info : process shutting down
+2023-05-25 00:16:40,147 - INFO - 5576 : multiprocessing -- info : Client with IP ('127.0.0.1', 57919) has connected
+2023-05-25 00:16:40,148 - INFO - 9592 : multiprocessing -- info : __add_task_executor
+2023-05-25 00:16:40,148 - INFO - 9592 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000023D45B150D0>
+2023-05-25 00:16:40,148 - INFO - 9592 : multiprocessing -- info : manager created
+2023-05-25 00:16:40,148 - ERROR - 9592 : multiprocessing -- error : type object 'Server' has no attribute '_InfectivityServer__MAX_BYTES'
+2023-05-25 00:16:40,149 - INFO - 5576 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-25 00:16:40,159 - INFO - 7280 : multiprocessing -- info : process exiting with exitcode 1
+2023-05-25 00:16:40,403 - INFO - 5576 : multiprocessing -- info : Client with IP ('127.0.0.1', 57920) has connected
+2023-05-25 00:16:40,403 - INFO - 5576 : multiprocessing -- info : Server waiting for connection on 127.0.0.1:5000 ...
+2023-05-25 00:16:40,404 - INFO - 9592 : multiprocessing -- info : __add_task_executor
+2023-05-25 00:16:40,404 - INFO - 9592 : multiprocessing -- info : Session created <sqlalchemy.orm.session.Session object at 0x0000023D42404310>
+2023-05-25 00:16:40,405 - INFO - 9592 : multiprocessing -- info : manager created
+2023-05-25 00:16:40,405 - ERROR - 9592 : multiprocessing -- error : type object 'Server' has no attribute '_InfectivityServer__MAX_BYTES'

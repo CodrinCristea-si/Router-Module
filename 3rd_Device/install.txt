@@ -1,0 +1,3 @@
+pip3 install mariadb SQLAlchemy
+
+setx PATH "%PATH%;C:\Python311"
