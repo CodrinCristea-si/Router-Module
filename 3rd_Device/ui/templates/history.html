@@ -1,0 +1,27 @@
+<div class="box_history">
+  <div class="menu_history">
+    <button class="menu-button_history" id = "button_history">History</button>
+    <button class="menu-button_history" id = "button_logs">Logs</button>
+  </div>
+  <div class="content_history" id = "content_history">
+    <!-- Your content goes here -->
+  </div>
+</div>
+
+
+<style>
+
+</style>
+
+<script>
+  var scriptElement = document.createElement('script');
+  scriptElement.src = "{{ url_for('static', filename='js/history.js') }}";
+
+  // Append the <script> element to the <head> or <body> element
+  document.head.appendChild(scriptElement);
+
+  var domContentLoadedEvent = new Event('DOMContentLoaded');
+
+  // Dispatch the custom event on the document object
+  document.dispatchEvent(domContentLoadedEvent);
+</script>

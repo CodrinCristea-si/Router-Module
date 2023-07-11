@@ -1,0 +1,88 @@
+.list {
+  /*list-style: none;*/
+  padding: 0 15px;
+  font-size: 18px;
+  min-width: 500px;
+}
+
+.list-details {
+  /*list-style: none;*/
+
+}
+
+li .clickeble_item {
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: bold;
+  display: inline-block;
+  padding: 10px 5px;
+  background-color: #39393B;
+  border: 1px solid #ccc;
+  width: 75%;
+  color: #c0c0c0
+}
+
+.dropdown {
+  display: none;
+  padding: 5px 50px;
+  font-size: 18px;
+  /*padding: 5px;*/
+  /*background-color: #f9f9f9;*/
+}
+
+.list_extra_details{
+  display: flex;
+  flex-direction: row;
+  gap:7px;
+}
+
+.key {
+  font-weight: bold;
+}
+
+
+.json-content {
+  font-family: Consolas, monospace;
+  padding: 10px;
+  background-color: #f1f1f1;
+  /*white-space: pre-wrap;*/
+  /*word-wrap: break-word;*/
+  overflow: auto;
+}
+
+.dropdown.active{
+  display: block;
+}
+
+.list_details_container{
+  display:flex;
+  flex-direction: row;
+  gap:10px;
+}
+
+.select-static {
+    background-color: saddlebrown;
+}
+
+.select-static:disabled{
+    opacity: 1;
+    color: black;
+}
+
+.select-package {
+  background-color: green;
+}
+
+.select-package:disabled{
+    opacity: 1;
+    color: black;
+}
+
+.select-general {
+  background-color: palevioletred;
+}
+
+.select-general:disabled{
+    opacity: 1;
+    color: black;
+}

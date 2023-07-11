@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>InfectivityMonitor</title>
+<!--    <link rel="stylesheet" type="text/css" href="css?scope=main">-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main-page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/malware.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/heuristics.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tests_clients.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/packages_client.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+    <script src="https://kit.fontawesome.com/12d6244bf1.js" crossorigin="anonymous"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="{{ url_for('static', filename='js/main-page.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+    <style>
+        /*main page*/
+
+
+        /*.list-clients {*/
+        /*    display: flex;*/
+        /*    align-items: center;*/
+        /*    flex-direction: column;*/
+        /*    background-color: lightgray;*/
+        /*    border-radius: 50px;*/
+        /*    padding: 10px;*/
+        /*    margin-bottom: 10px;*/
+        /*}*/
+
+        /*.field {*/
+        /*    flex: 1;*/
+        /*    margin: 0 10px;*/
+        /*    padding: 5px;*/
+        /*    background-color: white;*/
+        /*    border-radius: 50px;*/
+        /*}*/
+
+
+
+    </style>
+    <script>
+
+    </script>
+</head>
+<body class ="background_main_content">
+    <div class="container">
+        <div id="sidebar" class="sidebar">
+            <div class="box-list">
+                <button onclick="fetch_home()" >
+                    <i class="fa-solid fa-house"></i>
+                    <a href="/"></a>
+                    Home
+                </button>
+                <button onclick="fetch_clients()" >
+                    <i class="fa-solid fa-computer"></i>
+                    <a href="/"></a>
+                    Clients
+                </button>
+                <button onclick="fetch_malware_data()" >
+                    <i class="fa-solid fa-bug"></i>
+                    <a href="/"></a>
+                    Malware
+                </button>
+                <button onclick="fetch_heuristics()">
+                    <i class="fa-solid fa-gear"></i>
+                    Heuristics
+                </button>
+                <button onclick="fetch_history()">
+                    <i class="fa-solid fa-scroll"></i>
+                    History
+                </button>
+                <!-- Add more buttons as needed -->
+            </div>
+        </div>
+        <div>
+            <button onclick="toggleList()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+<!--        <ul class="client_list">-->
+<!--          <li class="client_list_item">-->
+<!--            <strong>IP:</strong> 192.168.1.1<br>-->
+<!--            <strong>MAC:</strong> 00:11:22:33:44:55<br>-->
+<!--            <strong>Status:</strong> Connected<br>-->
+<!--          </li>-->
+<!--            <li class="client_list_item">-->
+<!--            <strong>IP:</strong> 192.168.1.1<br>-->
+<!--            <strong>MAC:</strong> 00:11:22:33:44:55<br>-->
+<!--            <strong>Status:</strong> Connected<br>-->
+<!--          </li>-->
+<!--            <li class="client_list_item">-->
+<!--            <strong>IP:</strong> 192.168.1.1<br>-->
+<!--            <strong>MAC:</strong> 00:11:22:33:44:55<br>-->
+<!--            <strong>Status:</strong> Connected<br>-->
+<!--          </li>-->
+<!--          &lt;!&ndash; Add more list items for other clients &ndash;&gt;-->
+<!--        </ul>-->
+            <div id="content" class="content">
+
+<!--                 <canvas id="myChart"></canvas>-->
+<!--    <script>-->
+<!--         window.onload = () => {-->
+<!--            // Retrieve the data passed from Flask-->
+<!--            var labels = ['Red', 'Blue', 'Yellow'];-->
+<!--            var values = [10,20,30];-->
+<!--            console.log(labels);-->
+<!--            console.log(values);-->
+<!--            // Create the chart-->
+<!--            var ctx = document.getElementById('myChart').getContext('2d');-->
+<!--            var myChart = new Chart(ctx, {-->
+<!--                type: 'pie',-->
+<!--                data: {-->
+<!--                    labels: labels,-->
+<!--                    datasets: [{-->
+<!--                        data: values,-->
+<!--                        backgroundColor: ['red', 'blue', 'yellow'],-->
+<!--                    }]-->
+<!--                }-->
+<!--            });-->
+<!--         };-->
+<!--    </script>-->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
